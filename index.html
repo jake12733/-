@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>뱀피르 독도 클랜 관리</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .active-menu { background-color: #be123c; color: white; }
+        .hidden-content { display: none; }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-200 h-screen flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <nav class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col">
+        <div class="text-red-500 font-bold text-2xl mb-10 flex items-center justify-center gap-2">
+            <span class="text-blue-400">🛡️</span> 뱀피르 독도
+        </div>
+        
+        <div class="space-y-2">
+            <button onclick="showContent('dashboard')" class="menu-btn w-full text-left px-4 py-3 rounded-lg active-menu">대시보드</button>
+            <button onclick="showContent('attendance')" class="menu-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800">출석 체크</button>
+            <button onclick="showContent('timer')" class="menu-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800">보탐 타이머</button>
+            <button onclick="showContent('participation')" class="menu-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800">참여율 조회</button>
+            <button onclick="showContent('vault')" class="menu-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800">금고템 보유</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 overflow-y-auto">
+        <!-- Dashboard Content -->
+        <div id="content-dashboard" class="content-section">
+            <h1 class="text-3xl font-bold mb-6">대시보드</h1>
+            <div class="grid grid-cols-3 gap-6">
+                <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+                    <p class="text-gray-400">오늘 출석률</p>
+                    <p class="text-4xl font-bold text-green-400">95%</p>
+                </div>
+                <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+                    <p class="text-gray-400">낮 월드보스</p>
+                    <p class="text-2xl font-bold text-blue-400">11:55 알람</p>
+                </div>
+                <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+                    <p class="text-gray-400">저녁 월드보스</p>
+                    <p class="text-2xl font-bold text-red-400">19:55 알람</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 출석 체크 -->
+        <div id="content-attendance" class="content-section hidden-content">
+            <h1 class="text-3xl font-bold mb-6">실시간 보탐 출석 로그</h1>
+            
+            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 mb-6">
+                <input type="text" id="nickname-input" placeholder="닉네임 입력" class="bg-gray-800 text-white px-4 py-2 rounded-lg mb-4 w-full outline-none">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-blue-400">☀️ 오전 타임</h3>
+                        <button onclick="logAttendance('오전', '게헨나 시작전 출석')" class="w-full bg-blue-900 hover:bg-blue-800 p-2 rounded">게헨나 시작전 출석</button>
+                        <button onclick="logAttendance('오전', '3층 진입전')" class="w-full bg-blue-900 hover:bg-blue-800 p-2 rounded">3층 진입전</button>
+                        <button onclick="logAttendance('오전', '게헨나 끝 출석')" class="w-full bg-blue-900 hover:bg-blue-800 p-2 rounded">게헨나 끝 출석</button>
+                    </div>
+                    <div class="space-y-2">
+                        <h3 class="font-bold text-red-400">🌙 저녁 타임</h3>
+                        <button onclick="logAttendance('저녁', '게헨나 시작전 출석')" class="w-full bg-red-900 hover:bg-red-800 p-2 rounded">게헨나 시작전 출석</button>
+                        <button onclick="logAttendance('저녁', '3층 진입전')" class="w-full bg-red-900 hover:bg-red-800 p-2 rounded">3층 진입전</button>
+                        <button onclick="logAttendance('저녁', '게헨나 끝 출석')" class="w-full bg-red-900 hover:bg-red-800 p-2 rounded">게헨나 끝 출석</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
+                <h2 class="text-xl font-bold mb-4">출석 클랜원별 현황</h2>
+                <table class="w-full text-left">
+                    <thead class="text-gray-400 border-b border-gray-800">
+                        <tr>
+                            <th class="py-2">닉네임</th>
+                            <th class="py-2">참여 횟수 (타임별 최대 1회, 총 2회)</th>
+                            <th class="py-2">참여 항목 및 시간 기록</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendance-log"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 보탐 타이머 -->
+        <div id="content-timer" class="content-section hidden-content">
+            <h1 class="text-3xl font-bold mb-6">⏰ 보탐 및 월드보스 타이머</h1>
+            
+            <!-- 실시간 남은 시간 알람 현황판 -->
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow-lg mb-6">
+                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+                    <div class="flex items-center gap-3">
+                        <h2 class="text-xl font-bold text-yellow-400">🚨 다중 보스 실시간 음성 알람</h2>
+                        <span id="alarm-status" class="text-xs px-2.5 py-1 rounded-full font-bold bg-gray-800 text-gray-400">🔴 전체 알람 꺼짐</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="testVoice()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs px-3 py-1.5 rounded font-bold shadow">🗣️ 음성 테스트</button>
+                        <button id="btn-enable" onclick="setAllVoiceAlarm(true)" class="bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded font-bold shadow">🔊 전체 켜기</button>
+                        <button id="btn-disable" onclick="setAllVoiceAlarm(false)" class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-1.5 rounded font-bold shadow">🔇 전체 끄기</button>
+                    </div>
+                </div>
+                
+                <!-- 개별 카드 영역 -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+                    <!-- 11:55 -->
+                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 flex flex-col justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">낮 월드보스</p>
+                            <p class="text-xl font-bold text-white mt-1">11:55</p>
+                            <p id="timer-1155" class="text-xs text-yellow-400 mt-2 font-mono">계산 중...</p>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-700 flex items-center justify-between">
+                            <span class="text-xs text-gray-400">알람</span>
+                            <button id="toggle-1155" onclick="toggleBossAlarm('1155')" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold">ON</button>
+                        </div>
+                    </div>
+                    <!-- 12:55 -->
+                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 flex flex-col justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">오전 게헨나 보스</p>
+                            <p class="text-xl font-bold text-white mt-1">12:55</p>
+                            <p id="timer-1255" class="text-xs text-blue-400 mt-2 font-mono">계산 중...</p>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-700 flex items-center justify-between">
+                            <span class="text-xs text-gray-400">알람</span>
+                            <button id="toggle-1255" onclick="toggleBossAlarm('1255')" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold">ON</button>
+                        </div>
+                    </div>
+                    <!-- 19:55 -->
+                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 flex flex-col justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">저녁 월드보스</p>
+                            <p class="text-xl font-bold text-white mt-1">19:55</p>
+                            <p id="timer-1955" class="text-xs text-yellow-400 mt-2 font-mono">계산 중...</p>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-700 flex items-center justify-between">
+                            <span class="text-xs text-gray-400">알람</span>
+                            <button id="toggle-1955" onclick="toggleBossAlarm('1955')" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold">ON</button>
+                        </div>
+                    </div>
+                    <!-- 20:55 -->
+                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 flex flex-col justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">저녁 게헨나 보스</p>
+                            <p class="text-xl font-bold text-white mt-1">20:55</p>
+                            <p id="timer-2055" class="text-xs text-red-400 mt-2 font-mono">계산 중...</p>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-700 flex items-center justify-between">
+                            <span class="text-xs text-gray-400">알람</span>
+                            <button id="toggle-2055" onclick="toggleBossAlarm('2055')" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold">ON</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 오전 타임 -->
+                <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow-lg">
+                    <span class="bg-blue-900/50 text-blue-400 text-xs px-2.5 py-1 rounded-full font-medium">☀️ 오전 스케줄</span>
+                    <h2 class="text-2xl font-bold mt-2 text-white">오전 보스 & 보탐</h2>
+                    <ul class="mt-4 space-y-3 text-gray-300">
+                        <li class="flex justify-between items-center bg-gray-800 p-3 rounded-lg border-l-4 border-yellow-500">
+                            <span>낮 월드보스 알람</span>
+                            <span class="font-mono text-yellow-400 font-bold">11:55</span>
+                        </li>
+                        <li class="flex justify-between items-center bg-gray-800 p-3 rounded-lg border-l-4 border-blue-500">
+                            <span>게헨나 보스 출현</span>
+                            <span class="font-mono text-blue-400 font-bold">12:55</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 저녁 타임 -->
+                <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow-lg">
+                    <span class="bg-red-900/50 text-red-400 text-xs px-2.5 py-1 rounded-full font-medium">🌙 저녁 스케줄</span>
+                    <h2 class="text-2xl font-bold mt-2 text-white">저녁 보스 & 보탐</h2>
+                    <ul class="mt-4 space-y-3 text-gray-300">
+                        <li class="flex justify-between items-center bg-gray-800 p-3 rounded-lg border-l-4 border-yellow-500">
+                            <span>저녁 월드보스 알람</span>
+                            <span class="font-mono text-yellow-400 font-bold">19:55</span>
+                        </li>
+                        <li class="flex justify-between items-center bg-gray-800 p-3 rounded-lg border-l-4 border-red-500">
+                            <span>게헨나 보스 출현</span>
+                            <span class="font-mono text-red-400 font-bold">20:55</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 참여율 조회 -->
+        <div id="content-participation" class="content-section hidden-content">
+            <h1 class="text-3xl font-bold mb-6">참여율 조회</h1>
+            <p class="text-gray-400">클랜원들의 상세 참여율 데이터가 표시됩니다.</p>
+        </div>
+
+        <!-- 금고템 보유 -->
+        <div id="content-vault" class="content-section hidden-content">
+            <h1 class="text-3xl font-bold mb-6">금고템 보유</h1>
+            <p class="text-gray-400">클랜 금고 아이템 현황이 표시됩니다.</p>
+        </div>
+    </main>
+
+    <script>
+        let logs = JSON.parse(localStorage.getItem('clanLogsFinalV7')) || [];
+        
+        let bossAlarms = {
+            '1155': true,
+            '1255': true,
+            '1955': true,
+            '2055': true
+        };
+
+        function toggleBossAlarm(id) {
+            bossAlarms[id] = !bossAlarms[id];
+            const btn = document.getElementById('toggle-' + id);
+            if (bossAlarms[id]) {
+                btn.className = "bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold";
+                btn.innerText = "ON";
+            } else {
+                btn.className = "bg-gray-700 text-gray-400 text-xs px-2.5 py-1 rounded font-bold";
+                btn.innerText = "OFF";
+            }
+            updateGlobalStatusUI();
+        }
+
+        function setAllVoiceAlarm(status) {
+            for (let key in bossAlarms) {
+                bossAlarms[key] = status;
+                const btn = document.getElementById('toggle-' + key);
+                if (status) {
+                    btn.className = "bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold";
+                    btn.innerText = "ON";
+                } else {
+                    btn.className = "bg-gray-700 text-gray-400 text-xs px-2.5 py-1 rounded font-bold";
+                    btn.innerText = "OFF";
+                }
+            }
+            updateGlobalStatusUI();
+            if (status) {
+                speakText("전체 음성 알람이 활성화되었습니다.");
+            } else {
+                speakText("전체 음성 알람이 비활성화되었습니다.");
+            }
+        }
+
+        function updateGlobalStatusUI() {
+            const anyOn = Object.values(bossAlarms).some(v => v);
+            const statusBadge = document.getElementById('alarm-status');
+            const btnEnable = document.getElementById('btn-enable');
+            const btnDisable = document.getElementById('btn-disable');
+
+            if (anyOn) {
+                statusBadge.className = "text-xs px-2.5 py-1 rounded-full font-bold bg-green-900 text-green-300";
+                statusBadge.innerText = "🟢 알람 작동 중";
+                btnEnable.className = "bg-green-600 hover:bg-green-500 text-white text-xs px-3 py-1.5 rounded font-bold shadow";
+                btnDisable.className = "bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-1.5 rounded font-bold shadow";
+            } else {
+                statusBadge.className = "text-xs px-2.5 py-1 rounded-full font-bold bg-gray-800 text-gray-400";
+                statusBadge.innerText = "🔴 전체 알람 꺼짐";
+                btnEnable.className = "bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-1.5 rounded font-bold shadow";
+                btnDisable.className = "bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded font-bold shadow";
+            }
+        }
+
+        function testVoice() {
+            speakText("12시 월드보스 5분 전입니다.");
+        }
+
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) {
+                alert('이 브라우저는 음성 출력을 지원하지 않습니다.');
+                return;
+            }
+            window.speechSynthesis.cancel();
+            let utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ko-KR';
+            utterance.rate = 1.0; 
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function logAttendance(timeType, detailSlot) {
+            const nickname = document.getElementById('nickname-input').value.trim();
+            if (!nickname) { alert('닉네임을 입력하세요!'); return; }
+            
+            const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const slotFullName = timeType + ' - ' + detailSlot;
+            
+            let userLogs = logs.filter(l => l.name === nickname);
+            
+            // 이미 동일한 세부 항목을 눌렀는지 체크
+            let alreadyHasExact = userLogs.some(l => l.slot === slotFullName);
+            if (alreadyHasExact) {
+                alert(nickname + '님은 이미 [' + slotFullName + '] 항목을 기록하셨습니다!');
+                return;
+            }
+            
+            logs.push({ name: nickname, slot: slotFullName, time: now });
+            localStorage.setItem('clanLogsFinalV7', JSON.stringify(logs));
+            renderLogs();
+            alert(nickname + '님의 [' + slotFullName + '] 출석이 기록되었습니다!');
+        }
+
+        function renderLogs() {
+            const grouped = {};
+            logs.forEach(l => {
+                if (!grouped[l.name]) {
+                    grouped[l.name] = [];
+                }
+                grouped[l.name].push(l);
+            });
+
+            const list = document.getElementById('attendance-log');
+            list.innerHTML = '';
+
+            for (const [name, items] of Object.entries(grouped)) {
+                // 오전 타임 종류(시작전, 3층, 끝) 중 하나라도 포함되어 있으면 오전 1회로 계산
+                const hasMorning = items.some(i => i.slot.startsWith('오전 -'));
+                // 저녁 타임 종류 중 하나라도 포함되어 있으면 저녁 1회로 계산
+                const hasEvening = items.some(i => i.slot.startsWith('저녁 -'));
+                
+                const totalAttendanceCount = (hasMorning ? 1 : 0) + (hasEvening ? 1 : 0);
+
+                let details = items.map(i => `<span class="inline-block bg-gray-800 text-red-400 px-2 py-1 rounded text-xs mr-1 mb-1">${i.slot} (${i.time})</span>`).join('');
+                
+                list.innerHTML += `
+                    <tr class="border-b border-gray-800 hover:bg-gray-850">
+                        <td class="py-3 font-bold text-white">${name}</td>
+                        <td class="py-3 text-green-400 font-bold">${totalAttendanceCount} / 2회 인정</td>
+                        <td class="py-3">${details}</td>
+                    </tr>
+                `;
+            }
+        }
+        renderLogs();
+
+        // Real-time countdown timer & Voice Alarms
+        function updateBossTimers() {
+            const now = new Date();
+            const h = now.getHours();
+            const m = now.getMinutes();
+            const s = now.getSeconds();
+            const currentTotalSec = h * 3600 + m * 60 + s;
+
+            if (s === 0) {
+                if (h === 11 && m === 55 && bossAlarms['1155']) {
+                    speakText("12시 월드보스 5분 전입니다.");
+                } else if (h === 12 && m === 55 && bossAlarms['1255']) {
+                    speakText("13시 게헨나 보스 출현 시간입니다.");
+                } else if (h === 19 && m === 55 && bossAlarms['1955']) {
+                    speakText("20시 월드보스 5분 전입니다.");
+                } else if (h === 20 && m === 55 && bossAlarms['2055']) {
+                    speakText("21시 게헨나 보스 출현 시간입니다.");
+                }
+            }
+
+            function getDiffText(targetHour, targetMin) {
+                const targetTotalSec = targetHour * 3600 + targetMin * 60;
+                let diff = targetTotalSec - currentTotalSec;
+                if (diff < 0) {
+                    diff += 86400; // Next day
+                }
+                const dh = Math.floor(diff / 3600);
+                const dm = Math.floor((diff % 3600) / 60);
+                const ds = diff % 60;
+                return `${dh}시간 ${dm}분 ${ds}초 전`;
+            }
+
+            document.getElementById('timer-1155').innerText = getDiffText(11, 55);
+            document.getElementById('timer-1255').innerText = getDiffText(12, 55);
+            document.getElementById('timer-1955').innerText = getDiffText(19, 55);
+            document.getElementById('timer-2055').innerText = getDiffText(20, 55);
+        }
+        setInterval(updateBossTimers, 1000);
+        updateBossTimers();
+
+        function showContent(id) {
+            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden-content'));
+            document.getElementById('content-' + id).classList.remove('hidden-content');
+            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active-menu'));
+            event.currentTarget.classList.add('active-menu');
+        }
+    </script>
+</body>
+</html>
