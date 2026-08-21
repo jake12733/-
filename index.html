@@ -5,621 +5,384 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>뱀피르 독도 클랜 관리</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .active-menu { background-color: #be123c; color: white; }
-        .hidden-content { display: none; }
-    </style>
+    <style> body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Malgun Gothic', sans-serif; } </style>
 </head>
-<body class="bg-gray-950 text-gray-200 h-screen flex overflow-hidden">
+<body class="min-h-screen flex">
 
-    <!-- Sidebar -->
-    <nav class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col">
-        <div class="text-red-500 font-bold text-2xl mb-10 flex items-center justify-center gap-2">
-            <span class="text-blue-400">🛡️</span> 뱀피르 독도
+    <!-- 사이드바 -->
+    <aside class="w-64 bg-gray-900 border-r border-gray-800 flex flex-col hidden md:flex">
+        <div class="p-6 border-b border-gray-800 flex items-center space-x-2">
+            <span class="text-red-500 text-xl font-bold">🛡️</span>
+            <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
         </div>
-        
-        <div class="space-y-2">
-            <button onclick="showContent('dashboard')" class="menu-btn w-full text-left px-4 py-3 rounded-lg active-menu">대시보드</button>
-            <button onclick="showContent('attendance')" class="menu-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800">출석 체크</button>
-            <button onclick="showContent('timer')" class="menu-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800">보탐 타이머</button>
-            <button onclick="showContent('participation')" class="menu-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800">참여율 조회</button>
-            <button onclick="showContent('vault')" class="menu-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800">금고템 보유</button>
-        </div>
-    </nav>
+        <nav class="p-4 space-y-2">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white">대시보드</button>
+            <button onclick="switchTab('attendance')" id="nav-attendance" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800">출석 체크</button>
+            <button onclick="switchTab('boss')" id="nav-boss" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800">보탐 타이머</button>
+            <button onclick="switchTab('history')" id="nav-history" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800">참여율 조회</button>
+            <button onclick="switchTab('vault')" id="nav-vault" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800">금고템 보유</button>
+        </nav>
+    </aside>
 
-    <!-- Main Content -->
-    <main class="flex-1 p-8 overflow-y-auto">
-        <!-- Dashboard Content -->
-        <div id="content-dashboard" class="content-section">
-            <h1 class="text-3xl font-bold mb-6">대시보드</h1>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
-                    <p class="text-gray-400 text-sm">오늘 날짜</p>
-                    <p id="dashboard-date" class="text-3xl font-bold text-blue-400 mt-1">-</p>
-                </div>
-                <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
-                    <p class="text-gray-400 text-sm">오늘 전체 출석률</p>
-                    <p id="dashboard-rate" class="text-3xl font-bold text-green-400 mt-1">0%</p>
-                </div>
-            </div>
+    <!-- 메인 컨텐츠 -->
+    <main class="flex-grow p-8 space-y-6">
 
-            <!-- 날짜별 출석률 심플 보관함 -->
-            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
-                <h2 class="text-xl font-bold mb-4 text-yellow-400">📅 날짜별 출석률 보관함</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="text-gray-400 border-b border-gray-800">
-                            <tr>
-                                <th class="py-3 px-4">날짜</th>
-                                <th class="py-3 px-4">출석률</th>
-                                <th class="py-3 px-4">참여 인원</th>
-                            </tr>
-                        </thead>
-                        <tbody id="history-log-table"></tbody>
-                    </table>
+        <!-- 1. 대시보드 탭 -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            <h2 class="text-2xl font-bold text-white">대시보드</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow">
+                    <p class="text-gray-400 text-sm mb-1">오늘 날짜 (24시 자정 기준)</p>
+                    <p id="dashboard-date" class="text-2xl font-bold text-blue-400">-</p>
+                </div>
+                <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow">
+                    <p class="text-gray-400 text-sm mb-1">오늘 전체 출석률</p>
+                    <p class="text-2xl font-bold text-green-400">0% (0 / 0명 참여)</p>
                 </div>
             </div>
-        </div>
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow">
+                <h3 class="text-lg font-bold text-white mb-4">📅 날짜별 출석률 보관함</h3>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-gray-400 text-sm border-b border-gray-800">
+                            <th class="py-3">날짜</th>
+                            <th class="py-3">출석률</th>
+                            <th class="py-3">참여 인원</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="3" class="py-6 text-center text-gray-500">저장된 출석 기록이 없습니다.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-        <!-- 출석 체크 -->
-        <div id="content-attendance" class="content-section hidden-content">
-            <h1 class="text-3xl font-bold mb-6">실시간 보탐 출석 로그</h1>
-            
-            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 mb-6">
-                <input type="text" id="nickname-input" placeholder="닉네임 입력" class="bg-gray-800 text-white px-4 py-2 rounded-lg mb-4 w-full outline-none">
+        <!-- 2. 출석 체크 탭 -->
+        <section id="tab-attendance" class="tab-content hidden space-y-6">
+            <h2 class="text-2xl font-bold text-white">출석 체크</h2>
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-6">
+                <input type="text" id="att-nickname" placeholder="닉네임 입력" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
                 
-                <!-- 1. 기존 오전/저녁 타임 -->
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <!-- 오전 타임 -->
-                    <div class="space-y-2">
-                        <h3 class="font-bold text-blue-400">☀️ 오전 타임</h3>
-                        <button onclick="logAttendance('오전', '게헨나 시작전 출석')" class="w-full bg-blue-900 hover:bg-blue-800 p-2 rounded text-sm">게헨나 시작전 출석</button>
-                        <button onclick="logAttendance('오전', '3층 진입전')" class="w-full bg-blue-900 hover:bg-blue-800 p-2 rounded text-sm">3층 진입전</button>
-                        <button onclick="logAttendance('오전', '게헨나 끝 출석')" class="w-full bg-blue-900 hover:bg-blue-800 p-2 rounded text-sm">게헨나 끝 출석</button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <p class="text-amber-400 font-bold text-sm">☀️ 오전 타임</p>
+                        <button onclick="checkAttendance('계헨나 시작전 출석', 'morning')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-lg text-sm font-semibold transition">계헨나 시작전 출석</button>
+                        <button onclick="checkAttendance('3층 진입전', 'morning')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-lg text-sm font-semibold transition">3층 진입전</button>
+                        <button onclick="checkAttendance('계헨나 끝 출석', 'morning')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-lg text-sm font-semibold transition">계헨나 끝 출석</button>
                     </div>
-                    <!-- 저녁 타임 -->
-                    <div class="space-y-2">
-                        <h3 class="font-bold text-red-400">🌙 저녁 타임</h3>
-                        <button onclick="logAttendance('저녁', '게헨나 시작전 출석')" class="w-full bg-red-900 hover:bg-red-800 p-2 rounded text-sm">게헨나 시작전 출석</button>
-                        <button onclick="logAttendance('저녁', '3층 진입전')" class="w-full bg-red-900 hover:bg-red-800 p-2 rounded text-sm">3층 진입전</button>
-                        <button onclick="logAttendance('저녁', '게헨나 끝 출석')" class="w-full bg-red-900 hover:bg-red-800 p-2 rounded text-sm">게헨나 끝 출석</button>
+                    <div class="space-y-3">
+                        <p class="text-amber-200 font-bold text-sm">🌙 저녁 타임</p>
+                        <button onclick="checkAttendance('계헨나 시작전 출석', 'evening')" class="w-full bg-red-800 hover:bg-red-700 text-white p-3 rounded-lg text-sm font-semibold transition">계헨나 시작전 출석</button>
+                        <button onclick="checkAttendance('3층 진입전', 'evening')" class="w-full bg-red-800 hover:bg-red-700 text-white p-3 rounded-lg text-sm font-semibold transition">3층 진입전</button>
+                        <button onclick="checkAttendance('계헨나 끝 출석', 'evening')" class="w-full bg-red-800 hover:bg-red-700 text-white p-3 rounded-lg text-sm font-semibold transition">계헨나 끝 출석</button>
                     </div>
                 </div>
 
-                <!-- 2. 에노크 / 마슈미드 칸 -->
-                <div class="border-t border-gray-800 pt-4 mb-6">
-                    <h3 class="font-bold text-yellow-400 mb-3">✨ 에노크 / 마슈미드 타임</h3>
+                <div class="space-y-3 pt-2 border-t border-gray-800">
+                    <p class="text-orange-400 font-bold text-sm">✨ 에녹 / 마슈미드 타임</p>
                     <div class="grid grid-cols-2 gap-4">
-                        <button onclick="logAttendance('특수', '에노크')" class="w-full bg-yellow-900 hover:bg-yellow-800 p-2 rounded text-sm font-bold">에노크</button>
-                        <button onclick="logAttendance('특수', '마슈미드')" class="w-full bg-yellow-900 hover:bg-yellow-800 p-2 rounded text-sm font-bold">마슈미드</button>
+                        <button onclick="checkAttendance('에녹', 'special')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded-lg text-sm font-semibold transition">에녹</button>
+                        <button onclick="checkAttendance('마슈미드', 'special')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded-lg text-sm font-semibold transition">마슈미드</button>
                     </div>
                 </div>
 
-                <!-- 3. 전초전 / 쟁탈전 / 점령전 칸 -->
-                <div class="border-t border-gray-800 pt-4">
-                    <h3 class="font-bold text-purple-400 mb-3">⚔️ 전초전 / 쟁탈전 / 점령전 타임</h3>
-                    <div class="grid grid-cols-3 gap-3">
-                        <button onclick="logAttendance('특수', '전초전')" class="w-full bg-purple-900 hover:bg-purple-800 p-2 rounded text-sm font-bold">전초전</button>
-                        <button onclick="logAttendance('특수', '쟁탈전')" class="w-full bg-purple-900 hover:bg-purple-800 p-2 rounded text-sm font-bold">쟁탈전</button>
-                        <button onclick="logAttendance('특수', '점령전')" class="w-full bg-purple-900 hover:bg-purple-800 p-2 rounded text-sm font-bold">점령전</button>
+                <div class="space-y-3 pt-2 border-t border-gray-800">
+                    <p class="text-purple-400 font-bold text-sm">⚔️ 전초전 / 쟁탈전 / 점령전 타임</p>
+                    <div class="grid grid-cols-3 gap-4">
+                        <button onclick="checkAttendance('전초전', 'war')" class="bg-purple-800 hover:bg-purple-700 text-white p-3 rounded-lg text-sm font-semibold transition">전초전</button>
+                        <button onclick="checkAttendance('쟁탈전', 'war')" class="bg-purple-800 hover:bg-purple-700 text-white p-3 rounded-lg text-sm font-semibold transition">쟁탈전</button>
+                        <button onclick="checkAttendance('점령전', 'war')" class="bg-purple-800 hover:bg-purple-700 text-white p-3 rounded-lg text-sm font-semibold transition">점령전</button>
                     </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
+                <h3 class="text-lg font-bold text-white">출석 클랜원별 현황</h3>
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-800 text-gray-400">
+                            <th class="py-2">닉네임</th>
+                            <th class="py-2">오늘 / 누적 전체</th>
+                            <th class="py-2">에녹 / 마슈미드 횟수</th>
+                            <th class="py-2">전초/쟁탈/점령 횟수</th>
+                            <th class="py-2">날짜별 참여 항목 및 시간 기록</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendance-table-body">
+                        <tr><td colspan="5" class="py-6 text-center text-gray-500">기록된 출석 데이터가 없습니다.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. 보탐 타이머 탭 -->
+        <section id="tab-boss" class="tab-content hidden space-y-6">
+            <h2 class="text-2xl font-bold text-white">⏰ 보탐 및 월드보스 타이머 (5분 전 알람)</h2>
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <span class="text-red-500 font-bold">🚨 5분 전 음성 알람 시스템</span>
+                    <span id="global-alarm-status" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded-full font-bold">전체 알람 켜짐</span>
+                </div>
+                <div class="space-x-2">
+                    <button onclick="testVoice()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-sm font-semibold">음성 테스트</button>
+                    <button onclick="setAllAlarm(true)" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded text-sm font-semibold">전체 켜기</button>
+                    <button onclick="setAllAlarm(false)" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm font-semibold">전체 끄기</button>
                 </div>
             </div>
             
-            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
-                <h2 class="text-xl font-bold mb-4">출석 클랜원별 현황</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="text-gray-400 border-b border-gray-800">
-                            <tr>
-                                <th class="py-2 px-2">닉네임</th>
-                                <th class="py-2 px-2">오늘 / 누적 전체</th>
-                                <th class="py-2 px-2 text-yellow-400">에노크 / 마슈미드 횟수</th>
-                                <th class="py-2 px-2 text-purple-400">전초/쟁탈/점령 횟수</th>
-                                <th class="py-2 px-2">날짜별 참여 항목 및 시간 기록</th>
-                            </tr>
-                        </thead>
-                        <tbody id="attendance-log"></tbody>
-                    </table>
-                </div>
+            <div id="boss-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- 자바스크립트로 동적 생성되는 보스 카드들 -->
             </div>
-        </div>
+        </section>
 
-        <!-- 보탐 타이머 -->
-        <div id="content-timer" class="content-section hidden-content">
-            <h1 class="text-3xl font-bold mb-6">⏰ 보탐 및 월드보스 타이머</h1>
-            
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow-lg mb-6">
-                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
-                    <div class="flex items-center gap-3">
-                        <h2 class="text-xl font-bold text-yellow-400">🚨 다중 보스 실시간 음성 알람</h2>
-                        <span id="alarm-status" class="text-xs px-2.5 py-1 rounded-full font-bold bg-gray-800 text-gray-400">🔴 전체 알람 꺼짐</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="testVoice()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs px-3 py-1.5 rounded font-bold shadow">🗣️ 음성 테스트</button>
-                        <button id="btn-enable" onclick="setAllVoiceAlarm(true)" class="bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded font-bold shadow">🔊 전체 켜기</button>
-                        <button id="btn-disable" onclick="setAllVoiceAlarm(false)" class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-1.5 rounded font-bold shadow">🔇 전체 끄기</button>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
-                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 flex flex-col justify-between">
-                        <div>
-                            <p class="text-gray-400 text-sm">낮 월드보스</p>
-                            <p class="text-xl font-bold text-white mt-1">11:55</p>
-                            <p id="timer-1155" class="text-xs text-yellow-400 mt-2 font-mono">계산 중...</p>
-                        </div>
-                        <div class="mt-4 pt-2 border-t border-gray-700 flex items-center justify-between">
-                            <span class="text-xs text-gray-400">알람</span>
-                            <button id="toggle-1155" onclick="toggleBossAlarm('1155')" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold">ON</button>
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 flex flex-col justify-between">
-                        <div>
-                            <p class="text-gray-400 text-sm">오전 게헨나 보스</p>
-                            <p class="text-xl font-bold text-white mt-1">12:55</p>
-                            <p id="timer-1255" class="text-xs text-blue-400 mt-2 font-mono">계산 중...</p>
-                        </div>
-                        <div class="mt-4 pt-2 border-t border-gray-700 flex items-center justify-between">
-                            <span class="text-xs text-gray-400">알람</span>
-                            <button id="toggle-1255" onclick="toggleBossAlarm('1255')" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold">ON</button>
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 flex flex-col justify-between">
-                        <div>
-                            <p class="text-gray-400 text-sm">저녁 월드보스</p>
-                            <p class="text-xl font-bold text-white mt-1">19:55</p>
-                            <p id="timer-1955" class="text-xs text-yellow-400 mt-2 font-mono">계산 중...</p>
-                        </div>
-                        <div class="mt-4 pt-2 border-t border-gray-700 flex items-center justify-between">
-                            <span class="text-xs text-gray-400">알람</span>
-                            <button id="toggle-1955" onclick="toggleBossAlarm('1955')" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold">ON</button>
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 flex flex-col justify-between">
-                        <div>
-                            <p class="text-gray-400 text-sm">저녁 게헨나 보스</p>
-                            <p class="text-xl font-bold text-white mt-1">20:55</p>
-                            <p id="timer-2055" class="text-xs text-red-400 mt-2 font-mono">계산 중...</p>
-                        </div>
-                        <div class="mt-4 pt-2 border-t border-gray-700 flex items-center justify-between">
-                            <span class="text-xs text-gray-400">알람</span>
-                            <button id="toggle-2055" onclick="toggleBossAlarm('2055')" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold">ON</button>
-                        </div>
-                    </div>
-                </div>
+        <!-- 4. 참여율 조회 탭 -->
+        <section id="tab-history" class="tab-content hidden space-y-6">
+            <h2 class="text-2xl font-bold text-white">🔍 클랜원 상세 참여율 조회</h2>
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex gap-3">
+                <input type="text" placeholder="조회할 클랜원 닉네임 입력 후 검색" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm flex-grow focus:outline-none focus:border-red-500">
+                <button class="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded text-sm font-bold">검색</button>
             </div>
-        </div>
-
-        <!-- 참여율 조회 -->
-        <div id="content-participation" class="content-section hidden-content">
-            <h1 class="text-3xl font-bold mb-6">🔍 클랜원 상세 참여율 조회</h1>
-            
-            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 mb-6">
-                <div class="flex gap-3">
-                    <input type="text" id="search-nickname-input" placeholder="조회할 클랜원 닉네임 입력 후 검색" class="bg-gray-800 text-white px-4 py-2.5 rounded-lg flex-1 outline-none border border-gray-700 focus:border-red-500">
-                    <button onclick="searchMemberParticipation()" class="bg-red-600 hover:bg-red-500 text-white px-6 py-2.5 rounded-lg font-bold transition">검색</button>
-                </div>
-            </div>
-
-            <div id="search-result-container" class="bg-gray-900 p-6 rounded-xl border border-gray-800 hidden">
-                <h2 id="result-title" class="text-xl font-bold text-yellow-400 mb-4">-님의 상세 참여 현황</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
-                        <p class="text-gray-400 text-sm">총 누적 참여 횟수</p>
-                        <p id="res-total-count" class="text-2xl font-bold text-green-400 mt-1">0회</p>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
-                        <p class="text-gray-400 text-sm">에노크 / 마슈미드</p>
-                        <p id="res-special-1" class="text-lg font-bold text-yellow-300 mt-1">에노크 0회 / 마슈미드 0회</p>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
-                        <p class="text-gray-400 text-sm">전초전 / 쟁탈전 / 점령전</p>
-                        <p id="res-special-2" class="text-sm font-bold text-purple-300 mt-1">전초전 0 / 쟁탈전 0 / 점령전 0</p>
-                    </div>
-                </div>
-
-                <h3 class="font-bold text-white mb-3">📅 날짜별 상세 참여 시간 및 항목 리스트</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="text-gray-400 border-b border-gray-800">
-                            <tr>
-                                <th class="py-2 px-3">날짜</th>
-                                <th class="py-2 px-3">참여 항목 및 기록 시간</th>
-                            </tr>
-                        </thead>
-                        <tbody id="res-detail-table"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="search-placeholder" class="bg-gray-900 p-12 rounded-xl border border-gray-800 text-center text-gray-500">
+            <div class="bg-gray-900 border border-gray-800 p-12 rounded-xl shadow text-center text-gray-500 text-sm">
                 닉네임을 입력하고 검색 버튼을 누르면 상세 참여 내역이 표시됩니다.
             </div>
-        </div>
+        </section>
 
-        <!-- 금고템 보유 (간편 입력 및 관리 기능 추가) -->
-        <div id="content-vault" class="content-section hidden-content">
-            <h1 class="text-3xl font-bold mb-6">📦 클랜 금고템 보유 현황</h1>
-            
-            <!-- 아이템 직접 추가 패널 -->
-            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800 mb-6">
-                <h2 class="text-lg font-bold text-yellow-400 mb-3">➕ 금고 아이템 등록 / 수량 추가</h2>
+        <!-- 5. 금고템 보유 탭 -->
+        <section id="tab-vault" class="tab-content hidden space-y-6">
+            <h2 class="text-2xl font-bold text-white">📦 클랜 금고템 보유 현황</h2>
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
+                <div class="font-bold text-white text-sm">➕ 금고 아이템 등록 / 수량 추가</div>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <input type="text" id="vault-item-name" placeholder="아이템 이름 (예: 영웅 스킬북)" class="bg-gray-800 text-white px-4 py-2 rounded-lg outline-none border border-gray-700">
-                    <input type="number" id="vault-item-qty" placeholder="수량" value="1" min="1" class="bg-gray-800 text-white px-4 py-2 rounded-lg outline-none border border-gray-700">
-                    <input type="text" id="vault-item-memo" placeholder="메모 (획득처/담당자 등)" class="bg-gray-800 text-white px-4 py-2 rounded-lg outline-none border border-gray-700">
-                    <button onclick="addVaultItem()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg transition">아이템 추가</button>
+                    <input type="text" id="vault-name" placeholder="아이템 이름 (예: 영웅 스킬북)" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500 md:col-span-1">
+                    <input type="number" id="vault-count" value="1" min="1" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                    <input type="text" id="vault-memo" placeholder="메모 (획득처/담당자 등)" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                    <button onclick="addVaultItem()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold rounded p-3 text-sm transition">아이템 추가</button>
                 </div>
             </div>
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow">
+                <h3 class="text-lg font-bold text-white mb-4">현재 보유 중인 금고 리스트</h3>
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-800 text-gray-400">
+                            <th class="py-3 px-4">아이템 이름</th>
+                            <th class="py-3 px-4">보유 수량</th>
+                            <th class="py-3 px-4">메모</th>
+                            <th class="py-3 px-4 text-center">수량 조절 / 삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vault-table-body">
+                        <tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 금고 아이템이 없습니다.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-            <!-- 금고템 리스트 테이블 -->
-            <div class="bg-gray-900 p-6 rounded-xl border border-gray-800">
-                <h2 class="text-xl font-bold mb-4">현재 보유 중인 금고 리스트</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="text-gray-400 border-b border-gray-800">
-                            <tr>
-                                <th class="py-3 px-4">아이템 이름</th>
-                                <th class="py-3 px-4">보유 수량</th>
-                                <th class="py-3 px-4">메모</th>
-                                <th class="py-3 px-4 text-center">수량 조절 / 삭제</th>
-                            </tr>
-                        </thead>
-                        <tbody id="vault-table-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </main>
 
     <script>
-        let logs = JSON.parse(localStorage.getItem('clanLogsFinalV16')) || [];
-        let vaultItems = JSON.parse(localStorage.getItem('clanVaultItemsV1')) || [
-            { id: 1, name: '영웅 등급 장비 상자', qty: 2, memo: '보탐 드랍' },
-            { id: 2, name: '축복의 강화 주문서', qty: 15, memo: '공용 금고' }
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('aside nav button').forEach(btn => {
+                btn.classList.remove('bg-red-600', 'text-white');
+                btn.classList.add('text-gray-300');
+            });
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('nav-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-gray-300');
+                activeBtn.classList.add('bg-red-600', 'text-white');
+            }
+        }
+
+        // 자정 기준 날짜 갱신 함수
+        function checkAndUpdateDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            
+            const todayStr = `${year}-${month}-${day}`;
+            const dateEl = document.getElementById('dashboard-date');
+            if (dateEl && dateEl.innerText !== todayStr) {
+                dateEl.innerText = todayStr;
+            }
+        }
+
+        // --- [보스 이름 + 음성 알람 시스템] ---
+        let bossList = [
+            { name: "12시 월드보스", time: "11:55", alarmOn: true },
+            { name: "13시 게헨나 보스", time: "12:55", alarmOn: true },
+            { name: "20시 월드보스", time: "19:55", alarmOn: true },
+            { name: "21시 게헨나 보스", time: "20:55", alarmOn: true }
         ];
-        let bossAlarms = { '1155': true, '1255': true, '1955': true, '2055': true };
 
-        function toggleBossAlarm(id) {
-            bossAlarms[id] = !bossAlarms[id];
-            const btn = document.getElementById('toggle-' + id);
-            if (bossAlarms[id]) {
-                btn.className = "bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold";
-                btn.innerText = "ON";
-            } else {
-                btn.className = "bg-gray-700 text-gray-400 text-xs px-2.5 py-1 rounded font-bold";
-                btn.innerText = "OFF";
-            }
-            updateGlobalStatusUI();
-        }
+        function renderBossTimer() {
+            const container = document.getElementById('boss-container');
+            if(!container) return;
+            container.innerHTML = '';
 
-        function setAllVoiceAlarm(status) {
-            for (let key in bossAlarms) {
-                bossAlarms[key] = status;
-                const btn = document.getElementById('toggle-' + key);
-                if (status) {
-                    btn.className = "bg-green-600 text-white text-xs px-2.5 py-1 rounded font-bold";
-                    btn.innerText = "ON";
-                } else {
-                    btn.className = "bg-gray-700 text-gray-400 text-xs px-2.5 py-1 rounded font-bold";
-                    btn.innerText = "OFF";
+            const now = new Date();
+            
+            bossList.forEach((boss, index) => {
+                const [bHour, bMin] = boss.time.split(':').map(Number);
+                
+                let target = new Date();
+                target.setHours(bHour, bMin, 0, 0);
+
+                let diff = target.getTime() - now.getTime();
+                let isPassed = false;
+                if (diff < 0) {
+                    isPassed = true;
+                    diff += 24 * 60 * 60 * 1000;
                 }
+
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                let timeStr = `${hours}시간 ${minutes}분 ${seconds}초 전`;
+                if (isPassed) {
+                    timeStr = `남은 시간: ${hours}시간 ${minutes}분 ${seconds}초`;
+                }
+
+                // 설정된 시간에 도달했을 때(정각 0초 시점) 음성 출력
+                if (diff >= 299000 && diff <= 301000 && seconds === 0 && boss.alarmOn) {
+                    speakBossAlert(boss.name);
+                }
+
+                container.innerHTML += `
+                    <div class="bg-gray-900 border border-gray-800 p-5 rounded-xl space-y-4 shadow">
+                        <p class="text-gray-400 text-center text-xs font-semibold">${boss.name}</p>
+                        <p class="text-white text-center text-2xl font-bold">${boss.time}</p>
+                        <p class="text-blue-400 text-center text-xs font-mono">${timeStr}</p>
+                        <div class="flex justify-between items-center pt-3 border-t border-gray-800 text-xs text-gray-400">
+                            <span>알람 설정</span>
+                            <button onclick="toggleBossAlarm(${index})" class="px-3 py-1 rounded font-bold text-white transition ${boss.alarmOn ? 'bg-green-600 hover:bg-green-500' : 'bg-gray-700 hover:bg-gray-600'}">
+                                ${boss.alarmOn ? 'ON' : 'OFF'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleBossAlarm(index) {
+            bossList[index].alarmOn = !bossList[index].alarmOn;
+            renderBossTimer();
+            updateGlobalStatus();
+        }
+
+        function setAllAlarm(status) {
+            bossList.forEach(b => b.alarmOn = status);
+            renderBossTimer();
+            updateGlobalStatus();
+        }
+
+        function updateGlobalStatus() {
+            const allOn = bossList.every(b => b.alarmOn);
+            const statusEl = document.getElementById('global-alarm-status');
+            if(statusEl) {
+                statusEl.innerText = allOn ? "전체 알람 켜짐" : "일부 알람 꺼짐/켜짐";
+                statusEl.className = allOn ? "bg-green-600 text-white text-xs px-2.5 py-1 rounded-full font-bold" : "bg-yellow-600 text-white text-xs px-2.5 py-1 rounded-full font-bold";
             }
-            updateGlobalStatusUI();
         }
 
-        function updateGlobalStatusUI() {
-            const anyOn = Object.values(bossAlarms).some(v => v);
-            const statusBadge = document.getElementById('alarm-status');
-            const btnEnable = document.getElementById('btn-enable');
-            const btnDisable = document.getElementById('btn-disable');
-
-            if (anyOn) {
-                statusBadge.className = "text-xs px-2.5 py-1 rounded-full font-bold bg-green-900 text-green-300";
-                statusBadge.innerText = "🟢 알람 작동 중";
-                btnEnable.className = "bg-green-600 hover:bg-green-500 text-white text-xs px-3 py-1.5 rounded font-bold shadow";
-                btnDisable.className = "bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-1.5 rounded font-bold shadow";
-            } else {
-                statusBadge.className = "text-xs px-2.5 py-1 rounded-full font-bold bg-gray-800 text-gray-400";
-                statusBadge.innerText = "🔴 전체 알람 꺼짐";
-                btnEnable.className = "bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs px-3 py-1.5 rounded font-bold shadow";
-                btnDisable.className = "bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded font-bold shadow";
+        function speakBossAlert(bossName) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(`${bossName} 알람 시간입니다.`);
+                utterance.lang = 'ko-KR';
+                utterance.rate = 1.0;
+                window.speechSynthesis.speak(utterance);
             }
         }
 
-        function testVoice() { speakText("12시 월드보스 5분 전입니다."); }
-
-        function speakText(text) {
-            if (!('speechSynthesis' in window)) return;
-            window.speechSynthesis.cancel();
-            let utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'ko-KR';
-            utterance.rate = 1.0; 
-            window.speechSynthesis.speak(utterance);
+        function testVoice() {
+            speakBossAlert("20시 월드보스");
         }
 
-        function logAttendance(timeType, detailSlot) {
-            const nickname = document.getElementById('nickname-input').value.trim();
-            if (!nickname) { alert('닉네임을 입력하세요!'); return; }
-            
-            const today = new Date().toISOString().split('T')[0];
-            const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const slotFullName = timeType === '특수' ? detailSlot : (timeType + ' - ' + detailSlot);
-            
-            let userLogs = logs.filter(l => l.name === nickname);
-            let alreadyHasExact = userLogs.some(l => l.date === today && l.slot === slotFullName);
-            if (alreadyHasExact) {
-                alert(nickname + '님은 오늘 이미 [' + slotFullName + '] 항목을 기록하셨습니다!');
+        // 출석 체크 임시 기능
+        function checkAttendance(type, category) {
+            const nickname = document.getElementById('att-nickname').value.trim();
+            if(!nickname) {
+                alert('닉네임을 먼저 입력해주세요!');
+                document.getElementById('att-nickname').focus();
                 return;
             }
-            
-            logs.push({ name: nickname, date: today, slot: slotFullName, time: timeNow });
-            localStorage.setItem('clanLogsFinalV16', JSON.stringify(logs));
-            renderAll();
-            alert(nickname + '님의 [' + slotFullName + '] 출석이 기록되었습니다!');
+            alert(`[${nickname}]님의 '${type}' 출석이 체크되었습니다.`);
         }
 
         // 금고 아이템 관리 로직
+        let vaultItems = JSON.parse(localStorage.getItem('vampirVaultItems')) || [];
+
         function addVaultItem() {
-            const name = document.getElementById('vault-item-name').value.trim();
-            const qty = parseInt(document.getElementById('vault-item-qty').value) || 1;
-            const memo = document.getElementById('vault-item-memo').value.trim();
+            const name = document.getElementById('vault-name').value.trim();
+            const count = parseInt(document.getElementById('vault-count').value) || 1;
+            const memo = document.getElementById('vault-memo').value.trim();
 
-            if (!name) {
-                alert('아이템 이름을 입력하세요!');
-                return;
+            if (!name) { alert('아이템 이름을 입력해주세요!'); return; }
+
+            vaultItems.push({ name, count, memo });
+            saveAndRenderVault();
+            
+            document.getElementById('vault-name').value = '';
+            document.getElementById('vault-count').value = '1';
+            document.getElementById('vault-memo').value = '';
+        }
+
+        function updateCount(index, amount) {
+            vaultItems[index].count += amount;
+            if (vaultItems[index].count < 1) vaultItems[index].count = 1;
+            saveAndRenderVault();
+        }
+
+        function deleteItem(index) {
+            if (confirm('정말 삭제하시겠습니까?')) {
+                vaultItems.splice(index, 1);
+                saveAndRenderVault();
             }
+        }
 
-            // 이미 있는 아이템이면 수량 합치기
-            const existing = vaultItems.find(item => item.name === name);
-            if (existing) {
-                existing.qty += qty;
-                if (memo) existing.memo = memo;
-            } else {
-                vaultItems.push({ id: Date.now(), name, qty, memo });
-            }
-
-            localStorage.setItem('clanVaultItemsV1', JSON.stringify(vaultItems));
-            document.getElementById('vault-item-name').value = '';
-            document.getElementById('vault-item-qty').value = '1';
-            document.getElementById('vault-item-memo').value = '';
+        function saveAndRenderVault() {
+            localStorage.setItem('vampirVaultItems', JSON.stringify(vaultItems));
             renderVault();
         }
 
-        function updateVaultQty(id, amount) {
-            const item = vaultItems.find(i => i.id === id);
-            if (item) {
-                item.qty += amount;
-                if (item.qty <= 0) {
-                    if (confirm(`[${item.name}] 수량이 0이 되었습니다. 삭제하시겠습니까?`)) {
-                        vaultItems = vaultItems.filter(i => i.id !== id);
-                    } else {
-                        item.qty = 0;
-                    }
-                }
-                localStorage.setItem('clanVaultItemsV1', JSON.stringify(vaultItems));
-                renderVault();
-            }
-        }
-
-        function deleteVaultItem(id) {
-            if (confirm('해당 아이템을 금고 목록에서 삭제하시겠습니까?')) {
-                vaultItems = vaultItems.filter(i => i.id !== id);
-                localStorage.setItem('clanVaultItemsV1', JSON.stringify(vaultItems));
-                renderVault();
-            }
-        }
-
         function renderVault() {
-            const tbody = document.getElementById('vault-table-body');
-            tbody.innerHTML = '';
+            const body = document.getElementById('vault-table-body');
+            if(!body) return;
+            body.innerHTML = '';
 
             if (vaultItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 금고 아이템이 없습니다.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 금고 아이템이 없습니다.</td></tr>`;
                 return;
             }
 
-            vaultItems.forEach(item => {
-                tbody.innerHTML += `
-                    <tr class="border-b border-gray-800 hover:bg-gray-850">
-                        <td class="py-3 px-4 font-bold text-white">${item.name}</td>
-                        <td class="py-3 px-4 text-green-400 font-bold text-lg">${item.qty}개</td>
-                        <td class="py-3 px-4 text-gray-400 text-xs">${item.memo || '-'}</td>
-                        <td class="py-3 px-4 text-center">
-                            <button onclick="updateVaultQty(${item.id}, 1)" class="bg-gray-700 hover:bg-gray-600 text-white px-2.5 py-1 rounded text-xs font-bold mr-1">+1</button>
-                            <button onclick="updateVaultQty(${item.id}, -1)" class="bg-gray-700 hover:bg-gray-600 text-white px-2.5 py-1 rounded text-xs font-bold mr-2">-1</button>
-                            <button onclick="deleteVaultItem(${item.id})" class="bg-red-900 hover:bg-red-800 text-red-200 px-2.5 py-1 rounded text-xs font-bold">삭제</button>
+            vaultItems.forEach((item, index) => {
+                body.innerHTML += `
+                    <tr class="border-b border-gray-800 hover:bg-gray-850 transition">
+                        <td class="py-3 px-4 text-white font-medium">${item.name}</td>
+                        <td class="py-3 px-4 text-green-400 font-bold">${item.count}개</td>
+                        <td class="py-3 px-4 text-gray-400">${item.memo || '-'}</td>
+                        <td class="py-3 px-4 text-center space-x-1">
+                            <button onclick="updateCount(${index}, 1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded text-xs font-bold">+1</button>
+                            <button onclick="updateCount(${index}, -1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded text-xs font-bold">-1</button>
+                            <button onclick="deleteItem(${index})" class="bg-red-600 hover:bg-red-500 text-white px-2.5 py-1 rounded text-xs font-bold">삭제</button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        function renderAll() {
-            renderLogs();
-            renderDashboard();
-            renderVault();
-        }
+        // 초기 실행 및 1초 단위 타이머 반복 실행
+        checkAndUpdateDate();
+        renderBossTimer();
+        renderVault();
 
-        function renderLogs() {
-            const grouped = {};
-            logs.forEach(l => {
-                if (!grouped[l.name]) grouped[l.name] = [];
-                grouped[l.name].push(l);
-            });
-
-            const list = document.getElementById('attendance-log');
-            list.innerHTML = '';
-            const today = new Date().toISOString().split('T')[0];
-
-            for (const [name, items] of Object.entries(grouped)) {
-                const todayItems = items.filter(i => i.date === today);
-                const todayCount = todayItems.length;
-                const totalCumulativeCount = items.length;
-
-                const enokCount = items.filter(i => i.slot === '에노크').length;
-                const mashCount = items.filter(i => i.slot === '마슈미드').length;
-                const jeonCount = items.filter(i => i.slot === '전초전').length;
-                const jangCount = items.filter(i => i.slot === '쟁탈전').length;
-                const jeomCount = items.filter(i => i.slot === '점령전').length;
-
-                let logsByDate = {};
-                items.forEach(i => {
-                    if (!logsByDate[i.date]) logsByDate[i.date] = [];
-                    logsByDate[i.date].push(i);
-                });
-
-                let detailsHTML = '';
-                for (const [dateStr, dateItems] of Object.entries(logsByDate)) {
-                    let badges = dateItems.map(i => `<span class="inline-block bg-gray-800 text-red-400 px-2 py-1 rounded text-xs mr-1 mb-1">${i.slot} (${i.time})</span>`).join('');
-                    detailsHTML += `<div class="mb-1"><span class="text-yellow-400 font-semibold text-xs">[${dateStr}]</span> ${badges}</div>`;
-                }
-                
-                list.innerHTML += `
-                    <tr class="border-b border-gray-800 hover:bg-gray-850">
-                        <td class="py-3 px-2 font-bold text-white">${name}</td>
-                        <td class="py-3 px-2 text-green-400 font-bold">오늘 ${todayCount} <span class="text-gray-400 text-xs font-normal">(누적 ${totalCumulativeCount})</span></td>
-                        <td class="py-3 px-2 text-yellow-300 text-xs">에노크: <b>${enokCount}회</b><br>마슈미드: <b>${mashCount}회</b></td>
-                        <td class="py-3 px-2 text-purple-300 text-xs">전초전: <b>${jeonCount}회</b><br>쟁탈전: <b>${jangCount}회</b><br>점령전: <b>${jeomCount}회</b></td>
-                        <td class="py-3 px-2">${detailsHTML}</td>
-                    </tr>
-                `;
-            }
-        }
-
-        function searchMemberParticipation() {
-            const query = document.getElementById('search-nickname-input').value.trim();
-            const container = document.getElementById('search-result-container');
-            const placeholder = document.getElementById('search-placeholder');
-
-            if (!query) {
-                alert('검색할 닉네임을 입력하세요!');
-                return;
-            }
-
-            const userItems = logs.filter(l => l.name === query);
-            if (userItems.length === 0) {
-                alert('해당 닉네임의 출석 기록이 없습니다.');
-                container.classList.add('hidden');
-                placeholder.classList.remove('hidden');
-                return;
-            }
-
-            container.classList.remove('hidden');
-            placeholder.classList.add('hidden');
-
-            document.getElementById('result-title').innerText = `${query}님의 상세 참여 현황`;
-            document.getElementById('res-total-count').innerText = `${userItems.length}회`;
-
-            const enokCount = userItems.filter(i => i.slot === '에노크').length;
-            const mashCount = userItems.filter(i => i.slot === '마슈미드').length;
-            const jeonCount = userItems.filter(i => i.slot === '전초전').length;
-            const jangCount = userItems.filter(i => i.slot === '쟁탈전').length;
-            const jeomCount = userItems.filter(i => i.slot === '점령전').length;
-
-            document.getElementById('res-special-1').innerText = `에노크 ${enokCount}회 / 마슈미드 ${mashCount}회`;
-            document.getElementById('res-special-2').innerText = `전초전 ${jeonCount}회 / 쟁탈전 ${jangCount}회 / 점령전 ${jeomCount}회`;
-
-            let logsByDate = {};
-            userItems.forEach(i => {
-                if (!logsByDate[i.date]) logsByDate[i.date] = [];
-                logsByDate[i.date].push(i);
-            });
-
-            const detailTable = document.getElementById('res-detail-table');
-            detailTable.innerHTML = '';
-
-            for (const [dateStr, dateItems] of Object.entries(logsByDate).sort().reverse()) {
-                let badges = dateItems.map(i => `<span class="inline-block bg-gray-800 text-red-400 px-2.5 py-1 rounded text-xs font-semibold mr-1.5 mb-1.5">${i.slot} (${i.time})</span>`).join('');
-                detailTable.innerHTML += `
-                    <tr class="border-b border-gray-800">
-                        <td class="py-3 px-3 font-bold text-blue-400 w-32 align-top">${dateStr}</td>
-                        <td class="py-3 px-3">${badges}</td>
-                    </tr>
-                `;
-            }
-        }
-
-        function renderDashboard() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('dashboard-date').innerText = today;
-
-            const allMembers = [...new Set(logs.map(l => l.name))];
-            const totalMembersCount = allMembers.length;
-
-            let todayActiveCount = 0;
-            allMembers.forEach(name => {
-                const memberTodayItems = logs.filter(l => l.name === name && l.date === today);
-                if (memberTodayItems.length > 0) todayActiveCount++;
-            });
-
-            const todayRate = totalMembersCount > 0 ? Math.round((todayActiveCount / totalMembersCount) * 100) : 0;
-            document.getElementById('dashboard-rate').innerText = `${todayRate}% (${todayActiveCount} / ${totalMembersCount}명 참여)`;
-
-            const dates = [...new Set(logs.map(l => l.date))].sort().reverse();
-            const historyTable = document.getElementById('history-log-table');
-            historyTable.innerHTML = '';
-
-            if (dates.length === 0) {
-                historyTable.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-gray-500">저장된 출석 기록이 없습니다.</td></tr>`;
-                return;
-            }
-
-            dates.forEach(d => {
-                const dateLogs = logs.filter(l => l.date === d);
-                const dateMembers = [...new Set(dateLogs.map(l => l.name))];
-                
-                historyTable.innerHTML += `
-                    <tr class="border-b border-gray-800 hover:bg-gray-850">
-                        <td class="py-3 px-4 font-bold text-blue-400">${d} ${d === today ? '<span class="text-xs bg-red-900 text-red-200 px-1.5 py-0.5 rounded ml-1">오늘</span>' : ''}</td>
-                        <td class="py-3 px-4 text-green-400 font-bold text-lg">100%</td>
-                        <td class="py-3 px-4 text-gray-300">${dateMembers.length}명 참여 (${dateLogs.length}건 기록)</td>
-                    </tr>
-                `;
-            });
-        }
-
-        renderAll();
-
-        function updateBossTimers() {
-            const now = new Date();
-            const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
-            const currentTotalSec = h * 3600 + m * 60 + s;
-
-            if (s === 0) {
-                if (h === 11 && m === 55 && bossAlarms['1155']) speakText("12시 월드보스 5분 전입니다.");
-                else if (h === 12 && m === 55 && bossAlarms['1255']) speakText("13시 게헨나 보스 출현 시간입니다.");
-                else if (h === 19 && m === 55 && bossAlarms['1955']) speakText("20시 월드보스 5분 전입니다.");
-                else if (h === 20 && m === 55 && bossAlarms['2055']) speakText("21시 게헨나 보스 출현 시간입니다.");
-            }
-
-            function getDiffText(targetHour, targetMin) {
-                const targetTotalSec = targetHour * 3600 + targetMin * 60;
-                let diff = targetTotalSec - currentTotalSec;
-                if (diff < 0) diff += 86400;
-                const dh = Math.floor(diff / 3600);
-                const dm = Math.floor((diff % 3600) / 60);
-                const ds = diff % 60;
-                return `${dh}시간 ${dm}분 ${ds}초 전`;
-            }
-
-            document.getElementById('timer-1155').innerText = getDiffText(11, 55);
-            document.getElementById('timer-1255').innerText = getDiffText(12, 55);
-            document.getElementById('timer-1955').innerText = getDiffText(19, 55);
-            document.getElementById('timer-2055').innerText = getDiffText(20, 55);
-        }
-        setInterval(updateBossTimers, 1000);
-        updateBossTimers();
-
-        function showContent(id) {
-            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden-content'));
-            document.getElementById('content-' + id).classList.remove('hidden-content');
-            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active-menu'));
-            event.currentTarget.classList.add('active-menu');
-        }
+        setInterval(() => {
+            checkAndUpdateDate();
+            renderBossTimer();
+        }, 1000);
     </script>
 </body>
 </html>
