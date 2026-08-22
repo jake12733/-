@@ -9,18 +9,18 @@
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
 
-    <!-- 모바일 상단 헤더 (모바일에서만 보임) -->
-    <header class="md:hidden bg-gray-900 border-b border-gray-800 p-4 flex items-center justify-between z-30 sticky top-0">
+    <!-- 모바일 상단 헤더 (모바일 화면에서 확실히 보이도록 수정) -->
+    <div class="md:hidden bg-gray-900 border-b border-gray-800 p-4 flex items-center justify-between sticky top-0 z-30">
         <div class="flex items-center space-x-2">
             <span class="text-red-500 text-lg font-bold">🛡️</span>
             <span class="text-white font-bold text-base tracking-wider">뱀피르 독도</span>
         </div>
-        <button onclick="toggleMobileSidebar()" class="text-gray-300 hover:text-white p-2 focus:outline-none">
+        <button onclick="toggleMobileSidebar()" class="text-white bg-gray-800 hover:bg-gray-700 p-2 rounded-lg focus:outline-none">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>
-    </header>
+    </div>
 
     <!-- 모바일 배경 어둡게 처리하는 오버레이 -->
     <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
@@ -33,7 +33,7 @@
                 <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
             </div>
             <!-- 모바일용 닫기 버튼 -->
-            <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-400 hover:text-white">
+            <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-400 hover:text-white text-xl font-bold p-1">
                 ✕
             </button>
         </div>
