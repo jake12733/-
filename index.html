@@ -61,6 +61,18 @@
                 <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
             </div>
         </div>
+        
+        <!-- 권한 전환 바 -->
+        <div class="p-4 bg-gray-850 border-b border-gray-800 mx-4 mt-4 rounded-xl space-y-2">
+            <div class="text-xs text-amber-400 font-bold flex justify-between items-center">
+                <span>🔐 현재 접속 모드</span>
+                <span id="current-auth-badge" class="bg-red-900 text-red-200 px-2 py-0.5 rounded text-[10px]">운영진/클마</span>
+            </div>
+            <select id="auth-role-select" onchange="changeUserAuth(this.value)" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-xs text-white focus:outline-none focus:border-red-500">
+                <option value="staff">👑 클마 / 운영진 모드 (전체 제어)</option>
+                <option value="member">🛡️ 일반 클랜원 모드 (조회 및 출석만)</option>
+            </select>
+        </div>
 
         <nav class="p-4 space-y-2 overflow-y-auto flex-grow">
             <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white">대시보드</button>
@@ -85,19 +97,36 @@
                     <p class="text-gray-400 text-sm mb-1">오늘 날짜</p>
                     <p id="dashboard-date" class="text-2xl font-bold text-blue-400">-</p>
                 </div>
+                <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow">
+                    <p class="text-gray-400 text-sm mb-1">오늘 전체 참여 현황</p>
+                    <div class="flex flex-col md:flex-row md:items-baseline md:space-x-3">
+                        <p id="dashboard-total-rate" class="text-2xl font-bold text-green-400">0명 참여 중</p>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- 공지사항 탭 -->
         <section id="tab-notice" class="tab-content hidden space-y-6">
-            <h2 class="text-2xl font-bold text-white">📢 클랜 공지사항 및 점수 안내</h2>
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white">📢 클랜 공지사항 및 점수 안내</h2>
+                <div id="notice-edit-btn-container"></div>
+            </div>
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-6">
+                <div id="notice-view-mode" class="space-y-6">
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-bold text-amber-400">📅 점수 산정 기준 및 공지</h3>
+                        <div id="notice-content-display" class="text-gray-300 text-sm leading-relaxed bg-gray-850 p-5 rounded-xl border border-gray-800 space-y-3" style="white-space: pre-line;"></div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- 클랜원 명단 탭 -->
         <section id="tab-members" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">👥 클랜원 명단 및 역할 관리</h2>
             
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
+            <div id="admin-member-add-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="font-bold text-white text-sm">➕ 클랜원 추가하기</div>
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
                     <input type="text" id="new-member-name" placeholder="닉네임 입력" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
@@ -108,7 +137,7 @@
                         <option value="블러드스테인">블러드스테인</option>
                         <option value="그림리퍼">그림리퍼</option>
                     </select>
-                    <input type="number" id="new-member-power" placeholder="전투력 입력" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                    <input type="number" id="new-member-power" placeholder="전투력 입력 (예: 520000)" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
                     <select id="new-member-role" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
                         <option value="일반">일반 클랜원</option>
                         <option value="운영진">운영진</option>
@@ -132,7 +161,7 @@
                                 <th class="py-3 px-4">클래스</th>
                                 <th class="py-3 px-4">전투력</th>
                                 <th class="py-3 px-4">역할 (권한)</th>
-                                <th class="py-3 px-4 text-center">정보 수정 / 삭제</th>
+                                <th class="py-3 px-4 text-center admin-col-header">정보 수정 / 삭제</th>
                             </tr>
                         </thead>
                         <tbody id="staff-table-body">
@@ -145,7 +174,7 @@
             <!-- 🛡️ 일반 클랜원 리스트 -->
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-white">🛡️ 일반 클랜원 리스트</h3>
+                    <h3 class="text-lg font-bold text-white">🛡️ 일반 클랜원 리스트 (전투력 높은 순 정렬)</h3>
                     <span id="member-total-count" class="text-xs text-gray-400">총 0명</span>
                 </div>
                 <div class="overflow-x-auto">
@@ -156,7 +185,7 @@
                                 <th class="py-3 px-4">클래스</th>
                                 <th class="py-3 px-4">전투력</th>
                                 <th class="py-3 px-4">역할 (권한)</th>
-                                <th class="py-3 px-4 text-center">정보 수정 / 삭제</th>
+                                <th class="py-3 px-4 text-center admin-col-header">정보 수정 / 삭제</th>
                             </tr>
                         </thead>
                         <tbody id="member-table-body">
@@ -169,19 +198,47 @@
 
         <!-- 2. 출석 체크 탭 -->
         <section id="tab-attendance" class="tab-content hidden space-y-6">
-            <h2 class="text-2xl font-bold text-white">출석 체크</h2>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                <div>
+                    <h2 class="text-2xl font-bold text-white">출석 체크</h2>
+                </div>
+            </div>
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs text-gray-400">본인 닉네임 선택</label>
+                        <select id="att-nickname" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                            <option value="">-- 명단에서 닉네임을 선택하세요 --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- 3. 보탐 타이머 탭 -->
         <section id="tab-boss" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">⏰ 보탐 및 월드보스 타이머</h2>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4 border-l-4 border-l-red-500">
+            
+            <div id="admin-boss-add-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4 border-l-4 border-l-red-500">
                 <div class="font-bold text-white text-sm">➕ [운영진 설정] 보스 추가하기 (시간 설정)</div>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <input type="text" id="new-boss-name" placeholder="보스 이름" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
-                    <input type="time" id="new-boss-time" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
-                    <input type="text" id="new-boss-memo" placeholder="위치 또는 메모" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                    <input type="text" id="new-boss-name" placeholder="보스 이름 (예: 12시 월드보스)" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                    <div class="flex items-center space-x-2 bg-gray-800 border border-gray-700 rounded px-3 py-2">
+                        <span class="text-xs text-gray-400">출몰 시간:</span>
+                        <input type="time" id="new-boss-time" class="bg-transparent text-white text-sm focus:outline-none w-full">
+                    </div>
+                    <input type="text" id="new-boss-memo" placeholder="위치 또는 메모 (예: 3채널)" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
                     <button onclick="addNewBoss()" class="bg-red-600 hover:bg-red-500 text-white font-bold rounded p-3 text-sm transition">보스 등록</button>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <span class="text-red-500 font-bold">🚨 5분 전 음성 알람 시스템</span>
+                    <span id="global-alarm-status" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded-full font-bold">전체 알람 켜짐</span>
+                </div>
+                <div class="space-x-2 flex flex-wrap gap-2">
+                    <button onclick="testBossAlarmVoice()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-sm font-semibold">🔊 테스트</button>
                 </div>
             </div>
             <div id="boss-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
@@ -247,6 +304,7 @@
             }
         }
 
+        // 클랜원 추가 함수
         function addClanMember() {
             const nameInput = document.getElementById('new-member-name');
             const classSelect = document.getElementById('new-member-class');
@@ -281,9 +339,11 @@
             nameInput.value = '';
             powerInput.value = '';
             renderMembers();
+            updateAttendanceNicknameDropdown();
             alert(`[${name}] 클랜원이 등록되었습니다.`);
         }
 
+        // 클랜원 정보 수정 함수
         function editClanMember(id) {
             const member = clanMembers.find(m => m.id === id);
             if (!member) return;
@@ -303,7 +363,7 @@
             }
 
             const classes = ['아카샤', '바이퍼', '카니지', '블러드스테인', '그림리퍼'];
-            const newCls = prompt(`클래스를 선택 또는 입력하세요\n(${classes.join(', ')})`, member.cls);
+            const newCls = prompt(`클래스를 선택 또는 입력하세요\n(가능한 클래스: ${classes.join(', ')})`, member.cls);
             if (newCls === null) return;
 
             const newPowerStr = prompt('전투력을 입력하세요:', member.power);
@@ -311,11 +371,11 @@
             const newPower = Number(newPowerStr) || 0;
 
             const roles = ['일반', '운영진', '클마'];
-            const newRole = prompt(`역할을 입력하세요\n(일반, 운영진, 클마)`, member.role);
+            const newRole = prompt(`역할을 입력하세요\n(가능한 역할: ${roles.join(', ')})`, member.role);
             if (newRole === null) return;
 
             if (!roles.includes(newRole.trim())) {
-                alert('올바르지 않은 역할입니다.');
+                alert('올바르지 않은 역할입니다. (일반, 운영진, 클마 중 입력)');
                 return;
             }
 
@@ -326,16 +386,20 @@
 
             localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
             renderMembers();
+            updateAttendanceNicknameDropdown();
             alert('클랜원 정보가 수정되었습니다.');
         }
 
+        // 클랜원 삭제 함수
         function deleteClanMember(id) {
             if (!confirm('정말 이 클랜원을 삭제하시겠습니까?')) return;
             clanMembers = clanMembers.filter(m => m.id !== id);
             localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
             renderMembers();
+            updateAttendanceNicknameDropdown();
         }
 
+        // 명단 렌더링 함수
         function renderMembers() {
             const staffTbody = document.getElementById('staff-table-body');
             const memberTbody = document.getElementById('member-table-body');
@@ -392,6 +456,17 @@
             }
         }
 
+        function updateAttendanceNicknameDropdown() {
+            const attSelect = document.getElementById('att-nickname');
+            if (!attSelect) return;
+            let optHtml = '<option value="">-- 명단에서 닉네임을 선택하세요 --</option>';
+            clanMembers.forEach(m => {
+                optHtml += `<option value="${m.name}">${m.name} (${m.cls})</option>`;
+            });
+            attSelect.innerHTML = optHtml;
+        }
+
+        // 보스 등록 함수
         function addNewBoss() {
             const nameInput = document.getElementById('new-boss-name');
             const timeInput = document.getElementById('new-boss-time');
@@ -424,10 +499,12 @@
             nameInput.value = '';
             timeInput.value = '';
             memoInput.value = '';
+
             renderBossList();
             alert(`[${name}] 보스가 등록되었습니다.`);
         }
 
+        // 보스 삭제 함수
         function deleteBoss(id) {
             if (!confirm('이 보스를 삭제하시겠습니까?')) return;
             bossList = bossList.filter(b => b.id !== id);
@@ -435,6 +512,7 @@
             renderBossList();
         }
 
+        // 보스 리스트 렌더링 함수
         function renderBossList() {
             const container = document.getElementById('boss-container');
             if (!container) return;
@@ -462,6 +540,10 @@
             container.innerHTML = html;
         }
 
+        function testBossAlarmVoice() {
+            alert('보스 알람 테스트 완료');
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             const today = new Date();
             const dateString = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
@@ -469,6 +551,7 @@
             if (dateEl) dateEl.textContent = dateString;
 
             renderMembers();
+            updateAttendanceNicknameDropdown();
             renderBossList();
             switchTab('dashboard');
         });
