@@ -495,6 +495,127 @@
             }
         }
 
+        // 클랜원 추가 함수
+        function addClanMember() {
+            const nameInput = document.getElementById('new-member-name');
+            const classSelect = document.getElementById('new-member-class');
+            const powerInput = document.getElementById('new-member-power');
+            const roleSelect = document.getElementById('new-member-role');
+
+            const name = nameInput.value.trim();
+            const cls = classSelect.value;
+            const power = Number(powerInput.value) || 0;
+            const role = roleSelect.value;
+
+            if (!name) {
+                alert('클랜원 닉네임을 입력해주세요.');
+                nameInput.focus();
+                return;
+            }
+
+            // 중복 체크
+            if (clanMembers.some(m => m.name === name)) {
+                alert('이미 등록된 닉네임입니다.');
+                return;
+            }
+
+            clanMembers.push({
+                id: Date.now() + Math.random(),
+                name: name,
+                cls: cls,
+                power: power,
+                role: role
+            });
+
+            localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
+
+            // 입력창 초기화
+            nameInput.value = '';
+            powerInput.value = '';
+
+            renderMembers();
+            updateAttendanceNicknameDropdown();
+            alert(`[${name}] 클랜원이 등록되었습니다.`);
+        }
+
+        // 클랜원 삭제 함수
+        function deleteClanMember(id) {
+            if (!confirm('정말 이 클랜원을 삭제하시겠습니까?')) return;
+            clanMembers = clanMembers.filter(m => m.id !== id);
+            localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
+            renderMembers();
+            updateAttendanceNicknameDropdown();
+        }
+
+        // 명단 렌더링 함수
+        function renderMembers() {
+            const staffTbody = document.getElementById('staff-table-body');
+            const memberTbody = document.getElementById('member-table-body');
+            if (!staffTbody || !memberTbody) return;
+
+            // 전투력 높은 순 정렬
+            clanMembers.sort((a, b) => b.power - a.power);
+
+            const staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
+            const normalList = clanMembers.filter(m => m.role !== '클마' && m.role !== '운영진');
+
+            document.getElementById('staff-total-count').textContent = `총 ${staffList.length}명`;
+            document.getElementById('member-total-count').textContent = `총 ${normalList.length}명`;
+
+            // 운영진/클마 테이블 렌더링
+            if (staffList.length === 0) {
+                staffTbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500">등록된 클마 및 운영진이 없습니다.</td></tr>`;
+            } else {
+                let html = '';
+                staffList.forEach(m => {
+                    html += `
+                        <tr class="border-b border-gray-800 hover:bg-gray-850">
+                            <td class="py-3 px-4 font-bold text-white">${m.name}</td>
+                            <td class="py-3 px-4 text-gray-300">${m.cls}</td>
+                            <td class="py-3 px-4 text-blue-400">${m.power.toLocaleString()}</td>
+                            <td class="py-3 px-4"><span class="bg-amber-900 text-amber-200 px-2 py-0.5 rounded text-xs font-bold">${m.role}</span></td>
+                            <td class="py-3 px-4 text-center">
+                                <button onclick="deleteClanMember(${m.id})" class="bg-red-900 hover:bg-red-800 text-red-200 px-3 py-1 rounded text-xs">삭제</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                staffTbody.innerHTML = html;
+            }
+
+            // 일반 클랜원 테이블 렌더링
+            if (normalList.length === 0) {
+                memberTbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500">등록된 일반 클랜원이 없습니다.</td></tr>`;
+            } else {
+                let html = '';
+                normalList.forEach(m => {
+                    html += `
+                        <tr class="border-b border-gray-800 hover:bg-gray-850">
+                            <td class="py-3 px-4 font-bold text-white">${m.name}</td>
+                            <td class="py-3 px-4 text-gray-300">${m.cls}</td>
+                            <td class="py-3 px-4 text-blue-400">${m.power.toLocaleString()}</td>
+                            <td class="py-3 px-4"><span class="bg-gray-800 text-gray-300 px-2 py-0.5 rounded text-xs">${m.role}</span></td>
+                            <td class="py-3 px-4 text-center">
+                                <button onclick="deleteClanMember(${m.id})" class="bg-red-900 hover:bg-red-800 text-red-200 px-3 py-1 rounded text-xs">삭제</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                memberTbody.innerHTML = html;
+            }
+        }
+
+        // 출석 탭의 닉네임 셀렉트박스 동기화 함수
+        function updateAttendanceNicknameDropdown() {
+            const attSelect = document.getElementById('att-nickname');
+            if (!attSelect) return;
+            let optHtml = '<option value="">-- 명단에서 닉네임을 선택하세요 --</option>';
+            clanMembers.forEach(m => {
+                optHtml += `<option value="${m.name}">${m.name} (${m.cls})</option>`;
+            });
+            attSelect.innerHTML = optHtml;
+        }
+
         // 출석 체크 관련 수정 로직 (13시/21시는 각각 3개 서브 항목이 모두 체크되어야 1카운트 반영)
         function checkAttendanceWithPw(category, groupName, labelName, pwKey) {
             const nickname = document.getElementById('att-nickname').value;
@@ -512,14 +633,12 @@
 
             const todayStr = new Date().toISOString().split('T')[0];
             
-            // 중복 체크 방지
             const exists = attendanceLogs.find(l => l.date === todayStr && l.nickname === nickname && l.category === category);
             if (exists) {
                 alert('이미 해당 항목에 출석 체크를 완료했습니다.');
                 return;
             }
 
-            // 기록 추가
             attendanceLogs.push({
                 id: Date.now() + Math.random(),
                 date: todayStr,
@@ -570,10 +689,8 @@
                 const hasStart = userLogs.some(l => l.category.includes('시작전'));
                 const hasMid = userLogs.some(l => l.category.includes('3층전'));
                 const hasEnd = userLogs.some(l => l.category.includes('끝'));
-                // 3개가 모두 존재하면 1카운트 반환, 아니면 0
                 return (hasStart && hasMid && hasEnd) ? 1 : 0;
             } else {
-                // 그 외 그룹은 기존처럼 기록 개수만큼 카운트
                 return userLogs.length;
             }
         }
@@ -593,7 +710,6 @@
             clanMembers.forEach(m => {
                 const userLogsToday = attendanceLogs.filter(l => l.date === todayStr && l.nickname === m.name);
                 
-                // 그룹별 카운트 계산 적용
                 const c13 = getEffectiveGroupCount(userLogsToday, m.name, '13시타임');
                 const c21 = getEffectiveGroupCount(userLogsToday, m.name, '21시타임');
                 const cSpecial = getEffectiveGroupCount(userLogsToday, m.name, 'special');
@@ -606,7 +722,7 @@
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
                         <td class="py-3 px-2 font-bold text-white">${m.name}</td>
                         <td class="py-3 px-2 text-amber-400 font-bold">${totalScore}점</td>
-                        <td class="py-3 px-2 text-xs text-gray-300">오늘 ${userLogsToday.length}개 항목 완료</td>
+                        <td class="py-3 px-2 text-xs text-gray-300">오늘 완료된 항목 있음</td>
                         <td class="py-3 px-2 text-xs">${c13 > 0 ? '✔️ 13시완료' : '-'} / ${c21 > 0 ? '✔️ 21시완료' : '-'}</td>
                         <td class="py-3 px-2 text-xs">${cSpecial}건</td>
                         <td class="py-3 px-2 text-xs">${cWar}건</td>
@@ -629,16 +745,8 @@
                 noticeDisplay.textContent = savedNoticeText;
             }
 
-            // 닉네임 셀렉트박스 채우기
-            const attSelect = document.getElementById('att-nickname');
-            if (attSelect) {
-                let optHtml = '<option value="">-- 명단에서 닉네임을 선택하세요 --</option>';
-                clanMembers.forEach(m => {
-                    optHtml += `<option value="${m.name}">${m.name} (${m.cls})</option>`;
-                });
-                attSelect.innerHTML = optHtml;
-            }
-
+            renderMembers();
+            updateAttendanceNicknameDropdown();
             renderAttendanceTable();
             switchTab('dashboard');
         });
