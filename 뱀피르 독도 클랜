@@ -7,62 +7,74 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 0; }
-        
-        /* 모바일 및 모든 환경에서 강제로 최상단에 뜨는 헤더 강제 스타일 */
-        .forced-mobile-header {
-            position: sticky !important;
-            top: 0 !important;
+        /* 하단 탭바 스타일 (모바일 전용 고정) */
+        .mobile-bottom-nav {
+            position: fixed !important;
+            bottom: 0 !important;
             left: 0 !important;
             width: 100% !important;
-            height: 60px !important;
             background-color: #111827 !important;
-            border-bottom: 1px solid #1f2937 !important;
+            border-top: 1px solid #1f2937 !important;
             display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
-            padding: 0 16px !important;
+            justify-content: space-around !important;
+            padding: 8px 0 !important;
             z-index: 99999 !important;
             box-sizing: border-box !important;
         }
-        .forced-menu-btn {
-            background-color: #1f2937 !important;
-            color: #ffffff !important;
-            border: 1px solid #374151 !important;
-            padding: 8px 12px !important;
-            border-radius: 8px !important;
-            font-size: 16px !important;
-            font-weight: bold !important;
-            cursor: pointer !important;
+        .mobile-tab-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            flex: 1;
+        }
+        .mobile-tab-btn.active {
+            color: #ef4444;
+        }
+        /* PC 사이드바 숨기기 대응 */
+        @media (max-width: 767px) {
+            .pc-sidebar { display: none !important; }
+            main { padding-bottom: 80px !important; } /* 하단 탭바에 컨텐츠가 가리지 않도록 여백 확보 */
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
 
-    <!-- [강제 상단 헤더] 모바일/PC 구분 없이 무조건 맨 위에 고정 노출 -->
-    <div class="forced-mobile-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="color: #ef4444; font-size: 18px; font-weight: bold;">🛡️</span>
-            <span style="color: #ffffff; font-weight: bold; font-size: 16px; letter-spacing: 1px;">뱀피르 독도</span>
-        </div>
-        <button onclick="toggleMobileSidebar()" class="forced-menu-btn">
-            ☰ 메뉴
+    <!-- [모바일용 하단 고정 탭바] 스마트폰에서 터치로 이동 -->
+    <nav class="mobile-bottom-nav md:hidden">
+        <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="mobile-tab-btn active">
+            <span style="font-size: 18px;">📊</span>대시보드
         </button>
-    </div>
+        <button onclick="switchTab('notice')" id="mob-nav-notice" class="mobile-tab-btn">
+            <span style="font-size: 18px;">📢</span>공지
+        </button>
+        <button onclick="switchTab('attendance')" id="mob-nav-attendance" class="mobile-tab-btn">
+            <span style="font-size: 18px;">✅</span>출석
+        </button>
+        <button onclick="switchTab('boss')" id="mob-nav-boss" class="mobile-tab-btn">
+            <span style="font-size: 18px;">⏰</span>보탐
+        </button>
+        <button onclick="switchTab('history')" id="mob-nav-history" class="mobile-tab-btn">
+            <span style="font-size: 18px;">🔍</span>조회
+        </button>
+        <button onclick="switchTab('vault')" id="mob-nav-vault" class="mobile-tab-btn">
+            <span style="font-size: 18px;">📦</span>금고
+        </button>
+        <button onclick="switchTab('dia')" id="mob-nav-dia" class="mobile-tab-btn">
+            <span style="font-size: 18px;">💎</span>분배
+        </button>
+    </nav>
 
-    <!-- 모바일 배경 어둡게 처리하는 오버레이 -->
-    <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
-
-    <!-- 사이드바 (PC: 항상 표시 / 모바일: 토글형 드로어) -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-800 flex flex-col transform -translate-x-full md:translate-x-0 md:static transition-transform duration-200 ease-in-out shrink-0 min-h-screen">
-        <div class="p-6 border-b border-gray-800 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <span class="text-red-500 text-xl font-bold">🛡️</span>
-                <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
-            </div>
-            <!-- 모바일용 닫기 버튼 -->
-            <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-400 hover:text-white text-xl font-bold p-1">
-                ✕
-            </button>
+    <!-- 사이드바 (PC 환경 전용) -->
+    <aside class="pc-sidebar w-64 bg-gray-900 border-r border-gray-800 flex flex-col shrink-0 min-h-screen">
+        <div class="p-6 border-b border-gray-800 flex items-center space-x-2">
+            <span class="text-red-500 text-xl font-bold">🛡️</span>
+            <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
         </div>
         <nav class="p-4 space-y-2 overflow-y-auto flex-grow">
             <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white">대시보드</button>
@@ -75,7 +87,7 @@
         </nav>
     </aside>
 
-    <!-- 메인 컨텐츠 -->
+    <!-- 메인 컨텐츠 영역 -->
     <main class="flex-grow p-4 md:p-8 space-y-6 overflow-x-hidden">
 
         <!-- 1. 대시보드 탭 -->
@@ -87,7 +99,7 @@
                     <p id="dashboard-date" class="text-2xl font-bold text-blue-400">-</p>
                 </div>
                 <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow">
-                    <p class="text-gray-400 text-sm mb-1">오늘 전체 참여 현황 (기준 총 46명)</p>
+                    <p class="text-gray-400 text-sm mb-1">오늘 전체 참여 현황</p>
                     <div class="flex flex-col md:flex-row md:items-baseline md:space-x-3">
                         <p id="dashboard-total-rate" class="text-2xl font-bold text-green-400">0명 참여 중</p>
                         <span id="dashboard-today-avg-rate" class="text-amber-400 font-bold text-sm mt-1 md:mt-0">(평균 참여율: 0.0%)</span>
@@ -97,7 +109,7 @@
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="flex justify-between items-center">
                     <h3 class="text-lg font-bold text-white">📅 시즌별·날짜별 출석률 보관함</h3>
-                    <span class="text-xs text-gray-400">서버 매칭 시작일 기준 2주(14일) 단위 분류</span>
+                    <span class="text-xs text-gray-400">2주(14일) 단위 분류</span>
                 </div>
                 <div id="season-history-container" class="space-y-4">
                     <p class="py-6 text-center text-gray-500">저장된 출석 기록이 없습니다.</p>
@@ -108,30 +120,21 @@
         <!-- 공지사항 탭 -->
         <section id="tab-notice" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">📢 클랜 공지사항 및 점수 안내</h2>
-            
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-6">
-                <!-- 요일별 획득 가능 점수 -->
                 <div class="space-y-3">
                     <h3 class="text-lg font-bold text-amber-400">📅 요일별 획득 가능 점수 (하루 최대 5점)</h3>
                     <ul class="list-disc list-inside space-y-2 text-gray-300 text-sm leading-relaxed bg-gray-850 p-4 rounded-xl border border-gray-800">
                         <li><strong class="text-white">13시 / 21시 게헨나:</strong> 매일 있음 (14일 × 2점 = <span class="text-blue-400 font-bold">28점</span>)</li>
-                        <li><strong class="text-white">클랜임무 / 클랜수호:</strong> 목요일마다 있음 (2주 동안 목요일 2회 × 1점 = <span class="text-blue-400 font-bold">2점</span>)</li>
-                        <li><strong class="text-white">에노크 / 마슈미드:</strong> 토요일마다 있음 (2주 동안 토요일 2회 × 1점 = <span class="text-blue-400 font-bold">2점</span>)</li>
-                        <li><strong class="text-white">점령전 / 전초전:</strong> 토요일마다 있음 (2주 동안 토요일 2회 × 1점 = <span class="text-blue-400 font-bold">2점</span>)</li>
-                        <li><strong class="text-white">쟁탈전:</strong> 토요일마다 있음 (2주 동안 토요일 2회 × 1점 = <span class="text-blue-400 font-bold">2점</span>)</li>
+                        <li><strong class="text-white">클랜임무 / 클랜수호:</strong> 목요일마다 있음 (<span class="text-blue-400 font-bold">2점</span>)</li>
+                        <li><strong class="text-white">에노크 / 마슈미드:</strong> 토요일마다 있음 (<span class="text-blue-400 font-bold">2점</span>)</li>
+                        <li><strong class="text-white">점령전 / 전초전:</strong> 토요일마다 있음 (<span class="text-blue-400 font-bold">2점</span>)</li>
+                        <li><strong class="text-white">쟁탈전:</strong> 토요일마다 있음 (<span class="text-blue-400 font-bold">2점</span>)</li>
                     </ul>
                 </div>
-
-                <!-- 한 시즌 총 만점 -->
                 <div class="space-y-3 pt-2 border-t border-gray-800">
                     <h3 class="text-lg font-bold text-emerald-400">🛡️ 한 시즌(14일) 총 만점 계산</h3>
-                    <ul class="list-disc list-inside space-y-2 text-gray-300 text-sm leading-relaxed bg-gray-850 p-4 rounded-xl border border-gray-800">
-                        <li><strong class="text-white">목요일(2회) 주간:</strong> 13시/21시(2점) + 임무/수호(1점) + 특수·PVP(3점) = 하루 6점 × 2일 = <span class="text-amber-400 font-bold">12점</span></li>
-                        <li><strong class="text-white">토요일(2회) 주간:</strong> 13시/21시(2점) + 임무/수호(0점) + 특수·PVP(3점) = 하루 5점 × 2일 = <span class="text-amber-400 font-bold">10점</span></li>
-                        <li><strong class="text-white">나머지 일반 요일(10일):</strong> 13시/21시(2점) = 하루 2점 × 10일 = <span class="text-amber-400 font-bold">20점</span></li>
-                    </ul>
                     <div class="bg-red-900/40 border border-red-700/50 p-4 rounded-xl text-center">
-                        <span class="text-white font-bold text-base">✨ 총합: 12점 + 10점 + 20점 = <span class="text-yellow-400 text-xl font-extrabold">총 42점</span></span>
+                        <span class="text-white font-bold text-base">✨ 총합: <span class="text-yellow-400 text-xl font-extrabold">총 42점</span></span>
                     </div>
                 </div>
             </div>
@@ -151,7 +154,6 @@
                 <input type="text" id="att-nickname" placeholder="닉네임 입력" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
                 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <!-- 13시타임 -->
                     <div class="space-y-3 bg-gray-850 p-4 rounded-xl border border-gray-800 flex flex-col">
                         <p class="text-amber-400 font-bold text-sm">☀️ 13시타임 (3단계 모두 완료 시 1회 인정)</p>
                         <div class="space-y-2 flex-grow flex flex-col justify-between">
@@ -160,7 +162,6 @@
                             <button onclick="checkAttendance('13시_끝', '13시타임', '게헨나 끝 출석')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-lg text-sm font-semibold transition">게헨나 끝 출석</button>
                         </div>
                     </div>
-                    <!-- 21시타임 -->
                     <div class="space-y-3 bg-gray-850 p-4 rounded-xl border border-gray-800 flex flex-col">
                         <p class="text-amber-200 font-bold text-sm">🌙 21시타임 (3단계 모두 완료 시 1회 인정)</p>
                         <div class="space-y-2 flex-grow flex flex-col justify-between">
@@ -171,18 +172,16 @@
                     </div>
                 </div>
 
-                <!-- 에노크 / 마슈미드 -->
                 <div class="space-y-3 pt-2 border-t border-gray-800">
-                    <p class="text-orange-400 font-bold text-sm">✨ 에노크 / 마슈미드 세트 (둘 다 완료 시 1회 인정)</p>
+                    <p class="text-orange-400 font-bold text-sm">✨ 에노크 / 마슈미드 세트</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <button onclick="checkAttendance('에노크', 'special', '에노크')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded-lg text-sm font-semibold transition">에노크</button>
                         <button onclick="checkAttendance('마슈미드', 'special', '마슈미드')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded-lg text-sm font-semibold transition">마슈미드</button>
                     </div>
                 </div>
 
-                <!-- PVP 컨텐츠 -->
                 <div class="space-y-3 pt-2 border-t border-gray-800">
-                    <p class="text-purple-400 font-bold text-sm">⚔️ 쟁탈전 / 점령전 / 전초전 세트 (셋 다 완료 시 1회 인정)</p>
+                    <p class="text-purple-400 font-bold text-sm">⚔️ 쟁탈전 / 점령전 / 전초전 세트</p>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <button onclick="checkAttendance('점령전', 'war', '점령전')" class="bg-purple-800 hover:bg-purple-700 text-white p-3 rounded-lg text-sm font-semibold transition">점령전</button>
                         <button onclick="checkAttendance('전초전', 'war', '전초전')" class="bg-purple-800 hover:bg-purple-700 text-white p-3 rounded-lg text-sm font-semibold transition">전초전</button>
@@ -190,9 +189,8 @@
                     </div>
                 </div>
 
-                <!-- 클랜임무 / 클랜수호 -->
                 <div class="space-y-3 pt-2 border-t border-gray-800">
-                    <p class="text-emerald-400 font-bold text-sm">🛡️ 클랜임무 / 클랜수호 세트 (둘 다 완료 시 1회 인정)</p>
+                    <p class="text-emerald-400 font-bold text-sm">🛡️ 클랜임무 / 클랜수호 세트</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <button onclick="checkAttendance('클랜임무', 'mission', '클랜임무')" class="bg-emerald-800 hover:bg-emerald-700 text-white p-3 rounded-lg text-sm font-semibold transition">클랜임무</button>
                         <button onclick="checkAttendance('클랜수호', 'mission', '클랜수호')" class="bg-emerald-800 hover:bg-emerald-700 text-white p-3 rounded-lg text-sm font-semibold transition">클랜수호</button>
@@ -206,13 +204,13 @@
                     <table class="w-full text-left text-sm whitespace-nowrap">
                         <thead>
                             <tr class="border-b border-gray-800 text-gray-400">
-                                <th class="py-2 px-2">닉네임 (시즌 누적 참여 점수 및 참여율)</th>
-                                <th class="py-2 px-2">오늘 참여 현황</th>
+                                <th class="py-2 px-2">닉네임 (시즌 점수/참여율)</th>
+                                <th class="py-2 px-2">오늘 현황</th>
                                 <th class="py-2 px-2">13시/21시</th>
-                                <th class="py-2 px-2">에노크/마슈미드</th>
-                                <th class="py-2 px-2">쟁탈/점령/전초전</th>
-                                <th class="py-2 px-2">클랜임무/클랜수호</th>
-                                <th class="py-2 px-2">상세 참여 내역</th>
+                                <th class="py-2 px-2">에노크/마슈</th>
+                                <th class="py-2 px-2">쟁탈/점령/전초</th>
+                                <th class="py-2 px-2">임무/수호</th>
+                                <th class="py-2 px-2">상세 내역</th>
                             </tr>
                         </thead>
                         <tbody id="attendance-table-body">
@@ -225,10 +223,10 @@
 
         <!-- 3. 보탐 타이머 탭 -->
         <section id="tab-boss" class="tab-content hidden space-y-6">
-            <h2 class="text-2xl font-bold text-white">⏰ 보탐 및 월드보스 타이머 (5분 전 알람)</h2>
+            <h2 class="text-2xl font-bold text-white">⏰ 보탐 및 월드보스 타이머</h2>
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
-                    <span class="text-red-500 font-bold">🚨 5분 전 음성 알람 시스템</span>
+                    <span class="text-red-500 font-bold">🚨 5분 전 음성 알람</span>
                     <span id="global-alarm-status" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded-full font-bold">전체 알람 켜짐</span>
                 </div>
                 <div class="space-x-2">
@@ -237,20 +235,18 @@
                     <button onclick="setAllAlarm(false)" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm font-semibold">전체 끄기</button>
                 </div>
             </div>
-            
-            <div id="boss-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            </div>
+            <div id="boss-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
         </section>
 
         <!-- 4. 참여율 조회 탭 -->
         <section id="tab-history" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">🔍 클랜원 상세 참여율 조회</h2>
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex flex-col md:flex-row gap-3">
-                <input type="text" id="search-keyword" placeholder="조회할 클랜원 닉네임 입력 후 검색" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm flex-grow focus:outline-none focus:border-red-500">
+                <input type="text" id="search-keyword" placeholder="조회할 클랜원 닉네임 입력" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm flex-grow focus:outline-none focus:border-red-500">
                 <button onclick="searchMemberHistory()" class="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded text-sm font-bold">검색</button>
             </div>
             <div id="search-result-container" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow text-gray-400 text-sm">
-                닉네임을 입력하고 검색 버튼을 누르면 상세 참여 내역이 표시됩니다.
+                닉네임을 입력하고 검색 버튼을 눌러주세요.
             </div>
         </section>
 
@@ -258,11 +254,11 @@
         <section id="tab-vault" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">📦 클랜 금고템 보유 현황</h2>
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <div class="font-bold text-white text-sm">➕ 금고 아이템 등록 / 수량 추가</div>
+                <div class="font-bold text-white text-sm">➕ 아이템 등록 / 수량 추가</div>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <input type="text" id="vault-name" placeholder="아이템 이름 (예: 영웅 스킬북)" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500 md:col-span-1">
+                    <input type="text" id="vault-name" placeholder="아이템 이름" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500 md:col-span-1">
                     <input type="number" id="vault-count" value="1" min="1" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
-                    <input type="text" id="vault-memo" placeholder="메모 (획득처/담당자 등)" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                    <input type="text" id="vault-memo" placeholder="메모" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
                     <button onclick="addVaultItem()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold rounded p-3 text-sm transition">아이템 추가</button>
                 </div>
             </div>
@@ -289,7 +285,6 @@
         <!-- 6. 다이아 분배 탭 -->
         <section id="tab-dia" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">💎 클랜 다이아 분배 시스템</h2>
-            
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
                     <div class="w-full md:w-2/3 space-y-2">
@@ -300,9 +295,7 @@
                         <button onclick="calculateDiaDistribution()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded text-sm transition mt-6 md:mt-0">분배 계산하기</button>
                     </div>
                 </div>
-                <p class="text-xs text-gray-400">현재 선택된 서버 매칭 시즌의 클랜원별 <strong>출석 참여율(점수)</strong>을 기준으로 다이아가 비례 배분됩니다.</p>
             </div>
-
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <h3 class="text-lg font-bold text-white">📊 다이아 분배 결과 리스트</h3>
                 <div class="overflow-x-auto">
@@ -326,40 +319,43 @@
     </main>
 
     <script>
-        // 모바일 사이드바 열고 닫기 함수
-        function toggleMobileSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-
         function switchTab(tabId) {
+            // 모든 탭 내용 숨기기
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // PC 사이드바 버튼 스타일 초기화
             document.querySelectorAll('aside nav button').forEach(btn => {
                 btn.classList.remove('bg-red-600', 'text-white');
                 btn.classList.add('text-gray-300');
             });
 
+            // 모바일 하단 탭 버튼 스타일 초기화
+            document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // 선택된 탭 보이기
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-            const activeBtn = document.getElementById('nav-' + tabId);
-            if (activeBtn) {
-                activeBtn.classList.remove('text-gray-300');
-                activeBtn.classList.add('bg-red-600', 'text-white');
+
+            // PC 버튼 활성화 스타일 적용
+            const activePcBtn = document.getElementById('nav-' + tabId);
+            if (activePcBtn) {
+                activePcBtn.classList.remove('text-gray-300');
+                activePcBtn.classList.add('bg-red-600', 'text-white');
             }
+
+            // 모바일 하단 탭 버튼 활성화 스타일 적용
+            const activeMobBtn = document.getElementById('mob-nav-' + tabId);
+            if (activeMobBtn) {
+                activeMobBtn.classList.add('active');
+            }
+
             if(tabId === 'dia') {
                 calculateDiaDistribution();
             }
-
-            // 모바일 화면에서 메뉴를 누르면 자동으로 사이드바가 닫히도록 처리
-            if (window.innerWidth < 768) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.getElementById('sidebar-overlay');
-                if (!sidebar.classList.contains('-translate-x-full')) {
-                    sidebar.classList.add('-translate-x-full');
-                    overlay.classList.add('hidden');
-                }
-            }
+            
+            // 탭 이동 시 상단으로 스크롤 이동
+            window.scrollTo(0, 0);
         }
 
         function getTodayStr() {
@@ -376,7 +372,6 @@
             const targetDate = new Date(dateStr + 'T00:00:00');
             const diffTime = targetDate.getTime() - BASE_MATCH_START.getTime();
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            
             const seasonIndex = Math.floor(diffDays / 14);
 
             let currentStart = new Date(BASE_MATCH_START.getTime());
@@ -397,7 +392,7 @@
         }
 
         function resetTodayAttendance() {
-            if(confirm("정말 오늘 출석 기록을 전부 초기화하시겠습니까? (복구 불가능)")) {
+            if(confirm("정말 오늘 출석 기록을 전부 초기화하시겠습니까?")) {
                 const today = getTodayStr();
                 attendanceLogs = attendanceLogs.filter(log => log.date !== today);
                 saveAndRenderAttendance();
@@ -408,9 +403,7 @@
         function checkAndUpdateDate() {
             const todayStr = getTodayStr();
             const dateEl = document.getElementById('dashboard-date');
-            if (dateEl && dateEl.innerText !== todayStr) {
-                dateEl.innerText = todayStr;
-            }
+            if (dateEl) dateEl.innerText = todayStr;
 
             const seasonInfo = getSeasonStartAndEnd(todayStr);
             const seasonInfoEl = document.getElementById('current-season-info');
@@ -430,7 +423,6 @@
             const container = document.getElementById('boss-container');
             if(!container) return;
             container.innerHTML = '';
-
             const now = new Date();
             
             bossList.forEach((boss, index) => {
@@ -440,19 +432,14 @@
 
                 let diff = target.getTime() - now.getTime();
                 let isPassed = false;
-                if (diff < 0) {
-                    isPassed = true;
-                    diff += 24 * 60 * 60 * 1000;
-                }
+                if (diff < 0) { isPassed = true; diff += 24 * 60 * 60 * 1000; }
 
                 const hours = Math.floor(diff / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
                 let timeStr = `${hours}시간 ${minutes}분 ${seconds}초 전`;
-                if (isPassed) {
-                    timeStr = `남은 시간: ${hours}시간 ${minutes}분 ${seconds}초`;
-                }
+                if (isPassed) timeStr = `남은 시간: ${hours}시간 ${minutes}분 ${seconds}초`;
 
                 if (diff >= 299000 && diff <= 301000 && seconds === 0 && boss.alarmOn) {
                     speakBossAlert(boss.name);
@@ -465,7 +452,7 @@
                         <p class="text-blue-400 text-center text-xs font-mono">${timeStr}</p>
                         <div class="flex justify-between items-center pt-3 border-t border-gray-800 text-xs text-gray-400">
                             <span>알람 설정</span>
-                            <button onclick="toggleBossAlarm(${index})" class="px-3 py-1 rounded font-bold text-white transition ${boss.alarmOn ? 'bg-green-600 hover:bg-green-500' : 'bg-gray-700 hover:bg-gray-600'}">
+                            <button onclick="toggleBossAlarm(${index})" class="px-3 py-1 rounded font-bold text-white transition ${boss.alarmOn ? 'bg-green-600 hover:bg-green-500' : 'bg-gray-700'}">
                                 ${boss.alarmOn ? 'ON' : 'OFF'}
                             </button>
                         </div>
@@ -491,7 +478,6 @@
             const statusEl = document.getElementById('global-alarm-status');
             if(statusEl) {
                 statusEl.innerText = allOn ? "전체 알람 켜짐" : "일부 알람 꺼짐/켜짐";
-                statusEl.className = allOn ? "bg-green-600 text-white text-xs px-2.5 py-1 rounded-full font-bold" : "bg-yellow-600 text-white text-xs px-2.5 py-1 rounded-full font-bold";
             }
         }
 
@@ -503,9 +489,7 @@
             }
         }
 
-        function testVoice() {
-            speakBossAlert("20시 월드보스");
-        }
+        function testVoice() { speakBossAlert("20시 월드보스"); }
 
         let attendanceLogs = JSON.parse(localStorage.getItem('vampirAttendanceLogs')) || [];
         let vaultItems = JSON.parse(localStorage.getItem('vampirVaultItems')) || [];
@@ -513,33 +497,18 @@
         function checkAttendance(slotKey, groupName, buttonLabel) {
             const nicknameInput = document.getElementById('att-nickname');
             const nickname = nicknameInput.value.trim();
-            if(!nickname) {
-                alert('닉네임을 먼저 입력해주세요!');
-                nicknameInput.focus();
-                return;
-            }
+            if(!nickname) { alert('닉네임을 입력해주세요!'); nicknameInput.focus(); return; }
 
             const today = getTodayStr();
             const now = new Date();
             const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
             const alreadyExists = attendanceLogs.some(log => log.date === today && log.nickname === nickname && log.slotKey === slotKey);
-            if (alreadyExists) {
-                alert(`[${nickname}]님은 오늘 이미 '${buttonLabel}' 항목을 체크하셨습니다.`);
-                return;
-            }
+            if (alreadyExists) { alert(`이미 오늘 '${buttonLabel}' 항목을 체크하셨습니다.`); return; }
 
-            attendanceLogs.push({
-                date: today,
-                nickname: nickname,
-                slotKey: slotKey,
-                groupName: groupName,
-                buttonLabel: buttonLabel,
-                time: timeStr
-            });
-
+            attendanceLogs.push({ date: today, nickname, slotKey, groupName, buttonLabel, time: timeStr });
             saveAndRenderAttendance();
-            alert(`[${nickname}]님의 '${buttonLabel}' 출석이 완료되었습니다! (${timeStr})`);
+            alert(`[${nickname}]님의 '${buttonLabel}' 출석이 완료되었습니다.`);
         }
 
         function saveAndRenderAttendance() {
@@ -578,7 +547,6 @@
                 let specialSet = (sum.special['에노크'] && sum.special['마슈미드']) ? 1 : 0;
                 let warSet = (sum.war['점령전'] && sum.war['전초전'] && sum.war['쟁탈전']) ? 1 : 0;
                 let missionSet = (sum.mission['클랜임무'] && sum.mission['클랜수호']) ? 1 : 0;
-
                 scores[nick] = c13 + c21 + specialSet + warSet + missionSet;
             });
             return scores;
@@ -587,12 +555,7 @@
         function renderAttendance() {
             const today = getTodayStr();
             const currentSeason = getSeasonStartAndEnd(today);
-
-            const currentSeasonLogs = attendanceLogs.filter(log => {
-                const logSeason = getSeasonStartAndEnd(log.date);
-                return logSeason.seasonName === currentSeason.seasonName;
-            });
-
+            const currentSeasonLogs = attendanceLogs.filter(log => getSeasonStartAndEnd(log.date).seasonName === currentSeason.seasonName);
             const todayLogs = currentSeasonLogs.filter(log => log.date === today);
 
             let seasonTotalScores = {};
@@ -611,9 +574,7 @@
 
             let memberMap = {};
             todayLogs.forEach(log => {
-                if(!memberMap[log.nickname]) {
-                    memberMap[log.nickname] = [];
-                }
+                if(!memberMap[log.nickname]) memberMap[log.nickname] = [];
                 memberMap[log.nickname].push(log);
             });
 
@@ -630,11 +591,9 @@
             }
 
             let todayParticipatedCount = 0;
-
             nicknames.forEach(nick => {
                 const seasonScore = seasonTotalScores[nick] || 0;
                 const seasonRate = ((seasonScore / 42) * 100).toFixed(1);
-
                 const tLogs = memberMap[nick] || [];
                 const hasToday = tLogs.length > 0;
                 if(hasToday) todayParticipatedCount++;
@@ -646,33 +605,17 @@
                 let missionDone = tLogs.filter(l => l.groupName === 'mission').length >= 2;
 
                 const badge = (done, label) => `<span class="px-2 py-1 rounded text-xs font-bold ${done ? 'bg-green-900 text-green-300 border border-green-700' : 'bg-gray-800 text-gray-500'}">${label}</span>`;
-
                 const detailsHtml = tLogs.map(l => `<span class="inline-block bg-gray-800 text-gray-300 text-xs px-2 py-0.5 rounded mr-1 mb-1">${l.buttonLabel} (${l.time})</span>`).join('');
 
                 tbody.innerHTML += `
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
-                        <td class="py-3 px-2 font-bold text-white">
-                            ${nick} <br>
-                            <span class="text-xs text-amber-400 font-normal">시즌 점수: ${seasonScore}점 (${seasonRate}%)</span>
-                        </td>
-                        <td class="py-3 px-2">
-                            ${hasToday ? '<span class="text-green-400 font-bold">참여 완료</span>' : '<span class="text-gray-500">미참여</span>'}
-                        </td>
-                        <td class="py-3 px-2 space-x-1">
-                            ${badge(c13Done, '13시')} ${badge(c21Done, '21시')}
-                        </td>
-                        <td class="py-3 px-2">
-                            ${badge(specialDone, '에노크/마슈')}
-                        </td>
-                        <td class="py-3 px-2">
-                            ${badge(warDone, '쟁탈/점령/전초')}
-                        </td>
-                        <td class="py-3 px-2">
-                            ${badge(missionDone, '임무/수호')}
-                        </td>
-                        <td class="py-3 px-2 max-w-xs truncate">
-                            ${detailsHtml || '<span class="text-gray-600 text-xs">내역 없음</span>'}
-                        </td>
+                        <td class="py-3 px-2 font-bold text-white">${nick} <br><span class="text-xs text-amber-400 font-normal">점수: ${seasonScore}점 (${seasonRate}%)</span></td>
+                        <td class="py-3 px-2">${hasToday ? '<span class="text-green-400 font-bold">완료</span>' : '<span class="text-gray-500">미참여</span>'}</td>
+                        <td class="py-3 px-2 space-x-1">${badge(c13Done, '13시')} ${badge(c21Done, '21시')}</td>
+                        <td class="py-3 px-2">${badge(specialDone, '에노크/마슈')}</td>
+                        <td class="py-3 px-2">${badge(warDone, '쟁탈/점령/전초')}</td>
+                        <td class="py-3 px-2">${badge(missionDone, '임무/수호')}</td>
+                        <td class="py-3 px-2 max-w-xs truncate">${detailsHtml || '-'}</td>
                     </tr>
                 `;
             });
@@ -684,15 +627,12 @@
         function updateDashboard(todayCount, totalMembers, seasonScores) {
             const totalRateEl = document.getElementById('dashboard-total-rate');
             const avgRateEl = document.getElementById('dashboard-today-avg-rate');
-            if(totalRateEl) {
-                totalRateEl.innerText = `${todayCount}명 참여 중 (총 클랜원 ${totalMembers}명 등록됨)`;
-            }
+            if(totalRateEl) totalRateEl.innerText = `${todayCount}명 참여 중 (총 ${totalMembers}명)`;
             if(avgRateEl && totalMembers > 0) {
                 let totalScoreSum = 0;
                 Object.values(seasonScores).forEach(s => totalScoreSum += s);
-                let maxPossible = totalMembers * 42;
-                let avgSeasonRate = maxPossible > 0 ? ((totalScoreSum / maxPossible) * 100).toFixed(1) : 0;
-                avgRateEl.innerText = `(시즌 전체 평균 달성률: ${avgSeasonRate}%)`;
+                let avgSeasonRate = ((totalScoreSum / (totalMembers * 42)) * 100).toFixed(1);
+                avgRateEl.innerText = `(시즌 평균 달성률: ${avgSeasonRate}%)`;
             }
         }
 
@@ -700,71 +640,37 @@
             const container = document.getElementById('season-history-container');
             if(!container) return;
             container.innerHTML = '';
-
             let seasonsMap = {};
             attendanceLogs.forEach(log => {
                 const sInfo = getSeasonStartAndEnd(log.date);
-                if(!seasonsMap[sInfo.seasonName]) {
-                    seasonsMap[sInfo.seasonName] = [];
-                }
+                if(!seasonsMap[sInfo.seasonName]) seasonsMap[sInfo.seasonName] = [];
                 seasonsMap[sInfo.seasonName].push(log);
             });
 
             const seasonNames = Object.keys(seasonsMap).sort().reverse();
-            if(seasonNames.length === 0) {
-                container.innerHTML = `<p class="py-6 text-center text-gray-500">저장된 출석 기록이 없습니다.</p>`;
-                return;
-            }
+            if(seasonNames.length === 0) { container.innerHTML = `<p class="py-6 text-center text-gray-500">기록이 없습니다.</p>`; return; }
 
             seasonNames.forEach(seasonName => {
                 const sLogs = seasonsMap[seasonName];
                 let daysMap = {};
-                sLogs.forEach(l => {
-                    if(!daysMap[l.date]) daysMap[l.date] = [];
-                    daysMap[l.date].push(l);
-                });
-
+                sLogs.forEach(l => { if(!daysMap[l.date]) daysMap[l.date] = []; daysMap[l.date].push(l); });
                 let seasonScores = {};
                 Object.keys(daysMap).forEach(date => {
                     let dScores = calculateDayScore(daysMap[date]);
-                    Object.keys(dScores).forEach(nick => {
-                        seasonScores[nick] = (seasonScores[nick] || 0) + dScores[nick];
-                    });
+                    Object.keys(dScores).forEach(nick => { seasonScores[nick] = (seasonScores[nick] || 0) + dScores[nick]; });
                 });
 
                 let memberRows = '';
                 Object.keys(seasonScores).sort((a,b) => seasonScores[b] - seasonScores[a]).forEach(nick => {
                     let score = seasonScores[nick];
                     let rate = ((score / 42) * 100).toFixed(1);
-                    memberRows += `
-                        <tr class="border-b border-gray-800 text-xs">
-                            <td class="py-2 px-3 text-white font-bold">${nick}</td>
-                            <td class="py-2 px-3 text-amber-400 font-bold">${score}점</td>
-                            <td class="py-2 px-3 text-green-400 font-bold">${rate}%</td>
-                        </tr>
-                    `;
+                    memberRows += `<tr class="border-b border-gray-800 text-xs"><td class="py-2 px-3 text-white font-bold">${nick}</td><td class="py-2 px-3 text-amber-400 font-bold">${score}점</td><td class="py-2 px-3 text-green-400 font-bold">${rate}%</td></tr>`;
                 });
 
                 container.innerHTML += `
                     <div class="bg-gray-850 border border-gray-800 rounded-xl p-4 space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-amber-400 font-bold text-sm">🛡️ 시즌 기간: ${seasonName}</span>
-                            <span class="text-xs text-gray-400">총 참여 인원: ${Object.keys(seasonScores).length}명</span>
-                        </div>
-                        <div class="overflow-x-auto max-h-48">
-                            <table class="w-full text-left whitespace-nowrap">
-                                <thead>
-                                    <tr class="text-gray-500 text-xs border-b border-gray-800">
-                                        <th class="py-1 px-3">닉네임</th>
-                                        <th class="py-1 px-3">누적 점수</th>
-                                        <th class="py-1 px-3">시즌 달성률</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${memberRows}
-                                </tbody>
-                            </table>
-                        </div>
+                        <span class="text-amber-400 font-bold text-sm">🛡️ 시즌 기간: ${seasonName}</span>
+                        <div class="overflow-x-auto max-h-48"><table class="w-full text-left whitespace-nowrap"><tbody>${memberRows}</tbody></table></div>
                     </div>
                 `;
             });
@@ -773,27 +679,14 @@
         function searchMemberHistory() {
             const keyword = document.getElementById('search-keyword').value.trim();
             const container = document.getElementById('search-result-container');
-            if(!container) return;
-
-            if(!keyword) {
-                container.innerHTML = `<span class="text-red-400">검색할 클랜원 닉네임을 입력해주세요.</span>`;
-                return;
-            }
-
+            if(!container || !keyword) return;
             const memberLogs = attendanceLogs.filter(l => l.nickname.includes(keyword));
-            if(memberLogs.length === 0) {
-                container.innerHTML = `<span class="text-gray-400">'${keyword}' 클랜원의 출석 기록을 찾을 수 없습니다.</span>`;
-                return;
-            }
+            if(memberLogs.length === 0) { container.innerHTML = `<span class="text-gray-400">기록을 찾을 수 없습니다.</span>`; return; }
 
             let sInfo = getSeasonStartAndEnd(getTodayStr());
             let currentSeasonLogs = memberLogs.filter(l => getSeasonStartAndEnd(l.date).seasonName === sInfo.seasonName);
-
             let daysMap = {};
-            currentSeasonLogs.forEach(l => {
-                if(!daysMap[l.date]) daysMap[l.date] = [];
-                daysMap[l.date].push(l);
-            });
+            currentSeasonLogs.forEach(l => { if(!daysMap[l.date]) daysMap[l.date] = []; daysMap[l.date].push(l); });
 
             let totalScore = 0;
             Object.keys(daysMap).forEach(date => {
@@ -802,75 +695,34 @@
             });
 
             let rate = ((totalScore / 42) * 100).toFixed(1);
+            let logsHtml = memberLogs.sort((a,b) => new Date(b.date) - new Date(a.date)).map(l => `<div class="bg-gray-800 p-2 rounded flex justify-between text-xs"><span class="text-white">${l.date} (${l.time})</span><span class="text-amber-400">${l.buttonLabel}</span></div>`).join('');
 
-            let logsHtml = memberLogs.sort((a,b) => new Date(b.date) - new Date(a.date)).map(l => `
-                <div class="bg-gray-800 p-2 rounded flex justify-between items-center text-xs">
-                    <span class="text-white font-bold">${l.date} (${l.time})</span>
-                    <span class="text-amber-400">${l.buttonLabel}</span>
-                </div>
-            `).join('');
-
-            container.innerHTML = `
-                <div class="space-y-4">
-                    <div class="border-b border-gray-800 pb-3">
-                        <p class="text-lg font-bold text-white">🔍 '${keyword}' 클랜원 조회 결과</p>
-                        <p class="text-xs text-amber-400 mt-1">현재 시즌 누적 점수: <span class="font-bold text-white">${totalScore}점</span> / 만점 42점 (시즌 참여율: <span class="font-bold text-green-400">${rate}%</span>)</p>
-                    </div>
-                    <div class="space-y-2 max-h-60 overflow-y-auto">
-                        <p class="text-xs text-gray-400">전체 상세 참여 내역 (${memberLogs.length}건):</p>
-                        ${logsHtml}
-                    </div>
-                </div>
-            `;
+            container.innerHTML = `<div class="space-y-4"><p class="text-white font-bold">🔍 '${keyword}' (현재 시즌 점수: ${totalScore}점 / ${rate}%)</p><div class="space-y-2 max-h-60 overflow-y-auto">${logsHtml}</div></div>`;
         }
 
         function addVaultItem() {
-            const nameInput = document.getElementById('vault-name');
-            const countInput = document.getElementById('vault-count');
-            const memoInput = document.getElementById('vault-memo');
-
-            const name = nameInput.value.trim();
-            const count = parseInt(countInput.value) || 1;
-            const memo = memoInput.value.trim();
-
-            if(!name) {
-                alert('아이템 이름을 입력해주세요!');
-                nameInput.focus();
-                return;
-            }
+            const name = document.getElementById('vault-name').value.trim();
+            const count = parseInt(document.getElementById('vault-count').value) || 1;
+            const memo = document.getElementById('vault-memo').value.trim();
+            if(!name) { alert('아이템 이름을 입력해주세요!'); return; }
 
             const existing = vaultItems.find(item => item.name === name);
-            if(existing) {
-                existing.count += count;
-                if(memo) existing.memo = memo;
-            } else {
-                vaultItems.push({ name, count, memo });
-            }
+            if(existing) { existing.count += count; if(memo) existing.memo = memo; }
+            else { vaultItems.push({ name, count, memo }); }
 
             saveAndRenderVault();
-            nameInput.value = '';
-            countInput.value = '1';
-            memoInput.value = '';
-            alert(`'${name}' 아이템이 금고에 추가되었습니다.`);
+            document.getElementById('vault-name').value = '';
+            alert('금고에 추가되었습니다.');
         }
 
         function updateVaultCount(index, amount) {
             vaultItems[index].count += amount;
-            if(vaultItems[index].count <= 0) {
-                if(confirm(`'${vaultItems[index].name}' 수량이 0이 되었습니다. 삭제하시겠습니까?`)) {
-                    vaultItems.splice(index, 1);
-                } else {
-                    vaultItems[index].count = 0;
-                }
-            }
+            if(vaultItems[index].count <= 0) vaultItems.splice(index, 1);
             saveAndRenderVault();
         }
 
         function deleteVaultItem(index) {
-            if(confirm(`'${vaultItems[index].name}' 아이템을 금고에서 삭제하시겠습니까?`)) {
-                vaultItems.splice(index, 1);
-                saveAndRenderVault();
-            }
+            if(confirm('삭제하시겠습니까?')) { vaultItems.splice(index, 1); saveAndRenderVault(); }
         }
 
         function saveAndRenderVault() {
@@ -882,11 +734,7 @@
             const tbody = document.getElementById('vault-table-body');
             if(!tbody) return;
             tbody.innerHTML = '';
-
-            if(vaultItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 금고 아이템이 없습니다.</td></tr>`;
-                return;
-            }
+            if(vaultItems.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 아이템이 없습니다.</td></tr>`; return; }
 
             vaultItems.forEach((item, index) => {
                 tbody.innerHTML += `
@@ -895,9 +743,9 @@
                         <td class="py-3 px-4 text-amber-400 font-bold">${item.count}개</td>
                         <td class="py-3 px-4 text-gray-400">${item.memo || '-'}</td>
                         <td class="py-3 px-4 text-center space-x-1">
-                            <button onclick="updateVaultCount(${index}, 1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2 py-1 rounded text-xs font-bold">+</button>
-                            <button onclick="updateVaultCount(${index}, -1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2 py-1 rounded text-xs font-bold">-</button>
-                            <button onclick="deleteVaultItem(${index})" class="bg-red-900 hover:bg-red-800 text-red-200 px-2 py-1 rounded text-xs font-bold">삭제</button>
+                            <button onclick="updateVaultCount(${index}, 1)" class="bg-gray-800 text-white px-2 py-1 rounded text-xs">+</button>
+                            <button onclick="updateVaultCount(${index}, -1)" class="bg-gray-800 text-white px-2 py-1 rounded text-xs">-</button>
+                            <button onclick="deleteVaultItem(${index})" class="bg-red-900 text-red-200 px-2 py-1 rounded text-xs">삭제</button>
                         </td>
                     </tr>
                 `;
@@ -905,37 +753,24 @@
         }
 
         function calculateDiaDistribution() {
-            const input = document.getElementById('total-dia-input');
+            const totalDia = parseInt(document.getElementById('total-dia-input').value) || 0;
             const tbody = document.getElementById('dia-table-body');
-            if(!input || !tbody) return;
-
-            const totalDia = parseInt(input.value) || 0;
+            if(!tbody) return;
 
             const today = getTodayStr();
             const currentSeason = getSeasonStartAndEnd(today);
-            const currentSeasonLogs = attendanceLogs.filter(log => {
-                return getSeasonStartAndEnd(log.date).seasonName === currentSeason.seasonName;
-            });
+            const currentSeasonLogs = attendanceLogs.filter(log => getSeasonStartAndEnd(log.date).seasonName === currentSeason.seasonName);
 
             let seasonDaysMap = {};
-            currentSeasonLogs.forEach(log => {
-                if(!seasonDaysMap[log.date]) seasonDaysMap[log.date] = [];
-                seasonDaysMap[log.date].push(log);
-            });
-
+            currentSeasonLogs.forEach(log => { if(!seasonDaysMap[log.date]) seasonDaysMap[log.date] = []; seasonDaysMap[log.date].push(log); });
             let seasonTotalScores = {};
             Object.keys(seasonDaysMap).forEach(date => {
                 let dayScores = calculateDayScore(seasonDaysMap[date]);
-                Object.keys(dayScores).forEach(nick => {
-                    seasonTotalScores[nick] = (seasonTotalScores[nick] || 0) + dayScores[nick];
-                });
+                Object.keys(dayScores).forEach(nick => { seasonTotalScores[nick] = (seasonTotalScores[nick] || 0) + dayScores[nick]; });
             });
 
             const nicknames = Object.keys(seasonTotalScores);
-            if(nicknames.length === 0 || totalDia <= 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">현재 시즌에 기록된 점수가 없거나 총 다이아 수량이 입력되지 않았습니다.</td></tr>`;
-                return;
-            }
+            if(nicknames.length === 0 || totalDia <= 0) { tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">데이터가 없거나 총 수량이 입력되지 않았습니다.</td></tr>`; return; }
 
             let totalScoreSum = 0;
             nicknames.forEach(nick => totalScoreSum += seasonTotalScores[nick]);
