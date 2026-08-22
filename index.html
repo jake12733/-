@@ -61,18 +61,6 @@
                 <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
             </div>
         </div>
-        
-        <!-- 권한 전환 바 -->
-        <div class="p-4 bg-gray-850 border-b border-gray-800 mx-4 mt-4 rounded-xl space-y-2">
-            <div class="text-xs text-amber-400 font-bold flex justify-between items-center">
-                <span>🔐 현재 접속 모드</span>
-                <span id="current-auth-badge" class="bg-red-900 text-red-200 px-2 py-0.5 rounded text-[10px]">운영진/클마</span>
-            </div>
-            <select id="auth-role-select" onchange="changeUserAuth(this.value)" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-xs text-white focus:outline-none focus:border-red-500">
-                <option value="staff">👑 클마 / 운영진 모드 (전체 제어)</option>
-                <option value="member">🛡️ 일반 클랜원 모드 (조회 및 출석만)</option>
-            </select>
-        </div>
 
         <nav class="p-4 space-y-2 overflow-y-auto flex-grow">
             <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white">대시보드</button>
@@ -97,44 +85,19 @@
                     <p class="text-gray-400 text-sm mb-1">오늘 날짜</p>
                     <p id="dashboard-date" class="text-2xl font-bold text-blue-400">-</p>
                 </div>
-                <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow">
-                    <p class="text-gray-400 text-sm mb-1">오늘 전체 참여 현황</p>
-                    <div class="flex flex-col md:flex-row md:items-baseline md:space-x-3">
-                        <p id="dashboard-total-rate" class="text-2xl font-bold text-green-400">0명 참여 중</p>
-                    </div>
-                </div>
             </div>
         </section>
 
         <!-- 공지사항 탭 -->
         <section id="tab-notice" class="tab-content hidden space-y-6">
-            <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-white">📢 클랜 공지사항 및 점수 안내</h2>
-                <div id="notice-edit-btn-container"></div>
-            </div>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-6">
-                <div id="notice-view-mode" class="space-y-6">
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-bold text-amber-400">📅 점수 산정 기준 및 공지</h3>
-                        <div id="notice-content-display" class="text-gray-300 text-sm leading-relaxed bg-gray-850 p-5 rounded-xl border border-gray-800 space-y-3" style="white-space: pre-line;"></div>
-                    </div>
-                </div>
-                <div id="notice-edit-mode" class="hidden space-y-4">
-                    <label class="text-xs text-amber-400 font-bold">공지사항 내용 직접 편집 (엔터 줄바꿈 가능)</label>
-                    <textarea id="notice-textarea" rows="10" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-red-500 font-mono leading-relaxed"></textarea>
-                    <div class="flex justify-end space-x-3">
-                        <button onclick="cancelNoticeEdit()" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm font-bold transition">취소</button>
-                        <button onclick="saveNoticeContent()" class="bg-red-600 hover:bg-red-500 text-white px-5 py-2 rounded text-sm font-bold transition">저장하기</button>
-                    </div>
-                </div>
-            </div>
+            <h2 class="text-2xl font-bold text-white">📢 클랜 공지사항 및 점수 안내</h2>
         </section>
 
         <!-- 클랜원 명단 탭 -->
         <section id="tab-members" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">👥 클랜원 명단 및 역할 관리</h2>
             
-            <div id="admin-member-add-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="font-bold text-white text-sm">➕ 클랜원 추가하기</div>
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
                     <input type="text" id="new-member-name" placeholder="닉네임 입력" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
@@ -145,7 +108,7 @@
                         <option value="블러드스테인">블러드스테인</option>
                         <option value="그림리퍼">그림리퍼</option>
                     </select>
-                    <input type="number" id="new-member-power" placeholder="전투력 입력 (예: 520000)" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                    <input type="number" id="new-member-power" placeholder="전투력 입력" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
                     <select id="new-member-role" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
                         <option value="일반">일반 클랜원</option>
                         <option value="운영진">운영진</option>
@@ -169,7 +132,7 @@
                                 <th class="py-3 px-4">클래스</th>
                                 <th class="py-3 px-4">전투력</th>
                                 <th class="py-3 px-4">역할 (권한)</th>
-                                <th class="py-3 px-4 text-center admin-col-header">정보 수정 / 삭제</th>
+                                <th class="py-3 px-4 text-center">정보 수정 / 삭제</th>
                             </tr>
                         </thead>
                         <tbody id="staff-table-body">
@@ -182,7 +145,7 @@
             <!-- 🛡️ 일반 클랜원 리스트 -->
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-white">🛡️ 일반 클랜원 리스트 (전투력 높은 순 정렬)</h3>
+                    <h3 class="text-lg font-bold text-white">🛡️ 일반 클랜원 리스트</h3>
                     <span id="member-total-count" class="text-xs text-gray-400">총 0명</span>
                 </div>
                 <div class="overflow-x-auto">
@@ -193,7 +156,7 @@
                                 <th class="py-3 px-4">클래스</th>
                                 <th class="py-3 px-4">전투력</th>
                                 <th class="py-3 px-4">역할 (권한)</th>
-                                <th class="py-3 px-4 text-center admin-col-header">정보 수정 / 삭제</th>
+                                <th class="py-3 px-4 text-center">정보 수정 / 삭제</th>
                             </tr>
                         </thead>
                         <tbody id="member-table-body">
@@ -206,147 +169,19 @@
 
         <!-- 2. 출석 체크 탭 -->
         <section id="tab-attendance" class="tab-content hidden space-y-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-                <div>
-                    <h2 class="text-2xl font-bold text-white">출석 체크</h2>
-                    <p id="current-season-info" class="text-xs text-amber-400 mt-1">현재 서버 매칭 기간: 계산 중...</p>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button id="toggle-attendance-status-btn" onclick="toggleAttendanceActiveStatus()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded text-xs font-bold border border-emerald-600 transition">출석 활성화 중</button>
-                    <button id="reset-attendance-btn" onclick="resetTodayAttendance()" class="bg-red-900 hover:bg-red-800 text-red-200 px-4 py-2 rounded text-xs font-bold border border-red-700">오늘 출석 기록 전체 삭제</button>
-                </div>
-            </div>
-            
-            <div id="admin-pw-setting-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4 border-l-4 border-l-amber-500">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-amber-400">🔐 [관리자 설정] 타임별 인증 비밀번호 (각 4자리)</h3>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="flex items-center space-x-2 bg-gray-800 p-3 rounded-lg">
-                        <span class="text-xs text-blue-400 font-bold w-20">13시 비밀번호:</span>
-                        <input type="password" maxlength="4" id="admin-pw-13" placeholder="4자리" class="bg-gray-900 border border-gray-700 rounded p-2 text-white text-sm w-24 text-center">
-                        <button onclick="saveAdminPw('13')" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded text-xs font-bold">저장</button>
-                        <span id="status-pw-13" class="text-xs text-green-400 font-bold"></span>
-                    </div>
-                    <div class="flex items-center space-x-2 bg-gray-800 p-3 rounded-lg">
-                        <span class="text-xs text-red-400 font-bold w-20">21시 비밀번호:</span>
-                        <input type="password" maxlength="4" id="admin-pw-21" placeholder="4자리" class="bg-gray-900 border border-gray-700 rounded p-2 text-white text-sm w-24 text-center">
-                        <button onclick="saveAdminPw('21')" class="bg-red-700 hover:bg-red-600 text-white px-3 py-2 rounded text-xs font-bold">저장</button>
-                        <span id="status-pw-21" class="text-xs text-green-400 font-bold"></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-xs text-gray-400">본인 닉네임 선택</label>
-                        <select id="att-nickname" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
-                            <option value="">-- 명단에서 닉네임을 선택하세요 --</option>
-                        </select>
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs text-gray-400">타임별 인증 비밀번호</label>
-                        <input type="password" maxlength="4" id="att-input-pw" placeholder="출석할 타임의 4자리 비밀번호 입력" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div class="space-y-3 bg-gray-850 p-4 rounded-xl border border-gray-800 flex flex-col">
-                        <p class="text-blue-400 font-bold text-sm">☀️ 13시타임 (3개 모두 완료 시 1점)</p>
-                        <div class="space-y-2 flex-grow flex flex-col justify-between">
-                            <button onclick="checkAttendanceWithPw('13시_시작전', '13시타임', '게헨나 시작전 출석', '13')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-lg text-sm font-semibold transition">게헨나 시작전 출석</button>
-                            <button onclick="checkAttendanceWithPw('13시_3층전', '13시타임', '3층 올라가기전', '13')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-lg text-sm font-semibold transition">3층 올라가기전</button>
-                            <button onclick="checkAttendanceWithPw('13시_끝', '13시타임', '게헨나 끝 출석', '13')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-lg text-sm font-semibold transition">게헨나 끝 출석</button>
-                        </div>
-                    </div>
-                    <div class="space-y-3 bg-gray-850 p-4 rounded-xl border border-gray-800 flex flex-col">
-                        <p class="text-red-400 font-bold text-sm">🌙 21시타임 (3개 모두 완료 시 1점)</p>
-                        <div class="space-y-2 flex-grow flex flex-col justify-between">
-                            <button onclick="checkAttendanceWithPw('21시_시작전', '21시타임', '게헨나 시작전 출석', '21')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2.5 rounded-lg text-sm font-semibold transition">게헨나 시작전 출석</button>
-                            <button onclick="checkAttendanceWithPw('21시_3층전', '21시타임', '3층 올라가기전', '21')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2.5 rounded-lg text-sm font-semibold transition">3층 올라가기전</button>
-                            <button onclick="checkAttendanceWithPw('21시_끝', '21시타임', '게헨나 끝 출석', '21')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2.5 rounded-lg text-sm font-semibold transition">게헨나 끝 출석</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-3 pt-2 border-t border-gray-800">
-                    <p class="text-orange-400 font-bold text-sm">✨ 에노크 / 마슈미드 세트</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <button onclick="checkAttendance('에노크', 'special', '에노크')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded-lg text-sm font-semibold transition">에노크</button>
-                        <button onclick="checkAttendance('마슈미드', 'special', '마슈미드')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded-lg text-sm font-semibold transition">마슈미드</button>
-                    </div>
-                </div>
-
-                <div class="space-y-3 pt-2 border-t border-gray-800">
-                    <p class="text-purple-400 font-bold text-sm">⚔️ 쟁탈전 / 점령전 / 전초전 세트</p>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <button onclick="checkAttendance('점령전', 'war', '점령전')" class="bg-purple-800 hover:bg-purple-700 text-white p-3 rounded-lg text-sm font-semibold transition">점령전</button>
-                        <button onclick="checkAttendance('전초전', 'war', '전초전')" class="bg-purple-800 hover:bg-purple-700 text-white p-3 rounded-lg text-sm font-semibold transition">전초전</button>
-                        <button onclick="checkAttendance('쟁탈전', 'war', '쟁탈전')" class="bg-purple-800 hover:bg-purple-700 text-white p-3 rounded-lg text-sm font-semibold transition">쟁탈전</button>
-                    </div>
-                </div>
-
-                <div class="space-y-3 pt-2 border-t border-gray-800">
-                    <p class="text-emerald-400 font-bold text-sm">🛡️ 클랜임무 / 클랜수호 세트</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <button onclick="checkAttendance('클랜임무', 'mission', '클랜임무')" class="bg-emerald-800 hover:bg-emerald-700 text-white p-3 rounded-lg text-sm font-semibold transition">클랜임무</button>
-                        <button onclick="checkAttendance('클랜수호', 'mission', '클랜수호')" class="bg-emerald-800 hover:bg-emerald-700 text-white p-3 rounded-lg text-sm font-semibold transition">클랜수호</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <h3 class="text-lg font-bold text-white">출석 클랜원별 현황</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead>
-                            <tr class="border-b border-gray-800 text-gray-400">
-                                <th class="py-2 px-2">닉네임</th>
-                                <th class="py-2 px-2 text-amber-400 font-bold">총 점수</th>
-                                <th class="py-2 px-2">오늘 현황</th>
-                                <th class="py-2 px-2">13시/21시</th>
-                                <th class="py-2 px-2">에노크/마슈</th>
-                                <th class="py-2 px-2">쟁탈/점령/전초</th>
-                                <th class="py-2 px-2">임무/수호</th>
-                                <th class="py-2 px-2">상세 내역</th>
-                            </tr>
-                        </thead>
-                        <tbody id="attendance-table-body">
-                            <tr><td colspan="8" class="py-6 text-center text-gray-500">기록된 출석 데이터가 없습니다.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <h2 class="text-2xl font-bold text-white">출석 체크</h2>
         </section>
 
         <!-- 3. 보탐 타이머 탭 -->
         <section id="tab-boss" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">⏰ 보탐 및 월드보스 타이머</h2>
-            
-            <div id="admin-boss-add-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4 border-l-4 border-l-red-500">
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4 border-l-4 border-l-red-500">
                 <div class="font-bold text-white text-sm">➕ [운영진 설정] 보스 추가하기 (시간 설정)</div>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <input type="text" id="new-boss-name" placeholder="보스 이름 (예: 12시 월드보스)" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
-                    <div class="flex items-center space-x-2 bg-gray-800 border border-gray-700 rounded px-3 py-2">
-                        <span class="text-xs text-gray-400">출몰 시간:</span>
-                        <input type="time" id="new-boss-time" class="bg-transparent text-white text-sm focus:outline-none w-full">
-                    </div>
-                    <input type="text" id="new-boss-memo" placeholder="위치 또는 메모 (예: 3채널)" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                    <input type="text" id="new-boss-name" placeholder="보스 이름" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                    <input type="time" id="new-boss-time" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                    <input type="text" id="new-boss-memo" placeholder="위치 또는 메모" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
                     <button onclick="addNewBoss()" class="bg-red-600 hover:bg-red-500 text-white font-bold rounded p-3 text-sm transition">보스 등록</button>
-                </div>
-            </div>
-
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div class="flex items-center space-x-3">
-                    <span class="text-red-500 font-bold">🚨 5분 전 음성 알람 시스템</span>
-                    <span id="global-alarm-status" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded-full font-bold">전체 알람 켜짐</span>
-                </div>
-                <div class="space-x-2 flex flex-wrap gap-2">
-                    <button onclick="testBossAlarmVoice()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-sm font-semibold">🔊 테스트</button>
-                    <button onclick="testVoice()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-sm font-semibold">음성 테스트</button>
-                    <button onclick="setAllAlarm(true)" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded text-sm font-semibold">전체 켜기</button>
-                    <button onclick="setAllAlarm(false)" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm font-semibold">전체 끄기</button>
                 </div>
             </div>
             <div id="boss-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
@@ -355,91 +190,21 @@
         <!-- 4. 참여율 조회 탭 -->
         <section id="tab-history" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">🔍 클랜원 상세 참여율 조회</h2>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex flex-col md:flex-row gap-3">
-                <input type="text" id="search-keyword" placeholder="조회할 클랜원 닉네임 입력" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm flex-grow focus:outline-none focus:border-red-500">
-                <button onclick="searchMemberHistory()" class="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded text-sm font-bold">검색</button>
-            </div>
-            <div id="search-result-container" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow text-gray-400 text-sm">
-                닉네임을 입력하고 검색 버튼을 눌러주세요.
-            </div>
         </section>
 
         <!-- 5. 금고템 보유 탭 -->
         <section id="tab-vault" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">📦 클랜 금고템 보유 현황</h2>
-            
-            <div id="admin-vault-add-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <div class="font-bold text-white text-sm">➕ 아이템 등록 / 수량 추가</div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <input type="text" id="vault-name" placeholder="아이템 이름" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500 md:col-span-1">
-                    <input type="number" id="vault-count" value="1" min="1" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
-                    <input type="text" id="vault-memo" placeholder="메모" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500">
-                    <button onclick="addVaultItem()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold rounded p-3 text-sm transition">아이템 추가</button>
-                </div>
-            </div>
-
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow">
-                <h3 class="text-lg font-bold text-white mb-4">현재 보유 중인 금고 리스트</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead>
-                            <tr class="border-b border-gray-800 text-gray-400">
-                                <th class="py-3 px-4">아이템 이름</th>
-                                <th class="py-3 px-4">보유 수량</th>
-                                <th class="py-3 px-4">메모</th>
-                                <th class="py-3 px-4 text-center admin-col-header">수량 조절 / 삭제</th>
-                            </tr>
-                        </thead>
-                        <tbody id="vault-table-body">
-                            <tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 금고 아이템이 없습니다.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </section>
 
         <!-- 6. 다이아 분배 탭 -->
         <section id="tab-dia" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">💎 클랜 다이아 분배 시스템</h2>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-                    <div class="w-full md:w-2/3 space-y-2">
-                        <label class="text-sm font-bold text-amber-400">분배할 총 다이아 입력</label>
-                        <input type="number" id="total-dia-input" placeholder="예: 10000" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-500" oninput="calculateDiaDistribution()">
-                    </div>
-                    <div class="w-full md:w-1/3 flex items-end">
-                        <button onclick="calculateDiaDistribution()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded text-sm transition mt-6 md:mt-0">분배 계산하기</button>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <h3 class="text-lg font-bold text-white">📊 다이아 분배 결과 리스트</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead>
-                            <tr class="border-b border-gray-800 text-gray-400">
-                                <th class="py-3 px-4">닉네임</th>
-                                <th class="py-3 px-4">클래스</th>
-                                <th class="py-3 px-4">전투력</th>
-                                <th class="py-3 px-4">역할</th>
-                                <th class="py-3 px-4 text-amber-400">분배받을 다이아</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dia-table-body">
-                            <tr><td colspan="5" class="py-6 text-center text-gray-500">총 다이아 수량을 입력하고 계산하기 버튼을 눌러주세요.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </section>
 
     </main>
 
     <script>
-        let currentUserRole = localStorage.getItem('vampirUserRole') || 'staff'; 
-        let adminPasswords = JSON.parse(localStorage.getItem('vampirAdminPw')) || { '13': '', '21': '' };
-        let isAttendanceActive = localStorage.getItem('vampirAttendanceActive') !== 'false';
-        
         let rawMembers = JSON.parse(localStorage.getItem('vampirClanMembers')) || [];
         let clanMembers = rawMembers.map(m => ({
             ...m,
@@ -448,19 +213,6 @@
             power: Number(m.power) || 0
         }));
 
-        let attendanceLogs = JSON.parse(localStorage.getItem('vampirAttendanceLogs')) || [];
-        let vaultItems = JSON.parse(localStorage.getItem('vampirVaultItems')) || [];
-
-        const defaultNoticeText = 
-`13시 / 21시 게헨나: 매일 있음 (14일 × 2점 = 28점)
-클랜임무 / 클랜수호: 목요일마다 있음 (2점)
-에노크 / 마슈미드: 토요일마다 있음 (2점)
-점령전: 토요일마다 있음 (2점)
-쟁탈전, 전초전: 섀플 첫주마다 있음 (1점)
-도합: 총점 35점`;
-
-        let savedNoticeText = localStorage.getItem('vampirNoticeText') || defaultNoticeText;
-        
         let bossList = JSON.parse(localStorage.getItem('vampirBossList'));
         if (!bossList || bossList.length === 0) {
             bossList = [
@@ -495,7 +247,6 @@
             }
         }
 
-        // 클랜원 추가 함수
         function addClanMember() {
             const nameInput = document.getElementById('new-member-name');
             const classSelect = document.getElementById('new-member-class');
@@ -527,22 +278,18 @@
             });
 
             localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
-
             nameInput.value = '';
             powerInput.value = '';
-
             renderMembers();
-            updateAttendanceNicknameDropdown();
             alert(`[${name}] 클랜원이 등록되었습니다.`);
         }
 
-        // 클랜원 정보 수정 함수
         function editClanMember(id) {
             const member = clanMembers.find(m => m.id === id);
             if (!member) return;
 
             const newName = prompt('수정할 닉네임을 입력하세요:', member.name);
-            if (newName === null) return; // 취소 버튼
+            if (newName === null) return;
             
             const trimmedName = newName.trim();
             if (!trimmedName) {
@@ -550,14 +297,13 @@
                 return;
             }
 
-            // 중복 검사 (자기 자신 제외)
             if (clanMembers.some(m => m.id !== id && m.name === trimmedName)) {
                 alert('이미 존재하는 닉네임입니다.');
                 return;
             }
 
             const classes = ['아카샤', '바이퍼', '카니지', '블러드스테인', '그림리퍼'];
-            const newCls = prompt(`클래스를 선택 또는 입력하세요\n(가능한 클래스: ${classes.join(', ')})`, member.cls);
+            const newCls = prompt(`클래스를 선택 또는 입력하세요\n(${classes.join(', ')})`, member.cls);
             if (newCls === null) return;
 
             const newPowerStr = prompt('전투력을 입력하세요:', member.power);
@@ -565,11 +311,11 @@
             const newPower = Number(newPowerStr) || 0;
 
             const roles = ['일반', '운영진', '클마'];
-            const newRole = prompt(`역할을 입력하세요\n(가능한 역할: ${roles.join(', ')})`, member.role);
+            const newRole = prompt(`역할을 입력하세요\n(일반, 운영진, 클마)`, member.role);
             if (newRole === null) return;
 
             if (!roles.includes(newRole.trim())) {
-                alert('올바르지 않은 역할입니다. (일반, 운영진, 클마 중 입력)');
+                alert('올바르지 않은 역할입니다.');
                 return;
             }
 
@@ -580,20 +326,16 @@
 
             localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
             renderMembers();
-            updateAttendanceNicknameDropdown();
             alert('클랜원 정보가 수정되었습니다.');
         }
 
-        // 클랜원 삭제 함수
         function deleteClanMember(id) {
             if (!confirm('정말 이 클랜원을 삭제하시겠습니까?')) return;
             clanMembers = clanMembers.filter(m => m.id !== id);
             localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
             renderMembers();
-            updateAttendanceNicknameDropdown();
         }
 
-        // 명단 렌더링 함수
         function renderMembers() {
             const staffTbody = document.getElementById('staff-table-body');
             const memberTbody = document.getElementById('member-table-body');
@@ -607,7 +349,6 @@
             document.getElementById('staff-total-count').textContent = `총 ${staffList.length}명`;
             document.getElementById('member-total-count').textContent = `총 ${normalList.length}명`;
 
-            // 운영진/클마 테이블 렌더링
             if (staffList.length === 0) {
                 staffTbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500">등록된 클마 및 운영진이 없습니다.</td></tr>`;
             } else {
@@ -629,7 +370,6 @@
                 staffTbody.innerHTML = html;
             }
 
-            // 일반 클랜원 테이블 렌더링
             if (normalList.length === 0) {
                 memberTbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500">등록된 일반 클랜원이 없습니다.</td></tr>`;
             } else {
@@ -652,129 +392,74 @@
             }
         }
 
-        function updateAttendanceNicknameDropdown() {
-            const attSelect = document.getElementById('att-nickname');
-            if (!attSelect) return;
-            let optHtml = '<option value="">-- 명단에서 닉네임을 선택하세요 --</option>';
-            clanMembers.forEach(m => {
-                optHtml += `<option value="${m.name}">${m.name} (${m.cls})</option>`;
-            });
-            attSelect.innerHTML = optHtml;
-        }
+        function addNewBoss() {
+            const nameInput = document.getElementById('new-boss-name');
+            const timeInput = document.getElementById('new-boss-time');
+            const memoInput = document.getElementById('new-boss-memo');
 
-        function checkAttendanceWithPw(category, groupName, labelName, pwKey) {
-            const nickname = document.getElementById('att-nickname').value;
-            const inputPw = document.getElementById('att-input-pw').value;
+            const name = nameInput.value.trim();
+            const time = timeInput.value;
+            const memo = memoInput.value.trim();
 
-            if (!nickname) {
-                alert('본인 닉네임을 선택해주세요.');
+            if (!name) {
+                alert('보스 이름을 입력해주세요.');
+                nameInput.focus();
                 return;
             }
-            const currentPw = adminPasswords[pwKey];
-            if (currentPw && currentPw.trim() !== '' && inputPw !== currentPw) {
-                alert(`${pwKey}시 타임 인증 비밀번호가 일치하지 않습니다.`);
+            if (!time) {
+                alert('출몰 시간을 선택해주세요.');
+                timeInput.focus();
                 return;
             }
 
-            const todayStr = new Date().toISOString().split('T')[0];
-            const exists = attendanceLogs.find(l => l.date === todayStr && l.nickname === nickname && l.category === category);
-            if (exists) {
-                alert('이미 해당 항목에 출석 체크를 완료했습니다.');
-                return;
-            }
-
-            attendanceLogs.push({
+            bossList.push({
                 id: Date.now() + Math.random(),
-                date: todayStr,
-                nickname: nickname,
-                category: category,
-                group: groupName,
-                label: labelName
+                name: name,
+                time: time,
+                memo: memo,
+                alarmOn: true
             });
 
-            localStorage.setItem('vampirAttendanceLogs', JSON.stringify(attendanceLogs));
-            alert(`[${labelName}] 출석이 완료되었습니다.`);
-            document.getElementById('att-input-pw').value = '';
-            renderAttendanceTable();
+            localStorage.setItem('vampirBossList', JSON.stringify(bossList));
+            nameInput.value = '';
+            timeInput.value = '';
+            memoInput.value = '';
+            renderBossList();
+            alert(`[${name}] 보스가 등록되었습니다.`);
         }
 
-        function checkAttendance(category, groupName, labelName) {
-            const nickname = document.getElementById('att-nickname').value;
-            if (!nickname) {
-                alert('본인 닉네임을 선택해주세요.');
+        function deleteBoss(id) {
+            if (!confirm('이 보스를 삭제하시겠습니까?')) return;
+            bossList = bossList.filter(b => b.id !== id);
+            localStorage.setItem('vampirBossList', JSON.stringify(bossList));
+            renderBossList();
+        }
+
+        function renderBossList() {
+            const container = document.getElementById('boss-container');
+            if (!container) return;
+
+            if (bossList.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-6 text-center text-gray-500 bg-gray-900 border border-gray-800 rounded-xl">등록된 보스가 없습니다.</div>`;
                 return;
             }
 
-            const todayStr = new Date().toISOString().split('T')[0];
-            const exists = attendanceLogs.find(l => l.date === todayStr && l.nickname === nickname && l.category === category);
-            if (exists) {
-                alert('이미 해당 항목에 출석 체크를 완료했습니다.');
-                return;
-            }
-
-            attendanceLogs.push({
-                id: Date.now() + Math.random(),
-                date: todayStr,
-                nickname: nickname,
-                category: category,
-                group: groupName,
-                label: labelName
-            });
-
-            localStorage.setItem('vampirAttendanceLogs', JSON.stringify(attendanceLogs));
-            alert(`[${labelName}] 출석이 완료되었습니다.`);
-            renderAttendanceTable();
-        }
-
-        function getEffectiveGroupCount(logs, nickname, groupName) {
-            const userLogs = logs.filter(l => l.nickname === nickname && l.group === groupName);
-            if (groupName === '13시타임' || groupName === '21시타임') {
-                const hasStart = userLogs.some(l => l.category.includes('시작전'));
-                const hasMid = userLogs.some(l => l.category.includes('3층전'));
-                const hasEnd = userLogs.some(l => l.category.includes('끝'));
-                return (hasStart && hasMid && hasEnd) ? 1 : 0;
-            } else {
-                return userLogs.length;
-            }
-        }
-
-        function renderAttendanceTable() {
-            const tbody = document.getElementById('attendance-table-body');
-            if (!tbody) return;
-
-            if (clanMembers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-gray-500">등록된 클랜원이 없습니다.</td></tr>`;
-                return;
-            }
-
-            const todayStr = new Date().toISOString().split('T')[0];
             let html = '';
-
-            clanMembers.forEach(m => {
-                const userLogsToday = attendanceLogs.filter(l => l.date === todayStr && l.nickname === m.name);
-                
-                const c13 = getEffectiveGroupCount(userLogsToday, m.name, '13시타임');
-                const c21 = getEffectiveGroupCount(userLogsToday, m.name, '21시타임');
-                const cSpecial = getEffectiveGroupCount(userLogsToday, m.name, 'special');
-                const cWar = getEffectiveGroupCount(userLogsToday, m.name, 'war');
-                const cMission = getEffectiveGroupCount(userLogsToday, m.name, 'mission');
-                
-                const totalScore = c13 + c21 + cSpecial + cWar + cMission;
-
+            bossList.forEach(b => {
                 html += `
-                    <tr class="border-b border-gray-800 hover:bg-gray-850">
-                        <td class="py-3 px-2 font-bold text-white">${m.name}</td>
-                        <td class="py-3 px-2 text-amber-400 font-bold">${totalScore}점</td>
-                        <td class="py-3 px-2 text-xs text-gray-300">오늘 완료된 항목 있음</td>
-                        <td class="py-3 px-2 text-xs">${c13 > 0 ? '✔️ 13시완료' : '-'} / ${c21 > 0 ? '✔️ 21시완료' : '-'}</td>
-                        <td class="py-3 px-2 text-xs">${cSpecial}건</td>
-                        <td class="py-3 px-2 text-xs">${cWar}건</td>
-                        <td class="py-3 px-2 text-xs">${cMission}건</td>
-                        <td class="py-3 px-2 text-xs text-gray-400">상세내역보기</td>
-                    </tr>
+                    <div class="bg-gray-900 border border-gray-800 p-5 rounded-xl shadow space-y-3 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <h3 class="font-bold text-white text-base">${b.name}</h3>
+                                <button onclick="deleteBoss(${b.id})" class="text-gray-500 hover:text-red-400 text-xs">삭제</button>
+                            </div>
+                            <p class="text-2xl font-bold text-amber-400 mt-2">${b.time}</p>
+                            <p class="text-xs text-gray-400 mt-1">메모: ${b.memo || '없음'}</p>
+                        </div>
+                    </div>
                 `;
             });
-            tbody.innerHTML = html;
+            container.innerHTML = html;
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -783,14 +468,8 @@
             const dateEl = document.getElementById('dashboard-date');
             if (dateEl) dateEl.textContent = dateString;
 
-            const noticeDisplay = document.getElementById('notice-content-display');
-            if (noticeDisplay) {
-                noticeDisplay.textContent = savedNoticeText;
-            }
-
             renderMembers();
-            updateAttendanceNicknameDropdown();
-            renderAttendanceTable();
+            renderBossList();
             switchTab('dashboard');
         });
     </script>
