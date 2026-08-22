@@ -7,15 +7,37 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style> body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Malgun Gothic', sans-serif; } </style>
 </head>
-<body class="min-h-screen flex flex-row">
+<body class="min-h-screen flex flex-col md:flex-row">
 
-    <!-- 사이드바 (모바일/PC 동일하게 항상 표시) -->
-    <aside id="sidebar" class="w-64 bg-gray-900 border-r border-gray-800 flex flex-col shrink-0 min-h-screen">
-        <div class="p-6 border-b border-gray-800 flex items-center space-x-2">
-            <span class="text-red-500 text-xl font-bold">🛡️</span>
-            <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
+    <!-- 모바일 상단 헤더 (모바일에서만 보임) -->
+    <header class="md:hidden bg-gray-900 border-b border-gray-800 p-4 flex items-center justify-between z-30 sticky top-0">
+        <div class="flex items-center space-x-2">
+            <span class="text-red-500 text-lg font-bold">🛡️</span>
+            <span class="text-white font-bold text-base tracking-wider">뱀피르 독도</span>
         </div>
-        <nav class="p-4 space-y-2">
+        <button onclick="toggleMobileSidebar()" class="text-gray-300 hover:text-white p-2 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </header>
+
+    <!-- 모바일 배경 어둡게 처리하는 오버레이 -->
+    <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
+
+    <!-- 사이드바 (PC: 항상 표시 / 모바일: 토글형 드로어) -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-800 flex flex-col transform -translate-x-full md:translate-x-0 md:static transition-transform duration-200 ease-in-out shrink-0 min-h-screen">
+        <div class="p-6 border-b border-gray-800 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="text-red-500 text-xl font-bold">🛡️</span>
+                <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
+            </div>
+            <!-- 모바일용 닫기 버튼 -->
+            <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-400 hover:text-white">
+                ✕
+            </button>
+        </div>
+        <nav class="p-4 space-y-2 overflow-y-auto flex-grow">
             <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white">대시보드</button>
             <button onclick="switchTab('notice')" id="nav-notice" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800">공지사항</button>
             <button onclick="switchTab('attendance')" id="nav-attendance" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800">출석 체크</button>
@@ -277,6 +299,14 @@
     </main>
 
     <script>
+        // 모바일 사이드바 열고 닫기 함수
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('aside nav button').forEach(btn => {
@@ -292,6 +322,16 @@
             }
             if(tabId === 'dia') {
                 calculateDiaDistribution();
+            }
+
+            // 모바일 화면에서 메뉴를 누르면 자동으로 사이드바가 닫히도록 처리
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
             }
         }
 
@@ -555,79 +595,148 @@
             tbody.innerHTML = '';
 
             const nicknames = Object.keys(seasonTotalScores);
-            if(nicknames.length === 0 && todayLogs.length === 0) {
+            if(nicknames.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-gray-500">기록된 출석 데이터가 없습니다.</td></tr>`;
-                document.getElementById('dashboard-total-rate').innerText = `0명 참여 중`;
-                document.getElementById('dashboard-today-avg-rate').innerText = `(평균 참여율: 0.0%)`;
+                updateDashboard(0, 0, {});
+                renderSeasonHistory();
                 return;
             }
 
-            let allNicks = new Set([...Object.keys(memberMap), ...Object.keys(seasonTotalScores)]);
-            let todayParticipantCount = 0;
-            let totalTodayRateSum = 0;
+            let todayParticipatedCount = 0;
 
-            allNicks.forEach(nick => {
-                let score = seasonTotalScores[nick] || 0;
-                let rate = ((score / 42) * 100).toFixed(1);
-                
-                let todayLogsList = memberMap[nick] || [];
-                let hasToday = todayLogsList.length > 0;
-                if(hasToday) {
-                    todayParticipantCount++;
-                    totalTodayRateSum += Number(rate);
-                }
+            nicknames.forEach(nick => {
+                const seasonScore = seasonTotalScores[nick] || 0;
+                const seasonRate = ((seasonScore / 42) * 100).toFixed(1);
 
-                let c13Done = todayLogsList.some(l => l.groupName === '13시타임') ? '✅' : '❌';
-                let specialDone = todayLogsList.some(l => l.groupName === 'special') ? '✅' : '❌';
-                let warDone = todayLogsList.some(l => l.groupName === 'war') ? '✅' : '❌';
-                let missionDone = todayLogsList.some(l => l.groupName === 'mission') ? '✅' : '❌';
-                let details = todayLogsList.map(l => `${l.buttonLabel}(${l.time})`).join(', ') || '기록 없음';
+                const tLogs = memberMap[nick] || [];
+                const hasToday = tLogs.length > 0;
+                if(hasToday) todayParticipatedCount++;
+
+                let c13Done = tLogs.filter(l => l.groupName === '13시타임').length >= 3;
+                let c21Done = tLogs.filter(l => l.groupName === '21시타임').length >= 3;
+                let specialDone = tLogs.filter(l => l.groupName === 'special').length >= 2;
+                let warDone = tLogs.filter(l => l.groupName === 'war').length >= 3;
+                let missionDone = tLogs.filter(l => l.groupName === 'mission').length >= 2;
+
+                const badge = (done, label) => `<span class="px-2 py-1 rounded text-xs font-bold ${done ? 'bg-green-900 text-green-300 border border-green-700' : 'bg-gray-800 text-gray-500'}">${label}</span>`;
+
+                const detailsHtml = tLogs.map(l => `<span class="inline-block bg-gray-800 text-gray-300 text-xs px-2 py-0.5 rounded mr-1 mb-1">${l.buttonLabel} (${l.time})</span>`).join('');
 
                 tbody.innerHTML += `
-                    <tr class="border-b border-gray-800 text-gray-300">
-                        <td class="py-3 px-2 font-bold text-white">${nick} <span class="text-xs text-amber-400">(${score}점 / ${rate}%)</span></td>
-                        <td class="py-3 px-2">${hasToday ? '<span class="text-green-400 font-bold">참여 완료</span>' : '<span class="text-gray-500">미참여</span>'}</td>
-                        <td class="py-3 px-2">${c13Done}</td>
-                        <td class="py-3 px-2">${specialDone}</td>
-                        <td class="py-3 px-2">${warDone}</td>
-                        <td class="py-3 px-2">${missionDone}</td>
-                        <td class="py-3 px-2 text-xs text-gray-400">${details}</td>
+                    <tr class="border-b border-gray-800 hover:bg-gray-850">
+                        <td class="py-3 px-2 font-bold text-white">
+                            ${nick} <br>
+                            <span class="text-xs text-amber-400 font-normal">시즌 점수: ${seasonScore}점 (${seasonRate}%)</span>
+                        </td>
+                        <td class="py-3 px-2">
+                            ${hasToday ? '<span class="text-green-400 font-bold">참여 완료</span>' : '<span class="text-gray-500">미참여</span>'}
+                        </td>
+                        <td class="py-3 px-2 space-x-1">
+                            ${badge(c13Done, '13시')} ${badge(c21Done, '21시')}
+                        </td>
+                        <td class="py-3 px-2">
+                            ${badge(specialDone, '에노크/마슈')}
+                        </td>
+                        <td class="py-3 px-2">
+                            ${badge(warDone, '쟁탈/점령/전초')}
+                        </td>
+                        <td class="py-3 px-2">
+                            ${badge(missionDone, '임무/수호')}
+                        </td>
+                        <td class="py-3 px-2 max-w-xs truncate">
+                            ${detailsHtml || '<span class="text-gray-600 text-xs">내역 없음</span>'}
+                        </td>
                     </tr>
                 `;
             });
 
-            document.getElementById('dashboard-total-rate').innerText = `${todayParticipantCount}명 참여 중`;
-            let avgRate = todayParticipantCount > 0 ? (totalTodayRateSum / todayParticipantCount).toFixed(1) : '0.0';
-            document.getElementById('dashboard-today-avg-rate').innerText = `(평균 참여율: ${avgRate}%)`;
-            
-            renderSeasonHistory(seasonDaysMap, seasonTotalScores);
+            updateDashboard(todayParticipatedCount, nicknames.length, seasonTotalScores);
+            renderSeasonHistory();
         }
 
-        function renderSeasonHistory(seasonDaysMap, seasonTotalScores) {
+        function updateDashboard(todayCount, totalMembers, seasonScores) {
+            const totalRateEl = document.getElementById('dashboard-total-rate');
+            const avgRateEl = document.getElementById('dashboard-today-avg-rate');
+            if(totalRateEl) {
+                totalRateEl.innerText = `${todayCount}명 참여 중 (총 클랜원 ${totalMembers}명 등록됨)`;
+            }
+            if(avgRateEl && totalMembers > 0) {
+                let totalScoreSum = 0;
+                Object.values(seasonScores).forEach(s => totalScoreSum += s);
+                let maxPossible = totalMembers * 42;
+                let avgSeasonRate = maxPossible > 0 ? ((totalScoreSum / maxPossible) * 100).toFixed(1) : 0;
+                avgRateEl.innerText = `(시즌 전체 평균 달성률: ${avgSeasonRate}%)`;
+            }
+        }
+
+        function renderSeasonHistory() {
             const container = document.getElementById('season-history-container');
             if(!container) return;
-            
-            const dates = Object.keys(seasonDaysMap).sort().reverse();
-            if(dates.length === 0) {
+            container.innerHTML = '';
+
+            let seasonsMap = {};
+            attendanceLogs.forEach(log => {
+                const sInfo = getSeasonStartAndEnd(log.date);
+                if(!seasonsMap[sInfo.seasonName]) {
+                    seasonsMap[sInfo.seasonName] = [];
+                }
+                seasonsMap[sInfo.seasonName].push(log);
+            });
+
+            const seasonNames = Object.keys(seasonsMap).sort().reverse();
+            if(seasonNames.length === 0) {
                 container.innerHTML = `<p class="py-6 text-center text-gray-500">저장된 출석 기록이 없습니다.</p>`;
                 return;
             }
 
-            container.innerHTML = '';
-            dates.forEach(date => {
-                let dayScores = calculateDayScore(seasonDaysMap[date]);
-                let participants = Object.keys(dayScores);
-                
-                let listHtml = participants.map(p => `<span class="bg-gray-800 px-2.5 py-1 rounded text-xs text-gray-200">${p} (${dayScores[p]}점)</span>`).join(' ');
+            seasonNames.forEach(seasonName => {
+                const sLogs = seasonsMap[seasonName];
+                let daysMap = {};
+                sLogs.forEach(l => {
+                    if(!daysMap[l.date]) daysMap[l.date] = [];
+                    daysMap[l.date].push(l);
+                });
+
+                let seasonScores = {};
+                Object.keys(daysMap).forEach(date => {
+                    let dScores = calculateDayScore(daysMap[date]);
+                    Object.keys(dScores).forEach(nick => {
+                        seasonScores[nick] = (seasonScores[nick] || 0) + dScores[nick];
+                    });
+                });
+
+                let memberRows = '';
+                Object.keys(seasonScores).sort((a,b) => seasonScores[b] - seasonScores[a]).forEach(nick => {
+                    let score = seasonScores[nick];
+                    let rate = ((score / 42) * 100).toFixed(1);
+                    memberRows += `
+                        <tr class="border-b border-gray-800 text-xs">
+                            <td class="py-2 px-3 text-white font-bold">${nick}</td>
+                            <td class="py-2 px-3 text-amber-400 font-bold">${score}점</td>
+                            <td class="py-2 px-3 text-green-400 font-bold">${rate}%</td>
+                        </tr>
+                    `;
+                });
 
                 container.innerHTML += `
-                    <div class="bg-gray-850 p-4 rounded-xl border border-gray-800 space-y-2">
-                        <div class="flex justify-between items-center text-sm font-bold text-blue-400">
-                            <span>📅 ${date} 출석 현황</span>
-                            <span class="text-xs text-gray-400">총 ${participants.length}명 참여</span>
+                    <div class="bg-gray-850 border border-gray-800 rounded-xl p-4 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-amber-400 font-bold text-sm">🛡️ 시즌 기간: ${seasonName}</span>
+                            <span class="text-xs text-gray-400">총 참여 인원: ${Object.keys(seasonScores).length}명</span>
                         </div>
-                        <div class="flex flex-wrap gap-2 pt-1">
-                            ${listHtml || '<span class="text-xs text-gray-500">참여자 없음</span>'}
+                        <div class="overflow-x-auto max-h-48">
+                            <table class="w-full text-left whitespace-nowrap">
+                                <thead>
+                                    <tr class="text-gray-500 text-xs border-b border-gray-800">
+                                        <th class="py-1 px-3">닉네임</th>
+                                        <th class="py-1 px-3">누적 점수</th>
+                                        <th class="py-1 px-3">시즌 달성률</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${memberRows}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 `;
@@ -636,28 +745,56 @@
 
         function searchMemberHistory() {
             const keyword = document.getElementById('search-keyword').value.trim();
-            const resultContainer = document.getElementById('search-result-container');
+            const container = document.getElementById('search-result-container');
+            if(!container) return;
+
             if(!keyword) {
-                alert('검색할 닉네임을 입력해주세요!');
+                container.innerHTML = `<span class="text-red-400">검색할 클랜원 닉네임을 입력해주세요.</span>`;
                 return;
             }
 
-            const memberLogs = attendanceLogs.filter(log => log.nickname.includes(keyword));
+            const memberLogs = attendanceLogs.filter(l => l.nickname.includes(keyword));
             if(memberLogs.length === 0) {
-                resultContainer.innerHTML = `<p class="text-red-400">['${keyword}']에 대한 출석 기록이 존재하지 않습니다.</p>`;
+                container.innerHTML = `<span class="text-gray-400">'${keyword}' 클랜원의 출석 기록을 찾을 수 없습니다.</span>`;
                 return;
             }
 
-            let html = `<p class="font-bold text-white mb-3">🔍 '${keyword}' 클랜원의 상세 참여 내역 (총 ${memberLogs.length}건)</p>`;
-            html += `<div class="space-y-2 max-h-60 overflow-y-auto">`;
-            memberLogs.slice().reverse().forEach(log => {
-                html += `<div class="bg-gray-800 p-2.5 rounded text-xs flex justify-between text-gray-300">
-                    <span>날짜: <strong class="text-blue-400">${log.date}</strong> | 항목: <strong class="text-amber-400">${log.buttonLabel}</strong></span>
-                    <span class="text-gray-400">${log.time} 기록</span>
-                </div>`;
+            let sInfo = getSeasonStartAndEnd(getTodayStr());
+            let currentSeasonLogs = memberLogs.filter(l => getSeasonStartAndEnd(l.date).seasonName === sInfo.seasonName);
+
+            let daysMap = {};
+            currentSeasonLogs.forEach(l => {
+                if(!daysMap[l.date]) daysMap[l.date] = [];
+                daysMap[l.date].push(l);
             });
-            html += `</div>`;
-            resultContainer.innerHTML = html;
+
+            let totalScore = 0;
+            Object.keys(daysMap).forEach(date => {
+                let dScores = calculateDayScore(daysMap[date]);
+                if(dScores[keyword]) totalScore += dScores[keyword];
+            });
+
+            let rate = ((totalScore / 42) * 100).toFixed(1);
+
+            let logsHtml = memberLogs.sort((a,b) => new Date(b.date) - new Date(a.date)).map(l => `
+                <div class="bg-gray-800 p-2 rounded flex justify-between items-center text-xs">
+                    <span class="text-white font-bold">${l.date} (${l.time})</span>
+                    <span class="text-amber-400">${l.buttonLabel}</span>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <div class="border-b border-gray-800 pb-3">
+                        <p class="text-lg font-bold text-white">🔍 '${keyword}' 클랜원 조회 결과</p>
+                        <p class="text-xs text-amber-400 mt-1">현재 시즌 누적 점수: <span class="font-bold text-white">${totalScore}점</span> / 만점 42점 (시즌 참여율: <span class="font-bold text-green-400">${rate}%</span>)</p>
+                    </div>
+                    <div class="space-y-2 max-h-60 overflow-y-auto">
+                        <p class="text-xs text-gray-400">전체 상세 참여 내역 (${memberLogs.length}건):</p>
+                        ${logsHtml}
+                    </div>
+                </div>
+            `;
         }
 
         function addVaultItem() {
@@ -687,23 +824,23 @@
             nameInput.value = '';
             countInput.value = '1';
             memoInput.value = '';
-            alert('금고 아이템이 등록/수정되었습니다.');
+            alert(`'${name}' 아이템이 금고에 추가되었습니다.`);
         }
 
-        function adjustVaultCount(index, amount) {
+        function updateVaultCount(index, amount) {
             vaultItems[index].count += amount;
             if(vaultItems[index].count <= 0) {
-                if(confirm(`'${vaultItems[index].name}' 아이템의 수량이 0이 되어 삭제됩니다.`)) {
+                if(confirm(`'${vaultItems[index].name}' 수량이 0이 되었습니다. 삭제하시겠습니까?`)) {
                     vaultItems.splice(index, 1);
                 } else {
-                    vaultItems[index].count = 1;
+                    vaultItems[index].count = 0;
                 }
             }
             saveAndRenderVault();
         }
 
         function deleteVaultItem(index) {
-            if(confirm(`정말 '${vaultItems[index].name}' 아이템을 금고에서 삭제하시겠습니까?`)) {
+            if(confirm(`'${vaultItems[index].name}' 아이템을 금고에서 삭제하시겠습니까?`)) {
                 vaultItems.splice(index, 1);
                 saveAndRenderVault();
             }
@@ -726,14 +863,14 @@
 
             vaultItems.forEach((item, index) => {
                 tbody.innerHTML += `
-                    <tr class="border-b border-gray-800 text-gray-300">
+                    <tr class="border-b border-gray-800 hover:bg-gray-850">
                         <td class="py-3 px-4 font-bold text-white">${item.name}</td>
                         <td class="py-3 px-4 text-amber-400 font-bold">${item.count}개</td>
-                        <td class="py-3 px-4 text-xs text-gray-400">${item.memo || '-'}</td>
-                        <td class="py-3 px-4 text-center space-x-2">
-                            <button onclick="adjustVaultCount(${index}, 1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded text-xs font-bold">+</button>
-                            <button onclick="adjustVaultCount(${index}, -1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded text-xs font-bold">-</button>
-                            <button onclick="deleteVaultItem(${index})" class="bg-red-900 hover:bg-red-800 text-red-200 px-2.5 py-1 rounded text-xs font-bold">삭제</button>
+                        <td class="py-3 px-4 text-gray-400">${item.memo || '-'}</td>
+                        <td class="py-3 px-4 text-center space-x-1">
+                            <button onclick="updateVaultCount(${index}, 1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2 py-1 rounded text-xs font-bold">+</button>
+                            <button onclick="updateVaultCount(${index}, -1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2 py-1 rounded text-xs font-bold">-</button>
+                            <button onclick="deleteVaultItem(${index})" class="bg-red-900 hover:bg-red-800 text-red-200 px-2 py-1 rounded text-xs font-bold">삭제</button>
                         </td>
                     </tr>
                 `;
@@ -741,25 +878,25 @@
         }
 
         function calculateDiaDistribution() {
-            const totalDiaInput = document.getElementById('total-dia-input');
-            const totalDia = parseInt(totalDiaInput.value) || 0;
+            const input = document.getElementById('total-dia-input');
             const tbody = document.getElementById('dia-table-body');
-            if(!tbody) return;
+            if(!input || !tbody) return;
+
+            const totalDia = parseInt(input.value) || 0;
 
             const today = getTodayStr();
             const currentSeason = getSeasonStartAndEnd(today);
             const currentSeasonLogs = attendanceLogs.filter(log => {
-                const logSeason = getSeasonStartAndEnd(log.date);
-                return logSeason.seasonName === currentSeason.seasonName;
+                return getSeasonStartAndEnd(log.date).seasonName === currentSeason.seasonName;
             });
 
-            let seasonTotalScores = {};
             let seasonDaysMap = {};
             currentSeasonLogs.forEach(log => {
                 if(!seasonDaysMap[log.date]) seasonDaysMap[log.date] = [];
                 seasonDaysMap[log.date].push(log);
             });
 
+            let seasonTotalScores = {};
             Object.keys(seasonDaysMap).forEach(date => {
                 let dayScores = calculateDayScore(seasonDaysMap[date]);
                 Object.keys(dayScores).forEach(nick => {
@@ -768,28 +905,27 @@
             });
 
             const nicknames = Object.keys(seasonTotalScores);
-            if(nicknames.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">현재 시즌에 누적된 출석 점수가 없습니다. 출석을 먼저 기록해주세요.</td></tr>`;
+            if(nicknames.length === 0 || totalDia <= 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">현재 시즌에 기록된 점수가 없거나 총 다이아 수량이 입력되지 않았습니다.</td></tr>`;
                 return;
             }
 
             let totalScoreSum = 0;
-            nicknames.forEach(nick => {
-                totalScoreSum += seasonTotalScores[nick];
-            });
+            nicknames.forEach(nick => totalScoreSum += seasonTotalScores[nick]);
 
             tbody.innerHTML = '';
-            nicknames.forEach(nick => {
-                let score = seasonTotalScores[nick];
-                let rate = ((score / 42) * 100).toFixed(1);
-                let assignedDia = totalScoreSum > 0 ? Math.floor((score / totalScoreSum) * totalDia) : 0;
+            nicknames.sort((a,b) => seasonTotalScores[b] - seasonTotalScores[a]).forEach(nick => {
+                const score = seasonTotalScores[nick];
+                const rate = totalScoreSum > 0 ? (score / totalScoreSum) : 0;
+                const assignedDia = Math.floor(totalDia * rate);
+                const seasonRatePct = ((score / 42) * 100).toFixed(1);
 
                 tbody.innerHTML += `
-                    <tr class="border-b border-gray-800 text-gray-300">
+                    <tr class="border-b border-gray-800 hover:bg-gray-850">
                         <td class="py-3 px-4 font-bold text-white">${nick}</td>
-                        <td class="py-3 px-4">${score}점</td>
-                        <td class="py-3 px-4 text-blue-400">${rate}%</td>
-                        <td class="py-3 px-4 text-amber-400 font-bold">${assignedDia.toLocaleString()} 다이아</td>
+                        <td class="py-3 px-4 text-gray-300">${score}점</td>
+                        <td class="py-3 px-4 text-green-400">${seasonRatePct}%</td>
+                        <td class="py-3 px-4 text-amber-400 font-extrabold">${assignedDia.toLocaleString()} 다이아</td>
                     </tr>
                 `;
             });
@@ -797,9 +933,9 @@
 
         window.onload = function() {
             checkAndUpdateDate();
-            renderBossTimer();
             renderAttendance();
             renderVault();
+            renderBossTimer();
             setInterval(renderBossTimer, 1000);
         };
     </script>
