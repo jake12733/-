@@ -513,7 +513,6 @@
                 return;
             }
 
-            // 중복 체크
             if (clanMembers.some(m => m.name === name)) {
                 alert('이미 등록된 닉네임입니다.');
                 return;
@@ -529,13 +528,60 @@
 
             localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
 
-            // 입력창 초기화
             nameInput.value = '';
             powerInput.value = '';
 
             renderMembers();
             updateAttendanceNicknameDropdown();
             alert(`[${name}] 클랜원이 등록되었습니다.`);
+        }
+
+        // 클랜원 정보 수정 함수
+        function editClanMember(id) {
+            const member = clanMembers.find(m => m.id === id);
+            if (!member) return;
+
+            const newName = prompt('수정할 닉네임을 입력하세요:', member.name);
+            if (newName === null) return; // 취소 버튼
+            
+            const trimmedName = newName.trim();
+            if (!trimmedName) {
+                alert('닉네임을 입력해야 합니다.');
+                return;
+            }
+
+            // 중복 검사 (자기 자신 제외)
+            if (clanMembers.some(m => m.id !== id && m.name === trimmedName)) {
+                alert('이미 존재하는 닉네임입니다.');
+                return;
+            }
+
+            const classes = ['아카샤', '바이퍼', '카니지', '블러드스테인', '그림리퍼'];
+            const newCls = prompt(`클래스를 선택 또는 입력하세요\n(가능한 클래스: ${classes.join(', ')})`, member.cls);
+            if (newCls === null) return;
+
+            const newPowerStr = prompt('전투력을 입력하세요:', member.power);
+            if (newPowerStr === null) return;
+            const newPower = Number(newPowerStr) || 0;
+
+            const roles = ['일반', '운영진', '클마'];
+            const newRole = prompt(`역할을 입력하세요\n(가능한 역할: ${roles.join(', ')})`, member.role);
+            if (newRole === null) return;
+
+            if (!roles.includes(newRole.trim())) {
+                alert('올바르지 않은 역할입니다. (일반, 운영진, 클마 중 입력)');
+                return;
+            }
+
+            member.name = trimmedName;
+            member.cls = newCls.trim();
+            member.power = newPower;
+            member.role = newRole.trim();
+
+            localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
+            renderMembers();
+            updateAttendanceNicknameDropdown();
+            alert('클랜원 정보가 수정되었습니다.');
         }
 
         // 클랜원 삭제 함수
@@ -553,7 +599,6 @@
             const memberTbody = document.getElementById('member-table-body');
             if (!staffTbody || !memberTbody) return;
 
-            // 전투력 높은 순 정렬
             clanMembers.sort((a, b) => b.power - a.power);
 
             const staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
@@ -574,7 +619,8 @@
                             <td class="py-3 px-4 text-gray-300">${m.cls}</td>
                             <td class="py-3 px-4 text-blue-400">${m.power.toLocaleString()}</td>
                             <td class="py-3 px-4"><span class="bg-amber-900 text-amber-200 px-2 py-0.5 rounded text-xs font-bold">${m.role}</span></td>
-                            <td class="py-3 px-4 text-center">
+                            <td class="py-3 px-4 text-center space-x-2">
+                                <button onclick="editClanMember(${m.id})" class="bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs">수정</button>
                                 <button onclick="deleteClanMember(${m.id})" class="bg-red-900 hover:bg-red-800 text-red-200 px-3 py-1 rounded text-xs">삭제</button>
                             </td>
                         </tr>
@@ -595,7 +641,8 @@
                             <td class="py-3 px-4 text-gray-300">${m.cls}</td>
                             <td class="py-3 px-4 text-blue-400">${m.power.toLocaleString()}</td>
                             <td class="py-3 px-4"><span class="bg-gray-800 text-gray-300 px-2 py-0.5 rounded text-xs">${m.role}</span></td>
-                            <td class="py-3 px-4 text-center">
+                            <td class="py-3 px-4 text-center space-x-2">
+                                <button onclick="editClanMember(${m.id})" class="bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs">수정</button>
                                 <button onclick="deleteClanMember(${m.id})" class="bg-red-900 hover:bg-red-800 text-red-200 px-3 py-1 rounded text-xs">삭제</button>
                             </td>
                         </tr>
@@ -605,7 +652,6 @@
             }
         }
 
-        // 출석 탭의 닉네임 셀렉트박스 동기화 함수
         function updateAttendanceNicknameDropdown() {
             const attSelect = document.getElementById('att-nickname');
             if (!attSelect) return;
@@ -616,7 +662,6 @@
             attSelect.innerHTML = optHtml;
         }
 
-        // 출석 체크 관련 수정 로직 (13시/21시는 각각 3개 서브 항목이 모두 체크되어야 1카운트 반영)
         function checkAttendanceWithPw(category, groupName, labelName, pwKey) {
             const nickname = document.getElementById('att-nickname').value;
             const inputPw = document.getElementById('att-input-pw').value;
@@ -632,7 +677,6 @@
             }
 
             const todayStr = new Date().toISOString().split('T')[0];
-            
             const exists = attendanceLogs.find(l => l.date === todayStr && l.nickname === nickname && l.category === category);
             if (exists) {
                 alert('이미 해당 항목에 출석 체크를 완료했습니다.');
@@ -682,7 +726,6 @@
             renderAttendanceTable();
         }
 
-        // 13시 / 21시 타임별 완성 여부 계산 함수 (3개 다 눌러야 1카운트)
         function getEffectiveGroupCount(logs, nickname, groupName) {
             const userLogs = logs.filter(l => l.nickname === nickname && l.group === groupName);
             if (groupName === '13시타임' || groupName === '21시타임') {
