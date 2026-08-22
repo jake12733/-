@@ -7,22 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style> body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Malgun Gothic', sans-serif; } </style>
 </head>
-<body class="min-h-screen flex flex-col md:flex-row">
+<body class="min-h-screen flex flex-row">
 
-    <!-- 모바일용 상단바 (모바일에서만 보임) -->
-    <div class="md:hidden bg-gray-900 border-b border-gray-800 p-4 flex justify-between items-center">
-        <div class="flex items-center space-x-2">
-            <span class="text-red-500 text-lg font-bold">🛡️</span>
-            <span class="text-white font-bold text-base">뱀피르 독도</span>
-        </div>
-        <button onclick="toggleMobileMenu()" class="bg-gray-800 text-white px-3 py-1.5 rounded-lg text-sm font-semibold border border-gray-700">
-            ☰ 메뉴 열기
-        </button>
-    </div>
-
-    <!-- 사이드바 -->
-    <aside id="sidebar" class="w-full md:w-64 bg-gray-900 border-r border-gray-800 flex flex-col hidden md:flex shrink-0">
-        <div class="p-6 border-b border-gray-800 hidden md:flex items-center space-x-2">
+    <!-- 사이드바 (모바일/PC 동일하게 항상 표시) -->
+    <aside id="sidebar" class="w-64 bg-gray-900 border-r border-gray-800 flex flex-col shrink-0 min-h-screen">
+        <div class="p-6 border-b border-gray-800 flex items-center space-x-2">
             <span class="text-red-500 text-xl font-bold">🛡️</span>
             <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
         </div>
@@ -288,17 +277,6 @@
     </main>
 
     <script>
-        function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar.classList.contains('hidden')) {
-                sidebar.classList.remove('hidden');
-                sidebar.classList.add('flex', 'absolute', 'z-50', 'w-full', 'h-full', 'bg-gray-900');
-            } else {
-                sidebar.classList.add('hidden');
-                sidebar.classList.remove('flex', 'absolute', 'z-50', 'w-full', 'h-full', 'bg-gray-900');
-            }
-        }
-
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('aside nav button').forEach(btn => {
@@ -314,12 +292,6 @@
             }
             if(tabId === 'dia') {
                 calculateDiaDistribution();
-            }
-
-            // 모바일에서 메뉴를 누르면 자동으로 메뉴 닫기
-            const sidebar = document.getElementById('sidebar');
-            if (window.innerWidth < 768 && !sidebar.classList.contains('hidden')) {
-                toggleMobileMenu();
             }
         }
 
