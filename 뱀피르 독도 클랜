@@ -7,11 +7,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style> body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Malgun Gothic', sans-serif; } </style>
 </head>
-<body class="min-h-screen flex">
+<body class="min-h-screen flex flex-col md:flex-row">
+
+    <!-- 모바일용 상단바 (모바일에서만 보임) -->
+    <div class="md:hidden bg-gray-900 border-b border-gray-800 p-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <span class="text-red-500 text-lg font-bold">🛡️</span>
+            <span class="text-white font-bold text-base">뱀피르 독도</span>
+        </div>
+        <button onclick="toggleMobileMenu()" class="bg-gray-800 text-white px-3 py-1.5 rounded-lg text-sm font-semibold border border-gray-700">
+            ☰ 메뉴 열기
+        </button>
+    </div>
 
     <!-- 사이드바 -->
-    <aside class="w-64 bg-gray-900 border-r border-gray-800 flex flex-col hidden md:flex shrink-0">
-        <div class="p-6 border-b border-gray-800 flex items-center space-x-2">
+    <aside id="sidebar" class="w-full md:w-64 bg-gray-900 border-r border-gray-800 flex flex-col hidden md:flex shrink-0">
+        <div class="p-6 border-b border-gray-800 hidden md:flex items-center space-x-2">
             <span class="text-red-500 text-xl font-bold">🛡️</span>
             <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
         </div>
@@ -27,7 +38,7 @@
     </aside>
 
     <!-- 메인 컨텐츠 -->
-    <main class="flex-grow p-8 space-y-6 overflow-x-hidden">
+    <main class="flex-grow p-4 md:p-8 space-y-6 overflow-x-hidden">
 
         <!-- 1. 대시보드 탭 -->
         <section id="tab-dashboard" class="tab-content space-y-6">
@@ -39,9 +50,9 @@
                 </div>
                 <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow">
                     <p class="text-gray-400 text-sm mb-1">오늘 전체 참여 현황 (기준 총 46명)</p>
-                    <div class="flex items-baseline space-x-3">
+                    <div class="flex flex-col md:flex-row md:items-baseline md:space-x-3">
                         <p id="dashboard-total-rate" class="text-2xl font-bold text-green-400">0명 참여 중</p>
-                        <span id="dashboard-today-avg-rate" class="text-amber-400 font-bold text-sm">(평균 참여율: 0.0%)</span>
+                        <span id="dashboard-today-avg-rate" class="text-amber-400 font-bold text-sm mt-1 md:mt-0">(평균 참여율: 0.0%)</span>
                     </div>
                 </div>
             </div>
@@ -90,7 +101,7 @@
 
         <!-- 2. 출석 체크 탭 -->
         <section id="tab-attendance" class="tab-content hidden space-y-6">
-            <div class="flex justify-between items-center">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
                 <div>
                     <h2 class="text-2xl font-bold text-white">출석 체크</h2>
                     <p id="current-season-info" class="text-xs text-amber-400 mt-1">현재 서버 매칭 기간: 계산 중...</p>
@@ -177,7 +188,7 @@
         <!-- 3. 보탐 타이머 탭 -->
         <section id="tab-boss" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">⏰ 보탐 및 월드보스 타이머 (5분 전 알람)</h2>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex items-center justify-between">
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
                     <span class="text-red-500 font-bold">🚨 5분 전 음성 알람 시스템</span>
                     <span id="global-alarm-status" class="bg-green-600 text-white text-xs px-2.5 py-1 rounded-full font-bold">전체 알람 켜짐</span>
@@ -196,7 +207,7 @@
         <!-- 4. 참여율 조회 탭 -->
         <section id="tab-history" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">🔍 클랜원 상세 참여율 조회</h2>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex gap-3">
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex flex-col md:flex-row gap-3">
                 <input type="text" id="search-keyword" placeholder="조회할 클랜원 닉네임 입력 후 검색" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm flex-grow focus:outline-none focus:border-red-500">
                 <button onclick="searchMemberHistory()" class="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded text-sm font-bold">검색</button>
             </div>
@@ -219,23 +230,25 @@
             </div>
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow">
                 <h3 class="text-lg font-bold text-white mb-4">현재 보유 중인 금고 리스트</h3>
-                <table class="w-full text-left text-sm">
-                    <thead>
-                        <tr class="border-b border-gray-800 text-gray-400">
-                            <th class="py-3 px-4">아이템 이름</th>
-                            <th class="py-3 px-4">보유 수량</th>
-                            <th class="py-3 px-4">메모</th>
-                            <th class="py-3 px-4 text-center">수량 조절 / 삭제</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vault-table-body">
-                        <tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 금고 아이템이 없습니다.</td></tr>
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead>
+                            <tr class="border-b border-gray-800 text-gray-400">
+                                <th class="py-3 px-4">아이템 이름</th>
+                                <th class="py-3 px-4">보유 수량</th>
+                                <th class="py-3 px-4">메모</th>
+                                <th class="py-3 px-4 text-center">수량 조절 / 삭제</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vault-table-body">
+                            <tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 금고 아이템이 없습니다.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
-        <!-- 6. 다이아 분배 탭 (신규 추가) -->
+        <!-- 6. 다이아 분배 탭 -->
         <section id="tab-dia" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">💎 클랜 다이아 분배 시스템</h2>
             
@@ -275,6 +288,17 @@
     </main>
 
     <script>
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex', 'absolute', 'z-50', 'w-full', 'h-full', 'bg-gray-900');
+            } else {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex', 'absolute', 'z-50', 'w-full', 'h-full', 'bg-gray-900');
+            }
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('aside nav button').forEach(btn => {
@@ -290,6 +314,12 @@
             }
             if(tabId === 'dia') {
                 calculateDiaDistribution();
+            }
+
+            // 모바일에서 메뉴를 누르면 자동으로 메뉴 닫기
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth < 768 && !sidebar.classList.contains('hidden')) {
+                toggleMobileMenu();
             }
         }
 
@@ -439,6 +469,7 @@
         }
 
         let attendanceLogs = JSON.parse(localStorage.getItem('vampirAttendanceLogs')) || [];
+        let vaultItems = JSON.parse(localStorage.getItem('vampirVaultItems')) || [];
 
         function checkAttendance(slotKey, groupName, buttonLabel) {
             const nicknameInput = document.getElementById('att-nickname');
@@ -514,14 +545,6 @@
             return scores;
         }
 
-        function getTodayMaxScore() {
-            const todayObj = new Date(getTodayStr() + 'T00:00:00');
-            const dayOfWeek = todayObj.getDay(); 
-            if (dayOfWeek === 4) return 6; 
-            if (dayOfWeek === 6) return 5; 
-            return 2; 
-        }
-
         function renderAttendance() {
             const today = getTodayStr();
             const currentSeason = getSeasonStartAndEnd(today);
@@ -547,124 +570,212 @@
                 });
             });
 
-            const maxPossibleScore = 42; 
-            const todayMaxScore = getTodayMaxScore();
-            const clanTotalMembers = 46; 
-
             let memberMap = {};
-            let memberSummary = {};
-
             todayLogs.forEach(log => {
                 if(!memberMap[log.nickname]) {
                     memberMap[log.nickname] = [];
                 }
-                memberMap[log.nickname].push(`${log.buttonLabel} [${log.time}]`);
-
-                if(!memberSummary[log.nickname]) {
-                    memberSummary[log.nickname] = {
-                        '13시_시작전': false, '13시_3층전': false, '13시_끝': false,
-                        '21시_시작전': false, '21시_3층전': false, '21시_끝': false,
-                        special: { '에노크': false, '마슈미드': false },
-                        war: { '점령전': false, '전초전': false, '쟁탈전': false },
-                        mission: { '클랜임무': false, '클랜수호': false }
-                    };
-                }
-
-                if(log.groupName === '13시타임' || log.groupName === '21시타임') {
-                    memberSummary[log.nickname][log.slotKey] = true;
-                } else if(log.groupName === 'special') {
-                    memberSummary[log.nickname].special[log.slotKey] = true;
-                } else if(log.groupName === 'war') {
-                    memberSummary[log.nickname].war[log.slotKey] = true;
-                } else if(log.groupName === 'mission') {
-                    memberSummary[log.nickname].mission[log.slotKey] = true;
-                }
+                memberMap[log.nickname].push(log);
             });
 
             const tbody = document.getElementById('attendance-table-body');
             if(!tbody) return;
             tbody.innerHTML = '';
 
-            const nicknames = Object.keys(memberMap);
-            let totalTodayScoreSum = 0;
+            const nicknames = Object.keys(seasonTotalScores);
+            if(nicknames.length === 0 && todayLogs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-gray-500">기록된 출석 데이터가 없습니다.</td></tr>`;
+                document.getElementById('dashboard-total-rate').innerText = `0명 참여 중`;
+                document.getElementById('dashboard-today-avg-rate').innerText = `(평균 참여율: 0.0%)`;
+                return;
+            }
 
-            if (nicknames.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-gray-500">오늘 기록된 출석 데이터가 없습니다.</td></tr>`;
+            let allNicks = new Set([...Object.keys(memberMap), ...Object.keys(seasonTotalScores)]);
+            let todayParticipantCount = 0;
+            let totalTodayRateSum = 0;
+
+            allNicks.forEach(nick => {
+                let score = seasonTotalScores[nick] || 0;
+                let rate = ((score / 42) * 100).toFixed(1);
+                
+                let todayLogsList = memberMap[nick] || [];
+                let hasToday = todayLogsList.length > 0;
+                if(hasToday) {
+                    todayParticipantCount++;
+                    totalTodayRateSum += Number(rate);
+                }
+
+                let c13Done = todayLogsList.some(l => l.groupName === '13시타임') ? '✅' : '❌';
+                let specialDone = todayLogsList.some(l => l.groupName === 'special') ? '✅' : '❌';
+                let warDone = todayLogsList.some(l => l.groupName === 'war') ? '✅' : '❌';
+                let missionDone = todayLogsList.some(l => l.groupName === 'mission') ? '✅' : '❌';
+                let details = todayLogsList.map(l => `${l.buttonLabel}(${l.time})`).join(', ') || '기록 없음';
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-800 text-gray-300">
+                        <td class="py-3 px-2 font-bold text-white">${nick} <span class="text-xs text-amber-400">(${score}점 / ${rate}%)</span></td>
+                        <td class="py-3 px-2">${hasToday ? '<span class="text-green-400 font-bold">참여 완료</span>' : '<span class="text-gray-500">미참여</span>'}</td>
+                        <td class="py-3 px-2">${c13Done}</td>
+                        <td class="py-3 px-2">${specialDone}</td>
+                        <td class="py-3 px-2">${warDone}</td>
+                        <td class="py-3 px-2">${missionDone}</td>
+                        <td class="py-3 px-2 text-xs text-gray-400">${details}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('dashboard-total-rate').innerText = `${todayParticipantCount}명 참여 중`;
+            let avgRate = todayParticipantCount > 0 ? (totalTodayRateSum / todayParticipantCount).toFixed(1) : '0.0';
+            document.getElementById('dashboard-today-avg-rate').innerText = `(평균 참여율: ${avgRate}%)`;
+            
+            renderSeasonHistory(seasonDaysMap, seasonTotalScores);
+        }
+
+        function renderSeasonHistory(seasonDaysMap, seasonTotalScores) {
+            const container = document.getElementById('season-history-container');
+            if(!container) return;
+            
+            const dates = Object.keys(seasonDaysMap).sort().reverse();
+            if(dates.length === 0) {
+                container.innerHTML = `<p class="py-6 text-center text-gray-500">저장된 출석 기록이 없습니다.</p>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            dates.forEach(date => {
+                let dayScores = calculateDayScore(seasonDaysMap[date]);
+                let participants = Object.keys(dayScores);
+                
+                let listHtml = participants.map(p => `<span class="bg-gray-800 px-2.5 py-1 rounded text-xs text-gray-200">${p} (${dayScores[p]}점)</span>`).join(' ');
+
+                container.innerHTML += `
+                    <div class="bg-gray-850 p-4 rounded-xl border border-gray-800 space-y-2">
+                        <div class="flex justify-between items-center text-sm font-bold text-blue-400">
+                            <span>📅 ${date} 출석 현황</span>
+                            <span class="text-xs text-gray-400">총 ${participants.length}명 참여</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            ${listHtml || '<span class="text-xs text-gray-500">참여자 없음</span>'}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function searchMemberHistory() {
+            const keyword = document.getElementById('search-keyword').value.trim();
+            const resultContainer = document.getElementById('search-result-container');
+            if(!keyword) {
+                alert('검색할 닉네임을 입력해주세요!');
+                return;
+            }
+
+            const memberLogs = attendanceLogs.filter(log => log.nickname.includes(keyword));
+            if(memberLogs.length === 0) {
+                resultContainer.innerHTML = `<p class="text-red-400">['${keyword}']에 대한 출석 기록이 존재하지 않습니다.</p>`;
+                return;
+            }
+
+            let html = `<p class="font-bold text-white mb-3">🔍 '${keyword}' 클랜원의 상세 참여 내역 (총 ${memberLogs.length}건)</p>`;
+            html += `<div class="space-y-2 max-h-60 overflow-y-auto">`;
+            memberLogs.slice().reverse().forEach(log => {
+                html += `<div class="bg-gray-800 p-2.5 rounded text-xs flex justify-between text-gray-300">
+                    <span>날짜: <strong class="text-blue-400">${log.date}</strong> | 항목: <strong class="text-amber-400">${log.buttonLabel}</strong></span>
+                    <span class="text-gray-400">${log.time} 기록</span>
+                </div>`;
+            });
+            html += `</div>`;
+            resultContainer.innerHTML = html;
+        }
+
+        function addVaultItem() {
+            const nameInput = document.getElementById('vault-name');
+            const countInput = document.getElementById('vault-count');
+            const memoInput = document.getElementById('vault-memo');
+
+            const name = nameInput.value.trim();
+            const count = parseInt(countInput.value) || 1;
+            const memo = memoInput.value.trim();
+
+            if(!name) {
+                alert('아이템 이름을 입력해주세요!');
+                nameInput.focus();
+                return;
+            }
+
+            const existing = vaultItems.find(item => item.name === name);
+            if(existing) {
+                existing.count += count;
+                if(memo) existing.memo = memo;
             } else {
-                nicknames.forEach(nick => {
-                    const records = memberMap[nick];
-                    const sum = memberSummary[nick];
-                    const seasonScore = seasonTotalScores[nick] || 0;
-                    
-                    const attendanceRate = ((seasonScore / maxPossibleScore) * 100).toFixed(1);
-
-                    let count13 = (sum['13시_시작전'] && sum['13시_3층전'] && sum['13시_끝']) ? 1 : 0;
-                    let count21 = (sum['21시_시작전'] && sum['21시_3층전'] && sum['21시_끝']) ? 1 : 0;
-
-                    let raw13Count = (sum['13시_시작전']?1:0) + (sum['13시_3층전']?1:0) + (sum['13시_끝']?1:0);
-                    let raw21Count = (sum['21시_시작전']?1:0) + (sum['21시_3층전']?1:0) + (sum['21시_끝']?1:0);
-                    const timeSummaryStr = `13시 (${raw13Count}/3 완료${count13 ? ' ✅인정' : ''}) / 21시 (${raw21Count}/3 완료${count21 ? ' ✅인정' : ''})`;
-
-                    const enochDone = sum.special['에노크'] ? 1 : 0;
-                    const mashDone = sum.special['마슈미드'] ? 1 : 0;
-                    const specialSetDone = (enochDone && mashDone) ? 1 : 0;
-                    const specialStr = `에노크(${enochDone ? 'O' : 'X'}) / 마슈미드(${mashDone ? 'O' : 'X'}) → ${specialSetDone ? '✅ 1회 인정' : '미완료'}`;
-
-                    const occupyDone = sum.war['점령전'] ? 1 : 0;
-                    const outpostsDone = sum.war['전초전'] ? 1 : 0;
-                    const battleDone = sum.war['쟁탈전'] ? 1 : 0;
-                    const warSetDone = (occupyDone && outpostsDone && battleDone) ? 1 : 0;
-                    const warStr = `쟁탈전(${battleDone ? 'O' : 'X'}) / 점령전(${occupyDone ? 'O' : 'X'}) / 전초전(${outpostsDone ? 'O' : 'X'}) → ${warSetDone ? '✅ 1회 인정' : '미완료'}`;
-
-                    const missionDone = sum.mission['클랜임무'] ? 1 : 0;
-                    const guardDone = sum.mission['클랜수호'] ? 1 : 0;
-                    const missionSetDone = (missionDone && guardDone) ? 1 : 0;
-                    const missionStr = `클랜임무(${missionDone ? 'O' : 'X'}) / 클랜수호(${guardDone ? 'O' : 'X'}) → ${missionSetDone ? '✅ 1회 인정' : '미완료'}`;
-
-                    const todayTotalScore = count13 + count21 + specialSetDone + warSetDone + missionSetDone;
-                    totalTodayScoreSum += todayTotalScore;
-
-                    const recordsText = records.join(', ');
-
-                    tbody.innerHTML += `
-                        <tr class="border-b border-gray-800 hover:bg-gray-850 transition">
-                            <td class="py-3 px-2 text-white font-medium">${nick} <span class="text-xs text-blue-400 font-bold">(시즌 총 ${seasonScore}점 / 참여율 ${attendanceRate}%)</span></td>
-                            <td class="py-3 px-2 text-green-400 font-bold">오늘 ${todayTotalScore}점 획득</td>
-                            <td class="py-3 px-2 text-amber-400 text-xs">${timeSummaryStr}</td>
-                            <td class="py-3 px-2 text-orange-400 text-xs">${specialStr}</td>
-                            <td class="py-3 px-2 text-purple-400 text-xs">${warStr}</td>
-                            <td class="py-3 px-2 text-emerald-400 text-xs">${missionStr}</td>
-                            <td class="py-3 px-2 text-gray-300 text-xs max-w-xs truncate cursor-pointer" title="${recordsText}">${recordsText}</td>
-                        </tr>
-                    `;
-                });
+                vaultItems.push({ name, count, memo });
             }
 
-            const totalRateEl = document.getElementById('dashboard-total-rate');
-            const todayAvgRateEl = document.getElementById('dashboard-today-avg-rate');
+            saveAndRenderVault();
+            nameInput.value = '';
+            countInput.value = '1';
+            memoInput.value = '';
+            alert('금고 아이템이 등록/수정되었습니다.');
+        }
 
-            if(totalRateEl) {
-                totalRateEl.innerText = `${nicknames.length}명 참여 중`;
+        function adjustVaultCount(index, amount) {
+            vaultItems[index].count += amount;
+            if(vaultItems[index].count <= 0) {
+                if(confirm(`'${vaultItems[index].name}' 아이템의 수량이 0이 되어 삭제됩니다.`)) {
+                    vaultItems.splice(index, 1);
+                } else {
+                    vaultItems[index].count = 1;
+                }
+            }
+            saveAndRenderVault();
+        }
+
+        function deleteVaultItem(index) {
+            if(confirm(`정말 '${vaultItems[index].name}' 아이템을 금고에서 삭제하시겠습니까?`)) {
+                vaultItems.splice(index, 1);
+                saveAndRenderVault();
+            }
+        }
+
+        function saveAndRenderVault() {
+            localStorage.setItem('vampirVaultItems', JSON.stringify(vaultItems));
+            renderVault();
+        }
+
+        function renderVault() {
+            const tbody = document.getElementById('vault-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+
+            if(vaultItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 금고 아이템이 없습니다.</td></tr>`;
+                return;
             }
 
-            if(todayAvgRateEl) {
-                const totalPossibleScore = clanTotalMembers * todayMaxScore;
-                const avgRate = totalPossibleScore > 0 ? ((totalTodayScoreSum / totalPossibleScore) * 100).toFixed(1) : "0.0";
-                todayAvgRateEl.innerText = `(평균 참여율: ${avgRate}%)`;
-            }
-
-            renderDashboardHistory();
+            vaultItems.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-800 text-gray-300">
+                        <td class="py-3 px-4 font-bold text-white">${item.name}</td>
+                        <td class="py-3 px-4 text-amber-400 font-bold">${item.count}개</td>
+                        <td class="py-3 px-4 text-xs text-gray-400">${item.memo || '-'}</td>
+                        <td class="py-3 px-4 text-center space-x-2">
+                            <button onclick="adjustVaultCount(${index}, 1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded text-xs font-bold">+</button>
+                            <button onclick="adjustVaultCount(${index}, -1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded text-xs font-bold">-</button>
+                            <button onclick="deleteVaultItem(${index})" class="bg-red-900 hover:bg-red-800 text-red-200 px-2.5 py-1 rounded text-xs font-bold">삭제</button>
+                        </td>
+                    </tr>
+                `;
+            });
         }
 
         function calculateDiaDistribution() {
             const totalDiaInput = document.getElementById('total-dia-input');
-            const tbody = document.getElementById('dia-table-body');
-            if(!totalDiaInput || !tbody) return;
-
             const totalDia = parseInt(totalDiaInput.value) || 0;
+            const tbody = document.getElementById('dia-table-body');
+            if(!tbody) return;
+
             const today = getTodayStr();
             const currentSeason = getSeasonStartAndEnd(today);
-
             const currentSeasonLogs = attendanceLogs.filter(log => {
                 const logSeason = getSeasonStartAndEnd(log.date);
                 return logSeason.seasonName === currentSeason.seasonName;
@@ -684,11 +795,9 @@
                 });
             });
 
-            const maxPossibleScore = 42; 
-            let nicknames = Object.keys(seasonTotalScores);
-
-            if (nicknames.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">현재 시즌에 기록된 출석 참여 데이터가 없습니다.</td></tr>`;
+            const nicknames = Object.keys(seasonTotalScores);
+            if(nicknames.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">현재 시즌에 누적된 출석 점수가 없습니다. 출석을 먼저 기록해주세요.</td></tr>`;
                 return;
             }
 
@@ -698,181 +807,29 @@
             });
 
             tbody.innerHTML = '';
-            
-            // 점수가 높은 순으로 정렬
-            nicknames.sort((a, b) => seasonTotalScores[b] - seasonTotalScores[a]);
-
             nicknames.forEach(nick => {
-                const score = seasonTotalScores[nick];
-                const attendanceRate = ((score / maxPossibleScore) * 100).toFixed(1);
-                
-                // 분배 방식: 총 다이아를 각 클원 점수 / 전체 총 점수 비율로 배분 (점수가 0이면 0 다이아)
-                let allocatedDia = 0;
-                if (totalScoreSum > 0 && totalDia > 0) {
-                    allocatedDia = Math.floor((score / totalScoreSum) * totalDia);
-                }
+                let score = seasonTotalScores[nick];
+                let rate = ((score / 42) * 100).toFixed(1);
+                let assignedDia = totalScoreSum > 0 ? Math.floor((score / totalScoreSum) * totalDia) : 0;
 
                 tbody.innerHTML += `
-                    <tr class="border-b border-gray-800 hover:bg-gray-850 transition">
-                        <td class="py-3 px-4 text-white font-medium">${nick}</td>
-                        <td class="py-3 px-4 text-blue-400 font-bold">${score}점</td>
-                        <td class="py-3 px-4 text-gray-300">${attendanceRate}%</td>
-                        <td class="py-3 px-4 text-amber-400 font-extrabold">${allocatedDia.toLocaleString()} 다이아</td>
+                    <tr class="border-b border-gray-800 text-gray-300">
+                        <td class="py-3 px-4 font-bold text-white">${nick}</td>
+                        <td class="py-3 px-4">${score}점</td>
+                        <td class="py-3 px-4 text-blue-400">${rate}%</td>
+                        <td class="py-3 px-4 text-amber-400 font-bold">${assignedDia.toLocaleString()} 다이아</td>
                     </tr>
                 `;
             });
         }
 
-        function renderDashboardHistory() {
-            const container = document.getElementById('season-history-container');
-            if(!container) return;
-
-            if (attendanceLogs.length === 0) {
-                container.innerHTML = `<p class="py-6 text-center text-gray-500">저장된 출석 기록이 없습니다.</p>`;
-                return;
-            }
-
-            let seasonsMap = {};
-            attendanceLogs.forEach(log => {
-                const season = getSeasonStartAndEnd(log.date);
-                if(!seasonsMap[season.seasonName]) {
-                    seasonsMap[season.seasonName] = {};
-                }
-                if(!seasonsMap[season.seasonName][log.date]) {
-                    seasonsMap[season.seasonName][log.date] = [];
-                }
-                seasonsMap[season.seasonName][log.date].push(log);
-            });
-
-            let html = '';
-            const sortedSeasons = Object.keys(seasonsMap).sort().reverse();
-
-            sortedSeasons.forEach(seasonName => {
-                html += `
-                    <div class="border border-gray-800 rounded-xl p-4 bg-gray-850 space-y-3">
-                        <div class="flex justify-between items-center border-b border-gray-700 pb-2">
-                            <span class="text-amber-400 font-bold text-sm">🛡️ 매칭 시즌: ${seasonName}</span>
-                        </div>
-                        <div class="space-y-2">
-                `;
-
-                const sortedDates = Object.keys(seasonsMap[seasonName]).sort().reverse();
-                sortedDates.forEach(date => {
-                    const dateLogs = seasonsMap[seasonName][date];
-                    let uniqueNicks = [...new Set(dateLogs.map(l => l.nickname))];
-
-                    html += `
-                        <div class="bg-gray-900 p-3 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-                            <span class="text-blue-400 font-semibold text-sm">📅 ${date}</span>
-                            <span class="text-green-400 text-xs font-bold">참여 인원: ${uniqueNicks.length}명</span>
-                            <span class="text-gray-400 text-xs flex-grow md:text-right truncate max-w-lg" title="${uniqueNicks.join(', ')}">참여 클랜원: ${uniqueNicks.join(', ')}</span>
-                        </div>
-                    `;
-                });
-
-                html += `</div></div>`;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function searchMemberHistory() {
-            const keyword = document.getElementById('search-keyword').value.trim();
-            const resultContainer = document.getElementById('search-result-container');
-            if(!resultContainer) return;
-
-            if(!keyword) {
-                alert('검색할 닉네임을 입력해주세요!');
-                return;
-            }
-
-            const userLogs = attendanceLogs.filter(log => log.nickname.includes(keyword));
-            if(userLogs.length === 0) {
-                resultContainer.innerHTML = `<p class="text-red-400">['${keyword}']과(와) 일치하는 출석 기록이 없습니다.</p>`;
-                return;
-            }
-
-            let html = `<p class="text-white font-bold mb-3">🔍 '${keyword}' 클랜원 상세 참여 내역 (총 기록 건수: ${userLogs.length}건)</p><ul class="space-y-2 text-xs">`;
-            userLogs.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
-            
-            userLogs.forEach(log => {
-                const season = getSeasonStartAndEnd(log.date);
-                html += `<li class="bg-gray-800 p-2.5 rounded flex justify-between items-center"><span>시즌: ${season.seasonName}</span><span>📅 ${log.date}</span><span class="text-amber-400 font-bold">${log.buttonLabel}</span><span class="text-gray-400">${log.time}</span></li>`;
-            });
-            html += `</ul>`;
-            resultContainer.innerHTML = html;
-        }
-
-        let vaultItems = JSON.parse(localStorage.getItem('vampirVaultItems')) || [];
-
-        function addVaultItem() {
-            const name = document.getElementById('vault-name').value.trim();
-            const count = parseInt(document.getElementById('vault-count').value) || 1;
-            const memo = document.getElementById('vault-memo').value.trim();
-
-            if (!name) { alert('아이템 이름을 입력해주세요!'); return; }
-
-            vaultItems.push({ name, count, memo });
-            saveAndRenderVault();
-            
-            document.getElementById('vault-name').value = '';
-            document.getElementById('vault-count').value = '1';
-            document.getElementById('vault-memo').value = '';
-        }
-
-        function updateCount(index, amount) {
-            vaultItems[index].count += amount;
-            if (vaultItems[index].count < 1) vaultItems[index].count = 1;
-            saveAndRenderVault();
-        }
-
-        function deleteItem(index) {
-            if (confirm('정말 삭제하시겠습니까?')) {
-                vaultItems.splice(index, 1);
-                saveAndRenderVault();
-            }
-        }
-
-        function saveAndRenderVault() {
-            localStorage.setItem('vampirVaultItems', JSON.stringify(vaultItems));
-            renderVault();
-        }
-
-        function renderVault() {
-            const body = document.getElementById('vault-table-body');
-            if(!body) return;
-            body.innerHTML = '';
-
-            if (vaultItems.length === 0) {
-                body.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 금고 아이템이 없습니다.</td></tr>`;
-                return;
-            }
-
-            vaultItems.forEach((item, index) => {
-                body.innerHTML += `
-                    <tr class="border-b border-gray-800 hover:bg-gray-850 transition">
-                        <td class="py-3 px-4 text-white font-medium">${item.name}</td>
-                        <td class="py-3 px-4 text-green-400 font-bold">${item.count}개</td>
-                        <td class="py-3 px-4 text-gray-400">${item.memo || '-'}</td>
-                        <td class="py-3 px-4 text-center space-x-1">
-                            <button onclick="updateCount(${index}, 1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded text-xs font-bold">+1</button>
-                            <button onclick="updateCount(${index}, -1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded text-xs font-bold">-1</button>
-                            <button onclick="deleteItem(${index})" class="bg-red-600 hover:bg-red-500 text-white px-2.5 py-1 rounded text-xs font-bold">삭제</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        checkAndUpdateDate();
-        renderBossTimer();
-        renderAttendance();
-        renderVault();
-
-        setInterval(() => {
+        window.onload = function() {
             checkAndUpdateDate();
             renderBossTimer();
-        }, 1000);
+            renderAttendance();
+            renderVault();
+            setInterval(renderBossTimer, 1000);
+        };
     </script>
 </body>
 </html>
