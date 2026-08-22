@@ -2,38 +2,23 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 모바일에서도 PC 화면 그대로 전체가 다 보이도록 고정 너비 설정 -->
+    <meta name="viewport" content="width=1280, initial-scale=0.2, maximum-scale=2.0, user-scalable=yes">
     <title>뱀피르 독도 클랜 관리</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style> body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Malgun Gothic', sans-serif; } </style>
+    <style> 
+        body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Malgun Gothic', sans-serif; } 
+    </style>
 </head>
-<body class="min-h-screen flex flex-col md:flex-row">
+<body class="min-h-screen flex flex-row">
 
-    <!-- [모바일 전용 상단 헤더] 화면 맨 위에 강제로 고정되도록 수정 -->
-    <div class="md:hidden w-full bg-gray-900 border-b border-gray-800 p-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
-        <div class="flex items-center space-x-2">
-            <span class="text-red-500 text-lg font-bold">🛡️</span>
-            <span class="text-white font-bold text-base tracking-wider">뱀피르 독도</span>
-        </div>
-        <button onclick="toggleMobileSidebar()" class="text-white bg-gray-800 hover:bg-gray-700 px-3 py-2 rounded-lg focus:outline-none border border-gray-700 text-xl font-bold">
-            ☰ 메뉴
-        </button>
-    </div>
-
-    <!-- 모바일 배경 어둡게 처리하는 오버레이 -->
-    <div id="sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
-
-    <!-- 사이드바 (PC: 항상 표시 / 모바일: 토글형 드로어) -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-800 flex flex-col transform -translate-x-full md:translate-x-0 md:static transition-transform duration-200 ease-in-out shrink-0 min-h-screen">
+    <!-- 사이드바 (PC와 모바일 모두 항상 왼쪽에 고정) -->
+    <aside id="sidebar" class="w-64 bg-gray-900 border-r border-gray-800 flex flex-col shrink-0 min-h-screen">
         <div class="p-6 border-b border-gray-800 flex items-center justify-between">
             <div class="flex items-center space-x-2">
                 <span class="text-red-500 text-xl font-bold">🛡️</span>
                 <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
             </div>
-            <!-- 모바일용 닫기 버튼 -->
-            <button onclick="toggleMobileSidebar()" class="md:hidden text-gray-400 hover:text-white text-xl font-bold p-1">
-                ✕
-            </button>
         </div>
         <nav class="p-4 space-y-2 overflow-y-auto flex-grow">
             <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white">대시보드</button>
@@ -47,7 +32,7 @@
     </aside>
 
     <!-- 메인 컨텐츠 -->
-    <main class="flex-grow p-4 md:p-8 space-y-6 overflow-x-hidden">
+    <main class="flex-grow p-8 space-y-6 overflow-x-auto">
 
         <!-- 1. 대시보드 탭 -->
         <section id="tab-dashboard" class="tab-content space-y-6">
@@ -297,14 +282,6 @@
     </main>
 
     <script>
-        // 모바일 사이드바 열고 닫기 함수
-        function toggleMobileSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('aside nav button').forEach(btn => {
@@ -320,16 +297,6 @@
             }
             if(tabId === 'dia') {
                 calculateDiaDistribution();
-            }
-
-            // 모바일 화면에서 메뉴를 누르면 자동으로 사이드바가 닫히도록 처리
-            if (window.innerWidth < 768) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.getElementById('sidebar-overlay');
-                if (!sidebar.classList.contains('-translate-x-full')) {
-                    sidebar.classList.add('-translate-x-full');
-                    overlay.classList.add('hidden');
-                }
             }
         }
 
@@ -541,258 +508,152 @@
                 }
             });
 
-            let scores = {};
-            Object.keys(memberDaySummary).forEach(nick => {
-                const sum = memberDaySummary[nick];
-                let c13 = (sum['13시_시작전'] && sum['13시_3층전'] && sum['13시_끝']) ? 1 : 0;
-                let c21 = (sum['21시_시작전'] && sum['21시_3층전'] && sum['21시_끝']) ? 1 : 0;
-                let specialSet = (sum.special['에노크'] && sum.special['마슈미드']) ? 1 : 0;
-                let warSet = (sum.war['점령전'] && sum.war['전초전'] && sum.war['쟁탈전']) ? 1 : 0;
-                let missionSet = (sum.mission['클랜임무'] && sum.mission['클랜수호']) ? 1 : 0;
+            let memberDayScores = {};
+            let memberDayDetails = {};
 
-                scores[nick] = c13 + c21 + specialSet + warSet + missionSet;
+            Object.keys(memberDaySummary).forEach(nick => {
+                let data = memberDaySummary[nick];
+                let score = 0;
+                let details = [];
+
+                let c13 = data['13시_시작전'] && data['13시_3층전'] && data['13시_끝'];
+                if(c13) { score += 1; details.push('13시 완료(1점)'); }
+
+                let c21 = data['21시_시작전'] && data['21시_3층전'] && data['21시_끝'];
+                if(c21) { score += 1; details.push('21시 완료(1점)'); }
+
+                let cSpecial = data.special['에노크'] && data.special['마슈미드'];
+                if(cSpecial) { score += 1; details.push('에노크/마슈미드(1점)'); }
+
+                let cWar = data.war['점령전'] && data.war['전초전'] && data.war['쟁탈전'];
+                if(cWar) { score += 1; details.push('PVP세트(1점)'); }
+
+                let cMission = data.mission['클랜임무'] && data.mission['클랜수호'];
+                if(cMission) { score += 1; details.push('임무/수호세트(1점)'); }
+
+                memberDayScores[nick] = score;
+                memberDayDetails[nick] = {
+                    score: score,
+                    c13: c13,
+                    c21: c21,
+                    cSpecial: cSpecial,
+                    cWar: cWar,
+                    cMission: cMission,
+                    detailsText: details.join(', ') || '참여 내역 없음'
+                };
             });
-            return scores;
+
+            return { memberDayScores, memberDayDetails };
         }
 
         function renderAttendance() {
             const today = getTodayStr();
-            const currentSeason = getSeasonStartAndEnd(today);
-
-            const currentSeasonLogs = attendanceLogs.filter(log => {
-                const logSeason = getSeasonStartAndEnd(log.date);
-                return logSeason.seasonName === currentSeason.seasonName;
+            const seasonInfo = getSeasonStartAndEnd(today);
+            
+            const seasonLogs = attendanceLogs.filter(log => {
+                const logDate = new Date(log.date + 'T00:00:00');
+                return logDate >= seasonInfo.startDateObj && logDate <= seasonInfo.endDateObj;
             });
 
-            const todayLogs = currentSeasonLogs.filter(log => log.date === today);
+            const todayLogs = attendanceLogs.filter(log => log.date === today);
+            const { memberDayScores, memberDayDetails } = calculateDayScore(todayLogs);
 
-            let seasonTotalScores = {};
-            let seasonDaysMap = {};
-            currentSeasonLogs.forEach(log => {
-                if(!seasonDaysMap[log.date]) seasonDaysMap[log.date] = [];
-                seasonDaysMap[log.date].push(log);
-            });
+            let uniqueNicknames = new Set();
+            seasonLogs.forEach(log => uniqueNicknames.add(log.nickname));
+            todayLogs.forEach(log => uniqueNicknames.add(log.nickname));
 
-            Object.keys(seasonDaysMap).forEach(date => {
-                let dayScores = calculateDayScore(seasonDaysMap[date]);
-                Object.keys(dayScores).forEach(nick => {
-                    seasonTotalScores[nick] = (seasonTotalScores[nick] || 0) + dayScores[nick];
+            let allDatesInSeason = [];
+            let curr = new Date(seasonInfo.startDateObj);
+            while(curr <= seasonInfo.endDateObj) {
+                let y = curr.getFullYear();
+                let m = String(curr.getMonth() + 1).padStart(2, '0');
+                let d = String(curr.getDate()).padStart(2, '0');
+                allDatesInSeason.push(`${y}-${m}-${d}`);
+                curr.setDate(curr.getDate() + 1);
+            }
+
+            let memberSeasonScores = {};
+            uniqueNicknames.forEach(nick => {
+                let total = 0;
+                allDatesInSeason.forEach(dStr => {
+                    let dLogs = attendanceLogs.filter(l => l.date === dStr && l.nickname === nick);
+                    let res = calculateDayScore(dLogs);
+                    if(res.memberDayScores[nick]) {
+                        total += res.memberDayScores[nick];
+                    }
                 });
+                memberSeasonScores[nick] = total;
             });
 
-            let memberMap = {};
-            todayLogs.forEach(log => {
-                if(!memberMap[log.nickname]) {
-                    memberMap[log.nickname] = [];
-                }
-                memberMap[log.nickname].push(log);
-            });
+            const totalParticipatingToday = Object.keys(memberDayScores).length;
+            const totalMembers = 46;
+            const avgRateToday = totalMembers > 0 ? ((totalParticipatingToday / totalMembers) * 100).toFixed(1) : '0.0';
+            
+            document.getElementById('dashboard-total-rate').innerText = `${totalParticipatingToday}명 참여 중`;
+            document.getElementById('dashboard-today-avg-rate').innerText = `(평균 참여율: ${avgRateToday}%)`;
 
             const tbody = document.getElementById('attendance-table-body');
             if(!tbody) return;
-            tbody.innerHTML = '';
 
-            const nicknames = Object.keys(seasonTotalScores);
-            if(nicknames.length === 0) {
+            if(uniqueNicknames.size === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-gray-500">기록된 출석 데이터가 없습니다.</td></tr>`;
-                updateDashboard(0, 0, {});
-                renderSeasonHistory();
                 return;
             }
 
-            let todayParticipatedCount = 0;
-
-            nicknames.forEach(nick => {
-                const seasonScore = seasonTotalScores[nick] || 0;
-                const seasonRate = ((seasonScore / 42) * 100).toFixed(1);
-
-                const tLogs = memberMap[nick] || [];
-                const hasToday = tLogs.length > 0;
-                if(hasToday) todayParticipatedCount++;
-
-                let c13Done = tLogs.filter(l => l.groupName === '13시타임').length >= 3;
-                let c21Done = tLogs.filter(l => l.groupName === '21시타임').length >= 3;
-                let specialDone = tLogs.filter(l => l.groupName === 'special').length >= 2;
-                let warDone = tLogs.filter(l => l.groupName === 'war').length >= 3;
-                let missionDone = tLogs.filter(l => l.groupName === 'mission').length >= 2;
-
-                const badge = (done, label) => `<span class="px-2 py-1 rounded text-xs font-bold ${done ? 'bg-green-900 text-green-300 border border-green-700' : 'bg-gray-800 text-gray-500'}">${label}</span>`;
-
-                const detailsHtml = tLogs.map(l => `<span class="inline-block bg-gray-800 text-gray-300 text-xs px-2 py-0.5 rounded mr-1 mb-1">${l.buttonLabel} (${l.time})</span>`).join('');
+            tbody.innerHTML = '';
+            Array.from(uniqueNicknames).forEach(nick => {
+                let sScore = memberSeasonScores[nick] || 0;
+                let sRate = ((sScore / 42) * 100).toFixed(1);
+                let todayDetail = memberDayDetails[nick] || { score: 0, c13: false, c21: false, cSpecial: false, cWar: false, cMission: false, detailsText: '-' };
+                
+                let badge13_21 = (todayDetail.c13 || todayDetail.c21) ? '<span class="text-green-400 font-bold">O</span>' : '<span class="text-gray-600">-</span>';
+                let badgeSpecial = todayDetail.cSpecial ? '<span class="text-green-400 font-bold">O</span>' : '<span class="text-gray-600">-</span>';
+                let badgeWar = todayDetail.cWar ? '<span class="text-green-400 font-bold">O</span>' : '<span class="text-gray-600">-</span>';
+                let badgeMission = todayDetail.cMission ? '<span class="text-green-400 font-bold">O</span>' : '<span class="text-gray-600">-</span>';
 
                 tbody.innerHTML += `
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
-                        <td class="py-3 px-2 font-bold text-white">
-                            ${nick} <br>
-                            <span class="text-xs text-amber-400 font-normal">시즌 점수: ${seasonScore}점 (${seasonRate}%)</span>
-                        </td>
-                        <td class="py-3 px-2">
-                            ${hasToday ? '<span class="text-green-400 font-bold">참여 완료</span>' : '<span class="text-gray-500">미참여</span>'}
-                        </td>
-                        <td class="py-3 px-2 space-x-1">
-                            ${badge(c13Done, '13시')} ${badge(c21Done, '21시')}
-                        </td>
-                        <td class="py-3 px-2">
-                            ${badge(specialDone, '에노크/마슈')}
-                        </td>
-                        <td class="py-3 px-2">
-                            ${badge(warDone, '쟁탈/점령/전초')}
-                        </td>
-                        <td class="py-3 px-2">
-                            ${badge(missionDone, '임무/수호')}
-                        </td>
-                        <td class="py-3 px-2 max-w-xs truncate">
-                            ${detailsHtml || '<span class="text-gray-600 text-xs">내역 없음</span>'}
-                        </td>
+                        <td class="py-3 px-2 font-bold text-white">${nick} <span class="text-xs text-amber-400 font-normal">(${sScore}점 / ${sRate}%)</span></td>
+                        <td class="py-3 px-2 text-blue-400 font-semibold">${todayDetail.score}점 획득</td>
+                        <td class="py-3 px-2">${badge13_21}</td>
+                        <td class="py-3 px-2">${badgeSpecial}</td>
+                        <td class="py-3 px-2">${badgeWar}</td>
+                        <td class="py-3 px-2">${badgeMission}</td>
+                        <td class="py-3 px-2 text-xs text-gray-400">${todayDetail.detailsText}</td>
                     </tr>
                 `;
             });
 
-            updateDashboard(todayParticipatedCount, nicknames.length, seasonTotalScores);
-            renderSeasonHistory();
+            renderSeasonHistory(memberSeasonScores);
         }
 
-        function updateDashboard(todayCount, totalMembers, seasonScores) {
-            const totalRateEl = document.getElementById('dashboard-total-rate');
-            const avgRateEl = document.getElementById('dashboard-today-avg-rate');
-            if(totalRateEl) {
-                totalRateEl.innerText = `${todayCount}명 참여 중 (총 클랜원 ${totalMembers}명 등록됨)`;
-            }
-            if(avgRateEl && totalMembers > 0) {
-                let totalScoreSum = 0;
-                Object.values(seasonScores).forEach(s => totalScoreSum += s);
-                let maxPossible = totalMembers * 42;
-                let avgSeasonRate = maxPossible > 0 ? ((totalScoreSum / maxPossible) * 100).toFixed(1) : 0;
-                avgRateEl.innerText = `(시즌 전체 평균 달성률: ${avgSeasonRate}%)`;
-            }
-        }
-
-        function renderSeasonHistory() {
+        function renderSeasonHistory(memberSeasonScores) {
             const container = document.getElementById('season-history-container');
             if(!container) return;
-            container.innerHTML = '';
 
-            let seasonsMap = {};
-            attendanceLogs.forEach(log => {
-                const sInfo = getSeasonStartAndEnd(log.date);
-                if(!seasonsMap[sInfo.seasonName]) {
-                    seasonsMap[sInfo.seasonName] = [];
-                }
-                seasonsMap[sInfo.seasonName].push(log);
-            });
-
-            const seasonNames = Object.keys(seasonsMap).sort().reverse();
-            if(seasonNames.length === 0) {
+            if(Object.keys(memberSeasonScores).length === 0) {
                 container.innerHTML = `<p class="py-6 text-center text-gray-500">저장된 출석 기록이 없습니다.</p>`;
                 return;
             }
 
-            seasonNames.forEach(seasonName => {
-                const sLogs = seasonsMap[seasonName];
-                let daysMap = {};
-                sLogs.forEach(l => {
-                    if(!daysMap[l.date]) daysMap[l.date] = [];
-                    daysMap[l.date].push(l);
-                });
+            container.innerHTML = `
+                <div class="text-xs text-gray-300 space-y-2">
+                    <p class="font-bold text-amber-400">📊 현재 시즌 누적 점수 리스트 (만점: 42점 기준)</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            `;
 
-                let seasonScores = {};
-                Object.keys(daysMap).forEach(date => {
-                    let dScores = calculateDayScore(daysMap[date]);
-                    Object.keys(dScores).forEach(nick => {
-                        seasonScores[nick] = (seasonScores[nick] || 0) + dScores[nick];
-                    });
-                });
-
-                let memberRows = '';
-                Object.keys(seasonScores).sort((a,b) => seasonScores[b] - seasonScores[a]).forEach(nick => {
-                    let score = seasonScores[nick];
-                    let rate = ((score / 42) * 100).toFixed(1);
-                    memberRows += `
-                        <tr class="border-b border-gray-800 text-xs">
-                            <td class="py-2 px-3 text-white font-bold">${nick}</td>
-                            <td class="py-2 px-3 text-amber-400 font-bold">${score}점</td>
-                            <td class="py-2 px-3 text-green-400 font-bold">${rate}%</td>
-                        </tr>
-                    `;
-                });
-
+            Object.keys(memberSeasonScores).forEach(nick => {
+                let score = memberSeasonScores[nick];
+                let rate = ((score / 42) * 100).toFixed(1);
                 container.innerHTML += `
-                    <div class="bg-gray-850 border border-gray-800 rounded-xl p-4 space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-amber-400 font-bold text-sm">🛡️ 시즌 기간: ${seasonName}</span>
-                            <span class="text-xs text-gray-400">총 참여 인원: ${Object.keys(seasonScores).length}명</span>
-                        </div>
-                        <div class="overflow-x-auto max-h-48">
-                            <table class="w-full text-left whitespace-nowrap">
-                                <thead>
-                                    <tr class="text-gray-500 text-xs border-b border-gray-800">
-                                        <th class="py-1 px-3">닉네임</th>
-                                        <th class="py-1 px-3">누적 점수</th>
-                                        <th class="py-1 px-3">시즌 달성률</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${memberRows}
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="bg-gray-850 p-3 rounded border border-gray-800 flex justify-between items-center">
+                        <span class="font-bold text-white">${nick}</span>
+                        <span class="text-green-400">${score}점 <span class="text-xs text-gray-400">(${rate}%)</span></span>
                     </div>
                 `;
             });
-        }
 
-        function searchMemberHistory() {
-            const keyword = document.getElementById('search-keyword').value.trim();
-            const container = document.getElementById('search-result-container');
-            if(!container) return;
-
-            if(!keyword) {
-                container.innerHTML = `<span class="text-red-400">검색할 클랜원 닉네임을 입력해주세요.</span>`;
-                return;
-            }
-
-            const memberLogs = attendanceLogs.filter(l => l.nickname.includes(keyword));
-            if(memberLogs.length === 0) {
-                container.innerHTML = `<span class="text-gray-400">'${keyword}' 클랜원의 출석 기록을 찾을 수 없습니다.</span>`;
-                return;
-            }
-
-            let sInfo = getSeasonStartAndEnd(getTodayStr());
-            let currentSeasonLogs = memberLogs.filter(l => getSeasonStartAndEnd(l.date).seasonName === sInfo.seasonName);
-
-            let daysMap = {};
-            currentSeasonLogs.forEach(l => {
-                if(!daysMap[l.date]) daysMap[l.date] = [];
-                daysMap[l.date].push(l);
-            });
-
-            let totalScore = 0;
-            Object.keys(daysMap).forEach(date => {
-                let dScores = calculateDayScore(daysMap[date]);
-                if(dScores[keyword]) totalScore += dScores[keyword];
-            });
-
-            let rate = ((totalScore / 42) * 100).toFixed(1);
-
-            let logsHtml = memberLogs.sort((a,b) => new Date(b.date) - new Date(a.date)).map(l => `
-                <div class="bg-gray-800 p-2 rounded flex justify-between items-center text-xs">
-                    <span class="text-white font-bold">${l.date} (${l.time})</span>
-                    <span class="text-amber-400">${l.buttonLabel}</span>
-                </div>
-            `).join('');
-
-            container.innerHTML = `
-                <div class="space-y-4">
-                    <div class="border-b border-gray-800 pb-3">
-                        <p class="text-lg font-bold text-white">🔍 '${keyword}' 클랜원 조회 결과</p>
-                        <p class="text-xs text-amber-400 mt-1">현재 시즌 누적 점수: <span class="font-bold text-white">${totalScore}점</span> / 만점 42점 (시즌 참여율: <span class="font-bold text-green-400">${rate}%</span>)</p>
-                    </div>
-                    <div class="space-y-2 max-h-60 overflow-y-auto">
-                        <p class="text-xs text-gray-400">전체 상세 참여 내역 (${memberLogs.length}건):</p>
-                        ${logsHtml}
-                    </div>
-                </div>
-            `;
+            container.innerHTML += `</div></div>`;
         }
 
         function addVaultItem() {
@@ -810,7 +671,7 @@
                 return;
             }
 
-            const existing = vaultItems.find(item => item.name === name);
+            let existing = vaultItems.find(item => item.name === name);
             if(existing) {
                 existing.count += count;
                 if(memo) existing.memo = memo;
@@ -818,57 +679,56 @@
                 vaultItems.push({ name, count, memo });
             }
 
-            saveAndRenderVault();
+            localStorage.setItem('vampirVaultItems', JSON.stringify(vaultItems));
+            renderVaultItems();
+
             nameInput.value = '';
             countInput.value = '1';
             memoInput.value = '';
-            alert(`'${name}' 아이템이 금고에 추가되었습니다.`);
+            alert('금고 아이템이 등록/수정되었습니다.');
         }
 
         function updateVaultCount(index, amount) {
             vaultItems[index].count += amount;
             if(vaultItems[index].count <= 0) {
-                if(confirm(`'${vaultItems[index].name}' 수량이 0이 되었습니다. 삭제하시겠습니까?`)) {
+                if(confirm(`'${vaultItems[index].name}' 아이템을 삭제하시겠습니까?`)) {
                     vaultItems.splice(index, 1);
                 } else {
-                    vaultItems[index].count = 0;
+                    vaultItems[index].count = 1;
                 }
             }
-            saveAndRenderVault();
+            localStorage.setItem('vampirVaultItems', JSON.stringify(vaultItems));
+            renderVaultItems();
         }
 
         function deleteVaultItem(index) {
-            if(confirm(`'${vaultItems[index].name}' 아이템을 금고에서 삭제하시겠습니까?`)) {
+            if(confirm('정말 이 아이템을 금고에서 삭제하시겠습니까?')) {
                 vaultItems.splice(index, 1);
-                saveAndRenderVault();
+                localStorage.setItem('vampirVaultItems', JSON.stringify(vaultItems));
+                renderVaultItems();
             }
         }
 
-        function saveAndRenderVault() {
-            localStorage.setItem('vampirVaultItems', JSON.stringify(vaultItems));
-            renderVault();
-        }
-
-        function renderVault() {
+        function renderVaultItems() {
             const tbody = document.getElementById('vault-table-body');
             if(!tbody) return;
-            tbody.innerHTML = '';
 
             if(vaultItems.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 금고 아이템이 없습니다.</td></tr>`;
                 return;
             }
 
+            tbody.innerHTML = '';
             vaultItems.forEach((item, index) => {
                 tbody.innerHTML += `
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
                         <td class="py-3 px-4 font-bold text-white">${item.name}</td>
                         <td class="py-3 px-4 text-amber-400 font-bold">${item.count}개</td>
-                        <td class="py-3 px-4 text-gray-400">${item.memo || '-'}</td>
-                        <td class="py-3 px-4 text-center space-x-1">
+                        <td class="py-3 px-4 text-gray-400 text-xs">${item.memo || '-'}</td>
+                        <td class="py-3 px-4 text-center space-x-2">
                             <button onclick="updateVaultCount(${index}, 1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2 py-1 rounded text-xs font-bold">+</button>
                             <button onclick="updateVaultCount(${index}, -1)" class="bg-gray-800 hover:bg-gray-700 text-white px-2 py-1 rounded text-xs font-bold">-</button>
-                            <button onclick="deleteVaultItem(${index})" class="bg-red-900 hover:bg-red-800 text-red-200 px-2 py-1 rounded text-xs font-bold">삭제</button>
+                            <button onclick="deleteVaultItem(${index})" class="bg-red-900 hover:bg-red-800 text-red-200 px-2.5 py-1 rounded text-xs font-bold">삭제</button>
                         </td>
                     </tr>
                 `;
@@ -876,64 +736,99 @@
         }
 
         function calculateDiaDistribution() {
-            const input = document.getElementById('total-dia-input');
+            const totalDiaInput = document.getElementById('total-dia-input');
             const tbody = document.getElementById('dia-table-body');
-            if(!input || !tbody) return;
+            if(!totalDiaInput || !tbody) return;
 
-            const totalDia = parseInt(input.value) || 0;
-
+            const totalDia = parseInt(totalDiaInput.value) || 0;
+            
             const today = getTodayStr();
-            const currentSeason = getSeasonStartAndEnd(today);
-            const currentSeasonLogs = attendanceLogs.filter(log => {
-                return getSeasonStartAndEnd(log.date).seasonName === currentSeason.seasonName;
-            });
+            const seasonInfo = getSeasonStartAndEnd(today);
+            let uniqueNicknames = new Set();
+            attendanceLogs.forEach(log => uniqueNicknames.add(log.nickname));
 
-            let seasonDaysMap = {};
-            currentSeasonLogs.forEach(log => {
-                if(!seasonDaysMap[log.date]) seasonDaysMap[log.date] = [];
-                seasonDaysMap[log.date].push(log);
-            });
+            let allDatesInSeason = [];
+            let curr = new Date(seasonInfo.startDateObj);
+            while(curr <= seasonInfo.endDateObj) {
+                let y = curr.getFullYear();
+                let m = String(curr.getMonth() + 1).padStart(2, '0');
+                let d = String(curr.getDate()).padStart(2, '0');
+                allDatesInSeason.push(`${y}-${m}-${d}`);
+                curr.setDate(curr.getDate() + 1);
+            }
 
-            let seasonTotalScores = {};
-            Object.keys(seasonDaysMap).forEach(date => {
-                let dayScores = calculateDayScore(seasonDaysMap[date]);
-                Object.keys(dayScores).forEach(nick => {
-                    seasonTotalScores[nick] = (seasonTotalScores[nick] || 0) + dayScores[nick];
+            let memberSeasonScores = {};
+            let totalScoreSum = 0;
+
+            uniqueNicknames.forEach(nick => {
+                let total = 0;
+                allDatesInSeason.forEach(dStr => {
+                    let dLogs = attendanceLogs.filter(l => l.date === dStr && l.nickname === nick);
+                    let res = calculateDayScore(dLogs);
+                    if(res.memberDayScores[nick]) {
+                        total += res.memberDayScores[nick];
+                    }
                 });
+                memberSeasonScores[nick] = total;
+                totalScoreSum += total;
             });
 
-            const nicknames = Object.keys(seasonTotalScores);
-            if(nicknames.length === 0 || totalDia <= 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">현재 시즌에 기록된 점수가 없거나 총 다이아 수량이 입력되지 않았습니다.</td></tr>`;
+            if(uniqueNicknames.size === 0 || totalScoreSum === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">분배할 출석 점수 데이터가 존재하지 않습니다.</td></tr>`;
                 return;
             }
 
-            let totalScoreSum = 0;
-            nicknames.forEach(nick => totalScoreSum += seasonTotalScores[nick]);
-
             tbody.innerHTML = '';
-            nicknames.sort((a,b) => seasonTotalScores[b] - seasonTotalScores[a]).forEach(nick => {
-                const score = seasonTotalScores[nick];
-                const rate = totalScoreSum > 0 ? (score / totalScoreSum) : 0;
-                const assignedDia = Math.floor(totalDia * rate);
-                const seasonRatePct = ((score / 42) * 100).toFixed(1);
+            Array.from(uniqueNicknames).forEach(nick => {
+                let score = memberSeasonScores[nick];
+                let rate = ((score / 42) * 100).toFixed(1);
+                let assignedDia = Math.floor((score / totalScoreSum) * totalDia);
 
                 tbody.innerHTML += `
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
                         <td class="py-3 px-4 font-bold text-white">${nick}</td>
-                        <td class="py-3 px-4 text-gray-300">${score}점</td>
-                        <td class="py-3 px-4 text-green-400">${seasonRatePct}%</td>
+                        <td class="py-3 px-4 text-blue-400">${score}점</td>
+                        <td class="py-3 px-4 text-gray-300">${rate}%</td>
                         <td class="py-3 px-4 text-amber-400 font-extrabold">${assignedDia.toLocaleString()} 다이아</td>
                     </tr>
                 `;
             });
         }
 
+        function searchMemberHistory() {
+            const keyword = document.getElementById('search-keyword').value.trim();
+            const container = document.getElementById('search-result-container');
+            if(!keyword) {
+                alert('검색할 닉네임을 입력해주세요.');
+                return;
+            }
+
+            const memberLogs = attendanceLogs.filter(l => l.nickname.includes(keyword));
+            if(memberLogs.length === 0) {
+                container.innerHTML = `<p class="text-red-400">['${keyword}'] 클랜원의 검색된 출석 기록이 없습니다.</p>`;
+                return;
+            }
+
+            let html = `<p class="font-bold text-white mb-3">🔍 '${keyword}' 클랜원 검색 결과 (총 ${memberLogs.length}건 기록)</p>`;
+            html += `<div class="space-y-2 max-h-60 overflow-y-auto">`;
+            memberLogs.reverse().forEach(log => {
+                html += `
+                    <div class="bg-gray-800 p-3 rounded flex justify-between items-center text-xs">
+                        <span class="text-amber-400">${log.date} (${log.time})</span>
+                        <span class="text-white font-bold">${log.buttonLabel}</span>
+                        <span class="text-gray-400">그룹: ${log.groupName}</span>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
         window.onload = function() {
             checkAndUpdateDate();
             renderAttendance();
-            renderVault();
             renderBossTimer();
+            renderVaultItems();
             setInterval(renderBossTimer, 1000);
         };
     </script>
