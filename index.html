@@ -1,6 +1,4 @@
 
-
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -356,21 +354,28 @@
         <section id="tab-dia" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">💎 클랜 다이아 분배 시스템</h2>
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-                    <div class="w-full md:w-2/3 space-y-2">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                    <div class="md:col-span-9 space-y-2">
                         <label class="text-sm font-bold text-amber-400">분배할 총 다이아 입력</label>
-                        <input type="number" id="total-dia-input" placeholder="예: 10000" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm">
+                        <input type="number" id="total-dia-input" placeholder="예: 151543" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm">
                     </div>
-                    <div class="w-full md:w-1/3 flex items-end">
-                        <button onclick="calculateDiaDistribution()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded text-sm transition">분배 계산하기</button>
+                    <div class="md:col-span-3">
+                        <button onclick="calculateDiaDistribution()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded text-sm transition h-[46px]">분배 계산하기</button>
                     </div>
                 </div>
             </div>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow">
-                <table class="w-full text-left text-sm whitespace-nowrap">
-                    <thead><tr class="border-b border-gray-800 text-gray-400"><th class="py-3 px-4">닉네임</th><th class="py-3 px-4">클래스</th><th class="py-3 px-4">전투력</th><th class="py-3 px-4">역할</th><th class="py-3 px-4 text-amber-400">분배 다이아</th></tr></thead>
-                    <tbody id="dia-table-body"><tr><td colspan="5" class="py-6 text-center text-gray-500">총 다이아 수량을 입력하고 계산하기를 누르세요.</td></tr></tbody>
-                </table>
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
+                <div class="text-xs text-gray-400 space-y-1">
+                    <p>• <strong class="text-amber-400">운영진 주급 (10%)</strong>: 운영진 및 클마 멤버들에게 균등 분배</p>
+                    <p>• <strong class="text-amber-400">상위 전투력 (35%)</strong>: 지정된 7명(라닷지, 제비, 한국, 피카츄, 늑대, 마자용, 로이)에게 균등 분배</p>
+                    <p>• <strong class="text-amber-400">클랜원 (55%)</strong>: 전체 클랜원에게 균등 분배</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead><tr class="border-b border-gray-800 text-gray-400"><th class="py-3 px-4">닉네임</th><th class="py-3 px-4">클래스</th><th class="py-3 px-4">전투력</th><th class="py-3 px-4">역할</th><th class="py-3 px-4 text-center">운영진(10%)</th><th class="py-3 px-4 text-center">상위투력(35%)</th><th class="py-3 px-4 text-center">클랜원(55%)</th><th class="py-3 px-4 text-amber-400 text-right">총 분배 다이아</th></tr></thead>
+                        <tbody id="dia-table-body"><tr><td colspan="8" class="py-6 text-center text-gray-500">총 다이아 수량을 입력하고 계산하기를 누르세요.</td></tr></tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </main>
@@ -381,13 +386,21 @@
         let isAttendanceActive = localStorage.getItem('vampirAttendanceActive') !== 'false';
         
         let rawMembers = JSON.parse(localStorage.getItem('vampirClanMembers')) || [
-            { id: 1, name: 'DOKDO피카츄', cls: '아카샤', powerType: 'number', power: 500000, role: '운영진' }
+            { id: 1, name: '라닷지', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
+            { id: 2, name: '제비', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
+            { id: 3, name: '한국', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
+            { id: 4, name: '피카츄', cls: '아카샤', powerType: 'number', power: 500000, role: '운영진' },
+            { id: 5, name: '늑대', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
+            { id: 6, name: '마자용', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
+            { id: 7, name: '로이', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' }
         ];
+
         let clanMembers = rawMembers.map(m => ({
             ...m,
             id: m.id || Date.now() + Math.random(),
             cls: m.cls || m.class || '아카샤',
             powerType: m.powerType || (m.power === '블라인드' ? 'blind' : 'number'),
+            // 이미 저장된 데이터가 0이거나 비어있더라도 강제로 초기화되지 않고 안전하게 숫자로 읽어오도록 처리
             power: m.power === '블라인드' ? 0 : (Number(m.power) || 0)
         }));
 
@@ -614,7 +627,8 @@
                 let roleSelectHtml = `<select id="edit-role-${m.id}" class="bg-gray-800 border border-gray-700 rounded p-1 text-xs text-amber-400 font-bold">` +
                     roleOptions.map(r => `<option value="${r}" ${m.role === r ? 'selected' : ''}>${r}</option>`).join('') + `</select>`;
 
-                let powerValDisplay = m.powerType === 'blind' ? '' : m.power;
+                // 수정 모드 진입 시 기존 전투력 값이 안전하게 들어가도록 설정
+                let powerValDisplay = (m.powerType === 'blind' || m.power === 0) ? '' : m.power;
                 let powerInputHtml = `
                     <div class="flex items-center space-x-1">
                         <input type="number" id="edit-power-${m.id}" value="${powerValDisplay}" placeholder="${m.powerType === 'blind' ? '블라인드' : '전투력'}" ${m.powerType === 'blind' ? 'disabled' : ''} class="bg-gray-800 border border-gray-700 rounded p-1 text-xs text-blue-400 w-24">
@@ -665,7 +679,6 @@
             let targetIndex = direction === 'up' ? index - 1 : index + 1;
             if (targetIndex < 0 || targetIndex >= clanMembers.length) return;
 
-            // 순서 교체 (Swap)
             let temp = clanMembers[index];
             clanMembers[index] = clanMembers[targetIndex];
             clanMembers[targetIndex] = temp;
@@ -706,7 +719,10 @@
             let newCls = document.getElementById(`edit-cls-${id}`).value;
             let newRole = document.getElementById(`edit-role-${id}`).value;
             let newPowerType = document.getElementById(`edit-powertype-${id}`).value;
-            let newPower = newPowerType === 'blind' ? 0 : Number(document.getElementById(`edit-power-${id}`).value) || 0;
+            
+            // 핵심 수정: 입력창에 값이 비어있을 때 기존 전투력 값이 초기화(0)되지 않고 기존 값을 유지하도록 방어 로직 추가
+            let inputPowerVal = document.getElementById(`edit-power-${id}`).value;
+            let newPower = newPowerType === 'blind' ? 0 : (inputPowerVal !== '' ? Number(inputPowerVal) : member.power);
 
             if (!newName) { alert('닉네임을 입력해주세요.'); return; }
             if (newName !== member.name && clanMembers.some(m => m.name === newName)) {
@@ -753,7 +769,6 @@
 
             let newMemberObj = { id: Date.now(), name, cls, powerType, power, role };
 
-            // 최초 등록 시 블라인드 인원이면 맨 위로, 아니면 맨 아래로 추가
             if (powerType === 'blind') {
                 clanMembers.unshift(newMemberObj);
             } else {
@@ -935,12 +950,43 @@
             let totalDia = Number(document.getElementById('total-dia-input').value);
             if (!totalDia || totalDia <= 0) { alert('분배할 다이아 수량을 올바르게 입력해주세요.'); return; }
             
-            let tbody = document.getElementById('dia-table-body');
             let count = clanMembers.length;
             if (count === 0) { alert('분배할 클랜원이 없습니다.'); return; }
             
-            let share = Math.floor(totalDia / count);
-            tbody.innerHTML = clanMembers.map(m => `<tr class="border-b border-gray-800"><td class="py-3 px-4 font-bold text-white">${m.name}</td><td class="py-3 px-4 text-gray-300">${m.cls}</td><td class="py-3 px-4 text-blue-400">${m.powerType === 'blind' ? '블라인드' : m.power.toLocaleString()}</td><td class="py-3 px-4 text-amber-400">${m.role}</td><td class="py-3 px-4 text-amber-300 font-bold">${share.toLocaleString()} 다이아</td></tr>`).join('');
+            let poolStaff = totalDia * 0.10;
+            let poolPower = totalDia * 0.35;
+            let poolMember = totalDia * 0.55;
+
+            let staffList = clanMembers.filter(m => m.role === '운영진' || m.role === '클마');
+            let staffShare = staffList.length > 0 ? (poolStaff / staffList.length) : 0;
+
+            const top35Names = ['DOKDO라닷지', 'DOKDO제비', 'DOKDO한국', 'DOKDO피카츄', 'DOKDO늑대', 'DOKDO마자용', 'DOKDO로이', '라닷지', '제비', '한국', '피카츄', '늑대', '마자용', '로이'];
+            let top35List = clanMembers.filter(m => top35Names.some(name => m.name.includes(name)));
+            let powerShare = top35List.length > 0 ? (poolPower / top35List.length) : 0;
+
+            let memberShare = poolMember / count;
+
+            let tbody = document.getElementById('dia-table-body');
+            tbody.innerHTML = clanMembers.map(m => {
+                let isStaff = (m.role === '운영진' || m.role === '클마');
+                let isTop35 = top35List.some(tp => tp.id === m.id);
+
+                let myStaffAmt = isStaff ? staffShare : 0;
+                let myPowerAmt = isTop35 ? powerShare : 0;
+                let myMemberAmt = memberShare;
+                let myTotalAmt = Math.floor(myStaffAmt + myPowerAmt + myMemberAmt);
+
+                return `<tr class="border-b border-gray-800">
+                    <td class="py-3 px-4 font-bold text-white">${m.name}</td>
+                    <td class="py-3 px-4 text-gray-300">${m.cls}</td>
+                    <td class="py-3 px-4 text-blue-400">${m.powerType === 'blind' ? '블라인드' : m.power.toLocaleString()}</td>
+                    <td class="py-3 px-4 text-amber-400">${m.role}</td>
+                    <td class="py-3 px-4 text-center text-xs text-gray-300">${isStaff ? Math.floor(myStaffAmt).toLocaleString() : '-'}</td>
+                    <td class="py-3 px-4 text-center text-xs text-gray-300">${isTop35 ? Math.floor(myPowerAmt).toLocaleString() : '-'}</td>
+                    <td class="py-3 px-4 text-center text-xs text-gray-300">${Math.floor(myMemberAmt).toLocaleString()}</td>
+                    <td class="py-3 px-4 text-amber-300 font-bold text-right">${myTotalAmt.toLocaleString()} 다이아</td>
+                </tr>`;
+            }).join('');
         }
 
         window.onload = function() {
