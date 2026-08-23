@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -392,7 +393,6 @@
         const defaultNoticeText = `13시 / 21시 게헨나: 매일 있음 (14일 × 2점 = 28점)\n클랜임무 / 클랜수호: 목요일마다 있음 (2점)\n에노크 / 마슈미드: 토요일마다 있음 (2점)\n점령전: 토요일마다 있음 (2점)\n쟁탈전, 전초전: 첫주마다 있음 (1점)\n도합: 총점 35점`;
         let savedNoticeText = localStorage.getItem('vampirNoticeText') || defaultNoticeText; 
 
-        // 운영진 및 클마 권한 체크 함수
         function checkIsUserStaff() {
             let isUserStaff = false;
             if (loggedInUser) {
@@ -407,7 +407,6 @@
             return isUserStaff;
         }
 
-        // 비밀번호 검증 우회 및 운영진 설정 해제 함수
         function unlockAdminAttendanceSettings() {
             const inputPw = document.getElementById('admin-auth-input-pw').value.trim();
             
@@ -637,7 +636,14 @@
 
         function renderAttendance() {
             let select = document.getElementById('att-nickname');
+            let currentSelected = select.value; // 현재 선택된 값 보존
+
             select.innerHTML = '<option value="">-- 닉네임 선택 --</option>' + clanMembers.map(m => `<option value="${m.name}">${m.name} (${m.cls})</option>`).join('');
+            
+            // 기존에 선택했던 값이 여전히 목록에 존재한다면 유지
+            if (currentSelected && clanMembers.some(m => m.name === currentSelected)) {
+                select.value = currentSelected;
+            }
             
             let tbody = document.getElementById('attendance-table-body');
             let todayKey = new Date().toISOString().split('T')[0];
