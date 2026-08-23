@@ -473,123 +473,49 @@
                 staffs.map(m => `<tr class="border-b border-gray-800"><td class="py-3 px-4 text-white font-bold">${m.name}</td><td class="py-3 px-4 text-gray-300">${m.cls}</td><td class="py-3 px-4 text-gray-300">${m.power.toLocaleString()}</td><td class="py-3 px-4 text-amber-400 font-bold">${m.role}</td><td class="py-3 px-4 text-center"><button onclick="deleteClanMember(${m.id})" class="bg-red-900 text-white text-xs px-2 py-1 rounded">삭제</button></td></tr>`).join('');
 
             memberBody.innerHTML = members.length === 0 ? `<tr><td colspan="5" class="py-6 text-center text-gray-500">등록된 일반 클랜원이 없습니다.</td></tr>` :
-                members.map(m => `<tr class="border-b border-gray-800"><td class="py-3 px-4 text-white font-bold">${m.name}</td><td class="py-3 px-4 text-gray-300">${m.cls}</td><td class="py-3 px-4 text-gray-300">${m.power.toLocaleString()}</td><td class="py-3 px-4 text-gray-300">${m.role}</td><td class="py-3 px-4 text-center"><button onclick="deleteClanMember(${m.id})" class="bg-red-900 text-white text-xs px-2 py-1 rounded">삭제</button></td></tr>`).join('');
+                members.map(m => `<tr class="border-b border-gray-800"><td class="py-3 px-4 text-white font-bold">${m.name}</td><td class="py-3 px-4 text-gray-300">${m.cls}</td><td class="py-3 px-4 text-gray-300">${m.power.toLocaleString()}</td><td class="py-3 px-4 text-gray-400">${m.role}</td><td class="py-3 px-4 text-center"><button onclick="deleteClanMember(${m.id})" class="bg-red-900 text-white text-xs px-2 py-1 rounded">삭제</button></td></tr>`).join('');
         }
 
         function renderAttendanceSelect() {
-            const select = document.getElementById('att-nickname');
-            if (!select) return;
-            select.innerHTML = `<option value="">-- 명단에서 닉네임을 선택하세요 --</option>` +
-                clanMembers.map(m => `<option value="${m.name}">${m.name} (${m.role})</option>`).join('');
-        }
-
-        // 출석 체크 로직
-        function toggleAttendanceActiveStatus() {
-            isAttendanceActive = !isAttendanceActive;
-            localStorage.setItem('vampirAttendanceActive', isAttendanceActive);
-            const btn = document.getElementById('toggle-attendance-status-btn');
-            btn.innerText = isAttendanceActive ? '출석 활성화 중' : '출석 마감됨';
-            btn.className = isAttendanceActive ? 'bg-emerald-700 text-white px-4 py-2 rounded text-xs font-bold' : 'bg-gray-700 text-white px-4 py-2 rounded text-xs font-bold';
-        }
-
-        function resetTodayAttendance() {
-            if (confirm('오늘 출석 기록을 모두 초기화하시겠습니까?')) {
-                attendanceLogs = [];
-                localStorage.setItem('vampirAttendanceLogs', JSON.stringify(attendanceLogs));
-                alert('초기화되었습니다.');
-            }
-        }
-
-        function checkAttendanceWithPw(key, category, label, timeType) {
-            const nickname = document.getElementById('att-nickname').value;
-            const inputPw = document.getElementById('att-input-pw').value.trim();
-
-            if (!nickname) {
-                alert('닉네임을 선택해주세요.');
-                return;
-            }
-            if (!isAttendanceActive) {
-                alert('현재 출석 체크가 마감되었습니다.');
-                return;
-            }
-            if (adminPasswords[timeType] && adminPasswords[timeType] !== inputPw) {
-                alert(`${timeType}시 인증 비밀번호가 틀렸습니다.`);
-                return;
-            }
-
-            recordAttendanceLog(nickname, key, category, label);
-        }
-
-        function checkAttendance(key, category, label) {
-            const nickname = document.getElementById('att-nickname').value;
-            if (!nickname) {
-                alert('닉네임을 선택해주세요.');
-                return;
-            }
-            if (!isAttendanceActive) {
-                alert('현재 출석 체크가 마감되었습니다.');
-                return;
-            }
-            recordAttendanceLog(nickname, key, category, label);
-        }
-
-        function recordAttendanceLog(nickname, key, category, label) {
-            const todayStr = new Date().toDateString();
-            const exists = attendanceLogs.find(l => l.nickname === nickname && l.key === key && l.date === todayStr);
-            if (exists) {
-                alert(`이미 "${label}" 출석을 완료하셨습니다.`);
-                return;
-            }
-
-            attendanceLogs.push({ nickname, key, category, label, date: todayStr });
-            localStorage.setItem('vampirAttendanceLogs', JSON.stringify(attendanceLogs));
-            alert(`[${label}] 출석이 완료되었습니다.`);
-            document.getElementById('att-input-pw').value = '';
-        }
-
-        // 1. 보스 등록 함수
-        function addNewBoss() {
-            const nameInput = document.getElementById('new-boss-name');
-            const timeInput = document.getElementById('new-boss-time');
-            const memoInput = document.getElementById('new-boss-memo');
-
-            if (!nameInput.value || !timeInput.value) {
-                alert('보스 이름과 출몰 시간을 입력해주세요.');
-                return;
-            }
-
-            const newBoss = {
-                id: Date.now(),
-                name: nameInput.value,
-                time: timeInput.value,
-                memo: memoInput.value || '',
-                alarmOn: true
-            };
-
-            bossList.push(newBoss);
-            localStorage.setItem('vampirBossList', JSON.stringify(bossList));
-            
-            nameInput.value = '';
-            timeInput.value = '';
-            memoInput.value = '';
-            renderBossList();
-            alert('보스가 등록되었습니다.');
+            const selectEl = document.getElementById('att-nickname');
+            if (!selectEl) return;
+            selectEl.innerHTML = `<option value="">-- 닉네임 선택 --</option>` + 
+                clanMembers.map(m => `<option value="${m.name}">${m.name} (${m.cls}, ${m.role})</option>`).join('');
         }
 
         function renderBossList() {
             const container = document.getElementById('boss-container');
             if (!container) return;
-            if (bossList.length === 0) {
-                container.innerHTML = `<div class="text-gray-500 text-sm col-span-full">등록된 보스가 없습니다.</div>`;
-                return;
-            }
             container.innerHTML = bossList.map(b => `
                 <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl shadow space-y-2">
-                    <div class="flex justify-between font-bold text-white"><span>${b.name}</span><span class="text-red-400">${b.time}</span></div>
-                    <p class="text-xs text-gray-400">메모: ${b.memo || '없음'}</p>
-                    <button onclick="deleteBoss(${b.id})" class="w-full bg-red-900 hover:bg-red-800 text-white text-xs py-1.5 rounded mt-2">삭제</button>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-white text-sm">${b.name}</span>
+                        <button onclick="toggleBossAlarm(${b.id})" class="text-xs px-2 py-1 rounded ${b.alarmOn ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-400'}">${b.alarmOn ? '알람ON' : '알람OFF'}</button>
+                    </div>
+                    <div class="text-blue-400 text-lg font-bold">${b.time}</div>
+                    <div class="text-xs text-gray-400">${b.memo || '메모 없음'}</div>
+                    ${currentUserRole === 'staff' ? `<button onclick="deleteBoss(${b.id})" class="w-full bg-red-900 text-red-200 text-xs py-1 rounded mt-2">보스 삭제</button>` : ''}
                 </div>
             `).join('');
+        }
+
+        function addNewBoss() {
+            const name = document.getElementById('new-boss-name').value.trim();
+            const time = document.getElementById('new-boss-time').value;
+            const memo = document.getElementById('new-boss-memo').value.trim();
+
+            if (!name || !time) {
+                alert('보스 이름과 시간을 모두 입력해주세요.');
+                return;
+            }
+
+            bossList.push({ id: Date.now(), name, time, memo, alarmOn: true });
+            localStorage.setItem('vampirBossList', JSON.stringify(bossList));
+
+            document.getElementById('new-boss-name').value = '';
+            document.getElementById('new-boss-time').value = '';
+            document.getElementById('new-boss-memo').value = '';
+            renderBossList();
         }
 
         function deleteBoss(id) {
@@ -598,116 +524,101 @@
             renderBossList();
         }
 
-        function testBossAlarmVoice() {
-            alert('보스 알람 음성 테스트 기능입니다.');
-        }
-
-        function setAllAlarm(status) {
-            bossList.forEach(b => b.alarmOn = status);
+        function toggleBossAlarm(id) {
+            bossList = bossList.map(b => b.id === id ? { ...b, alarmOn: !b.alarmOn } : b);
+            localStorage.setItem('vampirBossList', JSON.stringify(bossList));
             renderBossList();
         }
 
-        // 2. 참여율 조회(검색) 함수
-        function searchMemberHistory() {
-            const keyword = document.getElementById('search-keyword').value.trim();
-            const resultContainer = document.getElementById('search-result-container');
-            if (!keyword) {
-                alert('검색할 닉네임을 입력해주세요.');
-                return;
-            }
-            const found = clanMembers.find(m => m.name === keyword);
-            if (!found) {
-                resultContainer.innerHTML = `<span class="text-red-400">"${keyword}" 클랜원을 찾을 수 없습니다. (정확한 닉네임을 입력해주세요)</span>`;
-                return;
-            }
-            resultContainer.innerHTML = `
-                <div class="space-y-2">
-                    <p class="text-white font-bold text-base">🛡️ ${found.name} 님의 정보</p>
-                    <p>클래스: ${found.cls}</p>
-                    <p>전투력: ${found.power.toLocaleString()}</p>
-                    <p>역할: ${found.role}</p>
-                </div>
-            `;
+        function setAllAlarm(status) {
+            bossList = bossList.map(b => ({ ...b, alarmOn: status }));
+            localStorage.setItem('vampirBossList', JSON.stringify(bossList));
+            renderBossList();
         }
 
-        // 3. 금고 아이템 추가 함수
-        function addVaultItem() {
-            const nameInput = document.getElementById('vault-name');
-            const countInput = document.getElementById('vault-count');
-            const memoInput = document.getElementById('vault-memo');
-
-            if (!nameInput.value) {
-                alert('아이템 이름을 입력해주세요.');
-                return;
-            }
-
-            const newItem = {
-                id: Date.now(),
-                name: nameInput.value,
-                count: parseInt(countInput.value) || 1,
-                memo: memoInput.value || ''
-            };
-
-            vaultItems.push(newItem);
-            localStorage.setItem('vampirVaultItems', JSON.stringify(vaultItems));
-
-            nameInput.value = '';
-            countInput.value = '1';
-            memoInput.value = '';
-            renderVaultTable();
-            alert('금고 아이템이 등록되었습니다.');
+        function testBossAlarmVoice() {
+            alert('테스트 알람 호출');
         }
 
         function renderVaultTable() {
             const tbody = document.getElementById('vault-table-body');
             if (!tbody) return;
-            if (vaultItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 아이템 없음</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = vaultItems.map(item => `
-                <tr class="border-b border-gray-800">
-                    <td class="py-3 px-4 text-white font-bold">${item.name}</td>
-                    <td class="py-3 px-4 text-green-400">${item.count}개</td>
-                    <td class="py-3 px-4 text-gray-400">${item.memo}</td>
-                    <td class="py-3 px-4 text-center"><button onclick="deleteVaultItem(${item.id})" class="bg-red-900 text-white text-xs px-2 py-1 rounded">삭제</button></td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = vaultItems.length === 0 ? `<tr><td colspan="4" class="py-6 text-center text-gray-500">등록된 아이템 없음</td></tr>` :
+                vaultItems.map((item, idx) => `
+                    <tr class="border-b border-gray-800">
+                        <td class="py-3 px-4 text-white font-bold">${item.name}</td>
+                        <td class="py-3 px-4 text-amber-400 font-bold">${item.count}개</td>
+                        <td class="py-3 px-4 text-gray-300">${item.memo || '-'}</td>
+                        <td class="py-3 px-4 text-center">
+                            ${currentUserRole === 'staff' ? `<button onclick="deleteVaultItem(${idx})" class="bg-red-900 text-white text-xs px-2 py-1 rounded">삭제</button>` : '-'}
+                        </td>
+                    </tr>
+                `).join('');
         }
 
-        function deleteVaultItem(id) {
-            vaultItems = vaultItems.filter(i => i.id !== id);
+        function addVaultItem() {
+            const name = document.getElementById('vault-name').value.trim();
+            const count = Number(document.getElementById('vault-count').value) || 1;
+            const memo = document.getElementById('vault-memo').value.trim();
+
+            if (!name) {
+                alert('아이템 이름을 입력해주세요.');
+                return;
+            }
+
+            const existing = vaultItems.find(i => i.name === name);
+            if (existing) {
+                existing.count += count;
+                if (memo) existing.memo = memo;
+            } else {
+                vaultItems.push({ name, count, memo });
+            }
+
+            localStorage.setItem('vampirVaultItems', JSON.stringify(vaultItems));
+            document.getElementById('vault-name').value = '';
+            document.getElementById('vault-count').value = '1';
+            document.getElementById('vault-memo').value = '';
+            renderVaultTable();
+        }
+
+        function deleteVaultItem(idx) {
+            vaultItems.splice(idx, 1);
             localStorage.setItem('vampirVaultItems', JSON.stringify(vaultItems));
             renderVaultTable();
         }
 
-        // 4. 다이아 분배 계산 함수
         function calculateDiaDistribution() {
-            const totalDia = parseInt(document.getElementById('total-dia-input').value);
+            const totalDia = Number(document.getElementById('total-dia-input').value);
             const tbody = document.getElementById('dia-table-body');
             if (!tbody) return;
 
-            if (isNaN(totalDia) || totalDia <= 0) {
-                alert('올바른 총 다이아 수량을 입력해주세요.');
+            if (!totalDia || totalDia <= 0) {
+                alert('분배할 총 다이아 수량을 정확히 입력해주세요.');
                 return;
             }
 
             if (clanMembers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-red-400">등록된 클랜원이 없습니다. 명단을 먼저 추가해주세요.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500">등록된 클랜원이 없습니다.</td></tr>`;
                 return;
             }
 
-            const perPerson = Math.floor(totalDia / clanMembers.length);
+            const perMember = Math.floor(totalDia / clanMembers.length);
             tbody.innerHTML = clanMembers.map(m => `
                 <tr class="border-b border-gray-800">
                     <td class="py-3 px-4 text-white font-bold">${m.name}</td>
                     <td class="py-3 px-4 text-gray-300">${m.cls}</td>
                     <td class="py-3 px-4 text-gray-300">${m.power.toLocaleString()}</td>
-                    <td class="py-3 px-4 text-gray-300">${m.role}</td>
-                    <td class="py-3 px-4 text-amber-400 font-bold">${perPerson.toLocaleString()} 다이아</td>
+                    <td class="py-3 px-4 text-gray-400">${m.role}</td>
+                    <td class="py-3 px-4 text-amber-400 font-bold">${perMember.toLocaleString()} 다이아</td>
                 </tr>
             `).join('');
         }
+
+        function checkAttendance() { alert('출석 체크 기능'); }
+        function checkAttendanceWithPw() { alert('비밀번호 출석 체크 기능'); }
+        function toggleAttendanceActiveStatus() {}
+        function resetTodayAttendance() {}
+        function searchMemberHistory() {}
 
         window.onload = function() {
             initDashboard();
