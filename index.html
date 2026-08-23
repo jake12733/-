@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -189,6 +190,8 @@
         <!-- 클랜원 명단 탭 -->
         <section id="tab-members" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">👥 클랜원 명단 및 역할 관리</h2>
+            <p class="text-xs text-gray-400">💡 운영진 모드일 때 각 항목의 [수정] 버튼을 누르면 입력창으로 바뀌어 내용을 변경할 수 있습니다.</p>
+            
             <div id="admin-member-add-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="font-bold text-white text-sm">➕ 클랜원 추가하기</div>
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
@@ -216,19 +219,25 @@
                     <button onclick="addClanMember()" class="bg-red-600 hover:bg-red-500 text-white font-bold rounded p-3 text-sm">클랜원 등록</button>
                 </div>
             </div>
+
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <h3 class="text-lg font-bold text-amber-400">👑 클마 및 운영진 리스트</h3>
-                <table class="w-full text-left text-sm whitespace-nowrap">
-                    <thead><tr class="border-b border-gray-800 text-gray-400"><th class="py-3 px-4">닉네임</th><th class="py-3 px-4">클래스</th><th class="py-3 px-4">전투력</th><th class="py-3 px-4">역할</th><th class="py-3 px-4 text-center admin-col-header">관리</th></tr></thead>
-                    <tbody id="staff-table-body"><tr><td colspan="5" class="py-6 text-center text-gray-500">없음</td></tr></tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead><tr class="border-b border-gray-800 text-gray-400"><th class="py-3 px-4">닉네임</th><th class="py-3 px-4">클래스</th><th class="py-3 px-4">전투력</th><th class="py-3 px-4">역할</th><th class="py-3 px-4 text-center admin-col-header">관리</th></tr></thead>
+                        <tbody id="staff-table-body"><tr><td colspan="5" class="py-6 text-center text-gray-500">없음</td></tr></tbody>
+                    </table>
+                </div>
             </div>
+
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <h3 class="text-lg font-bold text-white">🛡️ 일반 클랜원 리스트</h3>
-                <table class="w-full text-left text-sm whitespace-nowrap">
-                    <thead><tr class="border-b border-gray-800 text-gray-400"><th class="py-3 px-4">닉네임</th><th class="py-3 px-4">클래스</th><th class="py-3 px-4">전투력</th><th class="py-3 px-4">역할</th><th class="py-3 px-4 text-center admin-col-header">관리</th></tr></thead>
-                    <tbody id="member-table-body"><tr><td colspan="5" class="py-6 text-center text-gray-500">없음</td></tr></tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead><tr class="border-b border-gray-800 text-gray-400"><th class="py-3 px-4">닉네임</th><th class="py-3 px-4">클래스</th><th class="py-3 px-4">전투력</th><th class="py-3 px-4">역할</th><th class="py-3 px-4 text-center admin-col-header">관리</th></tr></thead>
+                        <tbody id="member-table-body"><tr><td colspan="5" class="py-6 text-center text-gray-500">없음</td></tr></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -245,7 +254,6 @@
                 </div>
             </div>
 
-            <!-- 오직 운영진만 접근 가능한 비밀번호 설정/수정 영역 -->
             <div id="admin-attendance-settings-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4 border-l-4 border-l-amber-500">
                 <div class="flex justify-between items-center">
                     <h3 class="text-sm font-bold text-amber-400">🔒 [운영진 전용] 타임별 인증 비밀번호 설정 (각 4자리)</h3>
@@ -389,6 +397,7 @@
         let userAccounts = JSON.parse(localStorage.getItem('vampirUserAccounts')) || {};
         let loggedInUser = localStorage.getItem('vampirLoggedInUser') || null;
         let attendanceRecords = JSON.parse(localStorage.getItem('vampirAttendanceRecords')) || {};
+        let editingMemberId = null; // 현재 수정 중인 클랜원 ID 저장용
 
         const defaultNoticeText = `13시 / 21시 게헨나: 매일 있음 (14일 × 2점 = 28점)\n클랜임무 / 클랜수호: 목요일마다 있음 (2점)\n에노크 / 마슈미드: 토요일마다 있음 (2점)\n점령전: 토요일마다 있음 (2점)\n쟁탈전, 전초전: 첫주마다 있음 (1점)\n도합: 총점 35점`;
         let savedNoticeText = localStorage.getItem('vampirNoticeText') || defaultNoticeText; 
@@ -409,7 +418,6 @@
 
         function unlockAdminAttendanceSettings() {
             const inputPw = document.getElementById('admin-auth-input-pw').value.trim();
-            
             if (checkIsUserStaff() || inputPw === adminPasswords['master']) {
                 document.getElementById('admin-lock-form').classList.add('hidden');
                 document.getElementById('admin-unlocked-area').classList.remove('hidden');
@@ -580,6 +588,10 @@
             let isStaff = checkIsUserStaff();
             document.getElementById('admin-member-add-box').style.display = isStaff ? 'block' : 'none';
 
+            document.querySelectorAll('.admin-col-header').forEach(el => {
+                el.style.display = isStaff ? '' : 'none';
+            });
+
             staffBody.innerHTML = staffList.length === 0 ? `<tr><td colspan="5" class="py-6 text-center text-gray-500">없음</td></tr>` : 
                 staffList.map(m => generateMemberRow(m, isStaff)).join('');
 
@@ -588,9 +600,119 @@
         }
 
         function generateMemberRow(m, isStaff) {
-            let powerStr = m.powerType === 'blind' ? '블라인드' : m.power.toLocaleString();
-            let adminCol = isStaff ? `<td class="py-3 px-4 text-center"><button onclick="deleteClanMember('${m.id}')" class="text-red-400 hover:text-red-300 text-xs font-bold">삭제</button></td>` : `<td class="py-3 px-4 text-center">-</td>`;
-            return `<tr class="border-b border-gray-800 hover:bg-gray-850"><td class="py-3 px-4 font-bold text-white">${m.name}</td><td class="py-3 px-4 text-gray-300">${m.cls}</td><td class="py-3 px-4 text-blue-400">${powerStr}</td><td class="py-3 px-4 text-amber-400">${m.role}</td>${adminCol}</tr>`;
+            let clsOptions = ['아카샤', '바이퍼', '카니지', '블러드스테인', '그림리퍼', '블라인드'];
+            let roleOptions = ['일반', '운영진', '클마'];
+            let isEditing = (String(editingMemberId) === String(m.id));
+
+            if (isStaff && isEditing) {
+                // 수정 모드일 때
+                let clsSelectHtml = `<select id="edit-cls-${m.id}" class="bg-gray-800 border border-gray-700 rounded p-1 text-xs text-white">` +
+                    clsOptions.map(c => `<option value="${c}" ${m.cls === c ? 'selected' : ''}>${c}</option>`).join('') + `</select>`;
+
+                let roleSelectHtml = `<select id="edit-role-${m.id}" class="bg-gray-800 border border-gray-700 rounded p-1 text-xs text-amber-400 font-bold">` +
+                    roleOptions.map(r => `<option value="${r}" ${m.role === r ? 'selected' : ''}>${r}</option>`).join('') + `</select>`;
+
+                let powerValDisplay = m.powerType === 'blind' ? '' : m.power;
+                let powerInputHtml = `
+                    <div class="flex items-center space-x-1">
+                        <input type="number" id="edit-power-${m.id}" value="${powerValDisplay}" placeholder="${m.powerType === 'blind' ? '블라인드' : '전투력'}" ${m.powerType === 'blind' ? 'disabled' : ''} class="bg-gray-800 border border-gray-700 rounded p-1 text-xs text-blue-400 w-24">
+                        <select id="edit-powertype-${m.id}" onchange="toggleEditPowerType('${m.id}')" class="bg-gray-800 border border-gray-700 rounded p-1 text-[10px] text-gray-300">
+                            <option value="number" ${m.powerType !== 'blind' ? 'selected' : ''}>숫자</option>
+                            <option value="blind" ${m.powerType === 'blind' ? 'selected' : ''}>블라인드</option>
+                        </select>
+                    </div>`;
+
+                let nameInputHtml = `<input type="text" id="edit-name-${m.id}" value="${m.name}" class="bg-gray-800 border border-gray-700 rounded p-1 text-xs text-white font-bold w-28">`;
+                let actionBtnHtml = `
+                    <div class="flex items-center justify-center space-x-1">
+                        <button onclick="saveMemberEdit('${m.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] px-2 py-1 rounded font-bold">저장</button>
+                        <button onclick="cancelMemberEdit()" class="bg-gray-700 hover:bg-gray-600 text-white text-[11px] px-2 py-1 rounded font-bold">취소</button>
+                    </div>`;
+
+                return `<tr class="border-b border-gray-800 bg-gray-850/65">
+                    <td class="py-3 px-4">${nameInputHtml}</td>
+                    <td class="py-3 px-4">${clsSelectHtml}</td>
+                    <td class="py-3 px-4">${powerInputHtml}</td>
+                    <td class="py-3 px-4">${roleSelectHtml}</td>
+                    <td class="py-3 px-4 text-center">${actionBtnHtml}</td>
+                </tr>`;
+            } else {
+                // 일반 보기 모드
+                let powerStr = m.powerType === 'blind' ? '블라인드' : m.power.toLocaleString();
+                let actionBtnHtml = isStaff ? `
+                    <div class="flex items-center justify-center space-x-1">
+                        <button onclick="startMemberEdit('${m.id}')" class="bg-blue-600 hover:bg-blue-500 text-white text-[11px] px-2 py-1 rounded font-bold">수정</button>
+                        <button onclick="deleteClanMember('${m.id}')" class="bg-red-950/60 hover:bg-red-900 text-red-400 text-[11px] px-2 py-1 rounded font-bold">삭제</button>
+                    </div>` : '';
+
+                return `<tr class="border-b border-gray-800 hover:bg-gray-850">
+                    <td class="py-3 px-4 font-bold text-white">${m.name}</td>
+                    <td class="py-3 px-4 text-gray-300">${m.cls}</td>
+                    <td class="py-3 px-4 text-blue-400">${powerStr}</td>
+                    <td class="py-3 px-4 text-amber-400">${m.role}</td>
+                    ${isStaff ? `<td class="py-3 px-4 text-center">${actionBtnHtml}</td>` : ''}
+                </tr>`;
+            }
+        }
+
+        function startMemberEdit(id) {
+            editingMemberId = id;
+            renderMembers();
+        }
+
+        function cancelMemberEdit() {
+            editingMemberId = null;
+            renderMembers();
+        }
+
+        function toggleEditPowerType(id) {
+            let typeSelect = document.getElementById(`edit-powertype-${id}`);
+            let powerInput = document.getElementById(`edit-power-${id}`);
+            if (typeSelect.value === 'blind') {
+                powerInput.value = '';
+                powerInput.disabled = true;
+                powerInput.placeholder = '블라인드';
+            } else {
+                powerInput.disabled = false;
+                powerInput.placeholder = '전투력';
+            }
+        }
+
+        function saveMemberEdit(id) {
+            let member = clanMembers.find(m => String(m.id) === String(id));
+            if (!member) return;
+
+            let newName = document.getElementById(`edit-name-${id}`).value.trim();
+            let newCls = document.getElementById(`edit-cls-${id}`).value;
+            let newRole = document.getElementById(`edit-role-${id}`).value;
+            let newPowerType = document.getElementById(`edit-powertype-${id}`).value;
+            let newPower = newPowerType === 'blind' ? 0 : Number(document.getElementById(`edit-power-${id}`).value) || 0;
+
+            if (!newName) { alert('닉네임을 입력해주세요.'); return; }
+            if (newName !== member.name && clanMembers.some(m => m.name === newName)) {
+                alert('이미 존재하는 닉네임입니다.');
+                return;
+            }
+
+            member.name = newName;
+            member.cls = newCls;
+            member.role = newRole;
+            member.powerType = newPowerType;
+            member.power = newPower;
+
+            clanMembers.sort(sortMembersList);
+            localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
+            
+            editingMemberId = null;
+            renderMembers();
+            renderAttendance();
+            alert('수정되었습니다.');
+        }
+
+        function sortMembersList(a, b) {
+            if (a.powerType === 'blind' && b.powerType !== 'blind') return 1;
+            if (a.powerType !== 'blind' && b.powerType === 'blind') return -1;
+            return b.power - a.power;
         }
 
         function togglePowerInputType(mode) {
@@ -617,6 +739,7 @@
             if (clanMembers.some(m => m.name === name)) { alert('이미 존재하는 닉네임입니다.'); return; }
 
             clanMembers.push({ id: Date.now(), name, cls, powerType, power, role });
+            clanMembers.sort(sortMembersList);
             localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
             
             document.getElementById('new-member-name').value = '';
@@ -636,11 +759,10 @@
 
         function renderAttendance() {
             let select = document.getElementById('att-nickname');
-            let currentSelected = select.value; // 현재 선택된 값 보존
+            let currentSelected = select.value; 
 
             select.innerHTML = '<option value="">-- 닉네임 선택 --</option>' + clanMembers.map(m => `<option value="${m.name}">${m.name} (${m.cls})</option>`).join('');
             
-            // 기존에 선택했던 값이 여전히 목록에 존재한다면 유지
             if (currentSelected && clanMembers.some(m => m.name === currentSelected)) {
                 select.value = currentSelected;
             }
