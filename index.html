@@ -480,7 +480,7 @@
             { id: 45, name: 'DOKDO크하핫', cls: '카니지', powerType: 'blind', power: 0, role: '일반' }
         ];
 
-        let clanMembers = rawMembers.map(m => {
+        let clanMembers = JSON.parse(localStorage.getItem('vampirClanMembers')) || rawMembers.map(m => {
             let pType = m.powerType;
             let pVal = m.power;
             if(!pType) {
@@ -1005,14 +1005,8 @@
         }
 
         function renderMembersTable() {
-            const sorted = [...clanMembers].sort((a, b) => {
-                if(a.powerType === 'blind' && b.powerType !== 'blind') return -1;
-                if(a.powerType !== 'blind' && b.powerType === 'blind') return 1;
-                return b.power - a.power;
-            });
-
-            const staffList = sorted.filter(m => m.role === '클마' || m.role === '운영진');
-            const memberList = sorted.filter(m => m.role === '일반');
+            const staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
+            const memberList = clanMembers.filter(m => m.role === '일반');
 
             const renderRows = (list, groupType) => {
                 if(list.length === 0) return `<tr><td colspan="6" class="py-6 text-center text-gray-500">없음</td></tr>`;
