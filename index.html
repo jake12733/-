@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -71,9 +72,12 @@
             </div>
             <div class="bg-gray-900/90 border border-gray-800 backdrop-blur-md p-6 md:p-8 rounded-2xl shadow-2xl space-y-6 text-left">
                 <div class="flex border-b border-gray-800 pb-2">
-                    <button onclick="switchAuthTab('login')" id="auth-tab-login" class="flex-1 pb-2 text-sm font-bold text-red-500 border-b-2 border-red-500 transition">로그인</button>
-                    <button onclick="switchAuthTab('register')" id="auth-tab-register" class="flex-1 pb-2 text-sm font-bold text-gray-400 hover:text-white transition">회원가입</button>
+                    <button onclick="switchAuthTab('login')" id="auth-tab-login" class="flex-1 pb-2 text-xs font-bold text-red-500 border-b-2 border-red-500 transition">로그인</button>
+                    <button onclick="switchAuthTab('register')" id="auth-tab-register" class="flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition">회원가입</button>
+                    <button onclick="switchAuthTab('reset')" id="auth-tab-reset" class="flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition">비번재설정</button>
                 </div>
+                
+                <!-- 로그인 폼 -->
                 <div id="form-login" class="space-y-4">
                     <div class="space-y-1">
                         <label class="text-xs text-gray-400 font-semibold">닉네임</label>
@@ -81,10 +85,15 @@
                     </div>
                     <div class="space-y-1">
                         <label class="text-xs text-gray-400 font-semibold">비밀번호</label>
-                        <input type="password" id="login-password" placeholder="비밀번호 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                        <div class="relative">
+                            <input type="password" id="login-password" placeholder="비밀번호 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 pr-10 text-white text-sm focus:outline-none focus:border-red-500">
+                            <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-sm focus:outline-none">👁️</button>
+                        </div>
                     </div>
                     <button onclick="processLogin()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-red-900/40">로그인하기</button>
                 </div>
+
+                <!-- 회원가입 폼 -->
                 <div id="form-register" class="space-y-4 hidden">
                     <div class="space-y-1">
                         <label class="text-xs text-gray-400 font-semibold">사용할 닉네임</label>
@@ -92,9 +101,28 @@
                     </div>
                     <div class="space-y-1">
                         <label class="text-xs text-gray-400 font-semibold">비밀번호</label>
-                        <input type="password" id="reg-password" placeholder="사용할 비밀번호 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                        <div class="relative">
+                            <input type="password" id="reg-password" placeholder="사용할 비밀번호 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 pr-10 text-white text-sm focus:outline-none focus:border-red-500">
+                            <button type="button" onclick="togglePasswordVisibility('reg-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-sm focus:outline-none">👁️</button>
+                        </div>
                     </div>
                     <button onclick="processRegister()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-blue-900/40">회원가입 완료</button>
+                </div>
+
+                <!-- 비밀번호 재설정 폼 -->
+                <div id="form-reset" class="space-y-4 hidden">
+                    <div class="space-y-1">
+                        <label class="text-xs text-gray-400 font-semibold">닉네임</label>
+                        <input type="text" id="reset-nickname" placeholder="가입된 닉네임 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-red-500">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs text-gray-400 font-semibold">새로운 비밀번호</label>
+                        <div class="relative">
+                            <input type="password" id="reset-new-password" placeholder="새로운 비밀번호 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 pr-10 text-white text-sm focus:outline-none focus:border-red-500">
+                            <button type="button" onclick="togglePasswordVisibility('reset-new-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-sm focus:outline-none">👁️</button>
+                        </div>
+                    </div>
+                    <button onclick="processPasswordReset()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-amber-900/40">비밀번호 변경하기</button>
                 </div>
             </div>
         </div>
@@ -435,6 +463,18 @@
         let savedNoticeText = localStorage.getItem('vampirNoticeText') || defaultNoticeText; 
         let savedServerName = localStorage.getItem('vampirServerName') || '독도 서버';
 
+        // 비밀번호 보기/숨기기 토글 함수
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerText = '🐵'; // 보이게 될 때 아이콘 변경 (선택사항, 기본 이모지 👁️ 유지 가능)
+            } else {
+                input.type = 'password';
+                btn.innerText = '👁️';
+            }
+        }
+
         // 탭 전환 기능
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -452,16 +492,31 @@
         }
 
         function switchAuthTab(type) {
+            const loginForm = document.getElementById('form-login');
+            const regForm = document.getElementById('form-register');
+            const resetForm = document.getElementById('form-reset');
+            
+            const tabLogin = document.getElementById('auth-tab-login');
+            const tabReg = document.getElementById('auth-tab-register');
+            const tabReset = document.getElementById('auth-tab-reset');
+
+            loginForm.classList.add('hidden');
+            regForm.classList.add('hidden');
+            resetForm.classList.add('hidden');
+
+            tabLogin.className = "flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition";
+            tabReg.className = "flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition";
+            tabReset.className = "flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition";
+
             if (type === 'login') {
-                document.getElementById('form-login').classList.remove('hidden');
-                document.getElementById('form-register').classList.add('hidden');
-                document.getElementById('auth-tab-login').className = "flex-1 pb-2 text-sm font-bold text-red-500 border-b-2 border-red-500 transition";
-                document.getElementById('auth-tab-register').className = "flex-1 pb-2 text-sm font-bold text-gray-400 hover:text-white transition";
-            } else {
-                document.getElementById('form-login').classList.add('hidden');
-                document.getElementById('form-register').classList.remove('hidden');
-                document.getElementById('auth-tab-register').className = "flex-1 pb-2 text-sm font-bold text-blue-500 border-b-2 border-blue-500 transition";
-                document.getElementById('auth-tab-login').className = "flex-1 pb-2 text-sm font-bold text-gray-400 hover:text-white transition";
+                loginForm.classList.remove('hidden');
+                tabLogin.className = "flex-1 pb-2 text-xs font-bold text-red-500 border-b-2 border-red-500 transition";
+            } else if (type === 'register') {
+                regForm.classList.remove('hidden');
+                tabReg.className = "flex-1 pb-2 text-xs font-bold text-blue-500 border-b-2 border-blue-500 transition";
+            } else if (type === 'reset') {
+                resetForm.classList.remove('hidden');
+                tabReset.className = "flex-1 pb-2 text-xs font-bold text-amber-500 border-b-2 border-amber-500 transition";
             }
         }
 
@@ -505,6 +560,26 @@
             localStorage.setItem('vampirLoggedInUser', loggedInUser);
             checkLoginState();
             alert('회원가입 및 로그인 완료!');
+        }
+
+        function processPasswordReset() {
+            const nickname = document.getElementById('reset-nickname').value.trim();
+            const newPassword = document.getElementById('reset-new-password').value.trim();
+            if(!nickname || !newPassword) {
+                alert('닉네임과 새로운 비밀번호를 모두 입력해주세요.');
+                return;
+            }
+            if(!userAccounts[nickname]) {
+                alert('등록되지 않은 닉네임입니다. 회원가입을 먼저 진행해주세요.');
+                return;
+            }
+            userAccounts[nickname] = newPassword;
+            localStorage.setItem('vampirUserAccounts', JSON.stringify(userAccounts));
+            alert('비밀번호가 성공적으로 재설정되었습니다. 새 비밀번호로 로그인해주세요.');
+            switchAuthTab('login');
+            document.getElementById('login-nickname').value = nickname;
+            document.getElementById('reset-nickname').value = '';
+            document.getElementById('reset-new-password').value = '';
         }
 
         function processLogout() {
@@ -782,7 +857,6 @@
             document.getElementById('dashboard-server-name-input').value = savedServerName;
             document.getElementById('dashboard-date').innerText = todayDateStr;
             
-            // 요구하신 기간 고정 (8.19 ~ 9.2)
             document.getElementById('dashboard-shuffle-period').innerHTML = `
                 <div class="text-sm text-gray-300 font-semibold mb-1">📅 기간: 2026.08.19 ~ 2026.09.02</div>
                 <div class="text-xl font-bold text-amber-400">총 14일 기준 셔플 기간 적용 중</div>
