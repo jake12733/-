@@ -229,7 +229,7 @@
         <!-- 클랜원 명단 탭 -->
         <section id="tab-members" class="tab-content hidden space-y-6">
             <h2 class="text-2xl font-bold text-white">👥 클랜원 명단 및 역할 관리</h2>
-            <p class="text-xs text-gray-400">💡 블라인드 인원은 자동으로 맨 위에 정렬되며, [▲] [▼] 버튼으로 순서를 직접 바꿀 수 있습니다.</p>
+            <p class="text-xs text-gray-400">💡 [▲] [▼] 버튼으로 순서를 직접 바꿀 수 있습니다.</p>
             
             <div id="admin-member-add-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="font-bold text-white text-sm">➕ 클랜원 추가하기</div>
@@ -681,6 +681,7 @@
             }
         }
 
+        // [수정된 부분] 전체 배열 내에서 해당 그룹 내 상대 위치를 찾아 안전하게 순서를 교체합니다.
         function moveMemberOrder(index, direction, groupType) {
             const staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
             const memberList = clanMembers.filter(m => m.role === '일반');
@@ -695,6 +696,7 @@
             const swapItem = targetArray[newPosIndex];
             const swapIndexInAll = clanMembers.findIndex(m => m.id === swapItem.id);
             
+            // clanMembers 전체 배열에서 두 항목의 위치를 서로 맞바꿈
             let temp = clanMembers[targetIndexInAll];
             clanMembers[targetIndexInAll] = clanMembers[swapIndexInAll];
             clanMembers[swapIndexInAll] = temp;
@@ -886,15 +888,10 @@
             document.getElementById('dashboard-total-rate').innerText = `${checkedCount}명 참여 중 (${rate}%)`;
         }
 
+        // [수정된 부분] 임의 정렬 상태가 유지되도록 clanMembers 배열 순서를 그대로 사용하여 렌더링합니다.
         function renderMembersTable() {
-            const sorted = [...clanMembers].sort((a, b) => {
-                if(a.powerType === 'blind' && b.powerType !== 'blind') return -1;
-                if(a.powerType !== 'blind' && b.powerType === 'blind') return 1;
-                return b.power - a.power;
-            });
-
-            const staffList = sorted.filter(m => m.role === '클마' || m.role === '운영진');
-            const memberList = sorted.filter(m => m.role === '일반');
+            const staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
+            const memberList = clanMembers.filter(m => m.role === '일반');
 
             const renderRows = (list, groupType) => {
                 if(list.length === 0) return `<tr><td colspan="6" class="py-6 text-center text-gray-500">없음</td></tr>`;
@@ -1072,3 +1069,4 @@
     </script>
 </body>
 </html>
+
