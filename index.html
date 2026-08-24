@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="ko" translate="no">
 <head>
@@ -500,6 +499,27 @@
             };
         });
 
+        // 최초 로딩 시 또는 저장된 데이터가 있을 때 블라인드 인원들을 각 그룹(운영진/일반)의 맨 위로 자동 정렬
+        function sortBlindMembersToTop() {
+            let staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
+            let memberList = clanMembers.filter(m => m.role === '일반');
+
+            staffList.sort((a, b) => {
+                if (a.powerType === 'blind' && b.powerType !== 'blind') return -1;
+                if (a.powerType !== 'blind' && b.powerType === 'blind') return 1;
+                return 0;
+            });
+
+            memberList.sort((a, b) => {
+                if (a.powerType === 'blind' && b.powerType !== 'blind') return -1;
+                if (a.powerType !== 'blind' && b.powerType === 'blind') return 1;
+                return 0;
+            });
+
+            clanMembers = [...staffList, ...memberList];
+        }
+        sortBlindMembersToTop();
+
         let userAccounts = JSON.parse(localStorage.getItem('vampirUserAccounts')) || {};
         let loggedInUser = localStorage.getItem('vampirLoggedInUser') || null;
         let attendanceRecords = JSON.parse(localStorage.getItem('vampirAttendanceRecords')) || {};
@@ -610,6 +630,7 @@
             
             if(!clanMembers.some(m => m.name === nickname)) {
                 clanMembers.push({ id: Date.now(), name: nickname, cls: '아카샤', powerType: 'number', power: 0, role: '일반' });
+                sortBlindMembersToTop();
                 saveMembersData();
             }
             
@@ -718,6 +739,7 @@
 
             const power = powerType === 'blind' ? 0 : (Number(powerInput) || 0);
             clanMembers.push({ id: Date.now(), name, cls, powerType, power, role });
+            sortBlindMembersToTop();
             saveMembersData();
 
             document.getElementById('new-member-name').value = '';
@@ -733,6 +755,7 @@
             }
             if(confirm('정말 이 클랜원을 삭제하시겠습니까?')) {
                 clanMembers = clanMembers.filter(m => m.id !== id);
+                sortBlindMembersToTop();
                 saveMembersData();
                 renderAll();
             }
@@ -788,6 +811,7 @@
             member.powerType = newPowerType;
             member.power = newPower;
 
+            sortBlindMembersToTop();
             saveMembersData();
             renderAll();
             alert('클랜원 정보가 수정되었습니다.');
@@ -1035,7 +1059,14 @@
 
         function renderAttendance() {
             const select = document.getElementById('att-nickname');
+            const currentSelectedValue = select.value; // 현재 선택된 닉네임 백업
+
             select.innerHTML = '<option value="">-- 닉네임 선택 --</option>' + clanMembers.map(m => `<option value="${m.name}">${m.name}</option>`).join('');
+            
+            // 이전 선택값이 존재하면 유지
+            if (currentSelectedValue && clanMembers.some(m => m.name === currentSelectedValue)) {
+                select.value = currentSelectedValue;
+            }
 
             const btnStatus = document.getElementById('toggle-attendance-status-btn');
             if(isAttendanceActive) {
