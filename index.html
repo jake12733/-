@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -174,8 +173,8 @@
             
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-2">
                 <p class="text-gray-400 text-sm">이번 셔플 기간</p>
-                <p id="dashboard-shuffle-period" class="text-xl font-bold text-amber-400">-</p>
-                <p class="text-xs text-gray-500">💡 셔플은 8월 19일 시작 기준 2주(14일) 주기로 자동으로 갱신됩니다.</p>
+                <div id="dashboard-shuffle-period" class="text-xl font-bold text-amber-400">-</div>
+                <p class="text-xs text-gray-500">💡 셔플은 총 14일 기준으로 갱신됩니다.</p>
             </div>
         </section>
 
@@ -432,7 +431,7 @@
 
         let verifiedTimePasswords = { '13': false, '21': false };
 
-        const defaultNoticeText = `13시 / 21시 게헨나: 매일 있음 (14일 × 2점 = 28점)\n클랜임무 / 클랜수호: 목요일마다 있음 (2점)\n에노크 / 마슈미드: 토요일마다 있음 (2점)\n점령전: 토요일마다 있음 (2점)\n쟁탈전, 전초전: 첫주마다 있음 (1점)\n도합: 총점 35점`;
+        const defaultNoticeText = `13시 / 21시 게헨나: 매일 있음\n클랜임무 / 클랜수호: 목요일마다 있음\n에노크 / 마슈미드: 토요일마다 있음\n점령전: 토요일마다 있음\n쟁탈전, 전초전: 첫주마다 있음\n도합: 총점 35점`;
         let savedNoticeText = localStorage.getItem('vampirNoticeText') || defaultNoticeText; 
         let savedServerName = localStorage.getItem('vampirServerName') || '독도 서버';
 
@@ -783,12 +782,11 @@
             document.getElementById('dashboard-server-name-input').value = savedServerName;
             document.getElementById('dashboard-date').innerText = todayDateStr;
             
-            const baseDate = new Date('2025-08-19');
-            const now = new Date();
-            const diffTime = Math.abs(now - baseDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            const cycleDay = (diffDays % 14) + 1;
-            document.getElementById('dashboard-shuffle-period').innerText = `현재 셔플 주기 14일 중 ${cycleDay}일차 진행 중`;
+            // 요구하신 기간 고정 (8.19 ~ 9.2)
+            document.getElementById('dashboard-shuffle-period').innerHTML = `
+                <div class="text-sm text-gray-300 font-semibold mb-1">📅 기간: 2026.08.19 ~ 2026.09.02</div>
+                <div class="text-xl font-bold text-amber-400">총 14일 기준 셔플 기간 적용 중</div>
+            `;
 
             let checkedCount = Object.keys(todayCheckedStatus).length;
             let totalMembersCount = clanMembers.length || 1;
