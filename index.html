@@ -3,23 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>뱀피르 독도 클랜 관리</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { box-sizing: border-box; }
+        /* 모든 브라우저 기본 스타일 및 렌더링 강제 통일 */
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 모바일 사파리/크롬 등에서 인풋/버튼의 기기 기본 스타일(둥근 모서리, 그림자 등) 강제 제거 */
+        input, button, select, textarea {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            border-radius: 0;
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+        }
+
         body { 
             background-color: #0b0f19; 
             color: #f3f4f6; 
-            font-family: 'Malgun Gothic', sans-serif; 
-            margin: 0; 
-            padding: 0; 
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            word-break: keep-all;
         }
+
         #login-bg-screen {
-            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.85)), url('image_4a3c26.jpg');
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.9)), url('image_4a3c26.jpg');
             background-size: cover;
             background-position: center;
         }
+
         .dokdo-title {
             font-family: 'Georgia', serif;
             font-weight: 900;
@@ -35,6 +53,7 @@
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.9));
         }
+
         .mobile-bottom-nav {
             position: fixed !important;
             bottom: 0 !important;
@@ -47,6 +66,7 @@
             padding: 8px 0 !important;
             z-index: 99999 !important;
         }
+
         .mobile-tab-btn {
             background: none;
             border: none;
@@ -60,6 +80,7 @@
             flex: 1;
         }
         .mobile-tab-btn.active { color: #ef4444; }
+
         @media (max-width: 767px) {
             .pc-sidebar { display: none !important; }
             main { padding-bottom: 90px !important; }
@@ -96,7 +117,7 @@
                             <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-sm focus:outline-none">👁️</button>
                         </div>
                     </div>
-                    <button onclick="processLogin()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-red-900/40">로그인하기</button>
+                    <button onclick="processLogin()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-red-900/40 cursor-pointer">로그인하기</button>
                 </div>
 
                 <!-- 회원가입 폼 -->
@@ -112,7 +133,7 @@
                             <button type="button" onclick="togglePasswordVisibility('reg-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-sm focus:outline-none">👁️</button>
                         </div>
                     </div>
-                    <button onclick="processRegister()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-blue-900/40">회원가입 완료</button>
+                    <button onclick="processRegister()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-blue-900/40 cursor-pointer">회원가입 완료</button>
                 </div>
 
                 <!-- 비밀번호 재설정 폼 -->
@@ -128,7 +149,7 @@
                             <button type="button" onclick="togglePasswordVisibility('reset-new-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-sm focus:outline-none">👁️</button>
                         </div>
                     </div>
-                    <button onclick="processPasswordReset()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-amber-900/40">비밀번호 변경하기</button>
+                    <button onclick="processPasswordReset()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-amber-900/40 cursor-pointer">비밀번호 변경하기</button>
                 </div>
             </div>
         </div>
@@ -164,12 +185,12 @@
         </div>
 
         <nav class="p-4 space-y-2 overflow-y-auto flex-grow">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white transition">대시보드</button>
-            <button onclick="switchTab('notice')" id="nav-notice" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition">공지사항</button>
-            <button onclick="switchTab('members')" id="nav-members" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition">👥 클랜원 명단</button>
-            <button onclick="switchTab('attendance')" id="nav-attendance" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition">출석 체크</button>
-            <button onclick="switchTab('history')" id="nav-history" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition">참여율 조회</button>
-            <button onclick="switchTab('dia')" id="nav-dia" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition">💎 다이아 분배</button>
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white transition cursor-pointer">대시보드</button>
+            <button onclick="switchTab('notice')" id="nav-notice" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer">공지사항</button>
+            <button onclick="switchTab('members')" id="nav-members" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer">👥 클랜원 명단</button>
+            <button onclick="switchTab('attendance')" id="nav-attendance" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer">출석 체크</button>
+            <button onclick="switchTab('history')" id="nav-history" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer">참여율 조회</button>
+            <button onclick="switchTab('dia')" id="nav-dia" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer">💎 다이아 분배</button>
         </nav>
     </aside>
 
@@ -181,7 +202,7 @@
                 <span id="user-status-dot" class="w-3 h-3 rounded-full bg-green-500"></span>
                 <span id="logged-in-user-name" class="text-sm font-bold text-white">로그인 중</span>
             </div>
-            <button onclick="processLogout()" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-xs font-bold transition">로그아웃</button>
+            <button onclick="processLogout()" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">로그아웃</button>
         </div>
 
         <!-- 1. 대시보드 탭 -->
@@ -192,7 +213,7 @@
                     <p class="text-gray-400 text-sm">현재 서버명</p>
                     <div class="flex space-x-2">
                         <input type="text" id="dashboard-server-name-input" placeholder="예: 독도 01서버" class="bg-gray-800 border border-gray-700 rounded p-2 text-white text-sm flex-grow">
-                        <button onclick="saveServerName()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-2 rounded text-xs font-bold">저장</button>
+                        <button onclick="saveServerName()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-2 rounded text-xs font-bold cursor-pointer">저장</button>
                     </div>
                 </div>
                 <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-1">
@@ -225,8 +246,8 @@
                 <div id="notice-edit-mode" class="hidden space-y-4">
                     <textarea id="notice-textarea" rows="10" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-red-500 font-mono"></textarea>
                     <div class="flex justify-end space-x-3">
-                        <button onclick="cancelNoticeEdit()" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm font-bold">취소</button>
-                        <button onclick="saveNoticeContent()" class="bg-red-600 hover:bg-red-500 text-white px-5 py-2 rounded text-sm font-bold">저장하기</button>
+                        <button onclick="cancelNoticeEdit()" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm font-bold cursor-pointer">취소</button>
+                        <button onclick="saveNoticeContent()" class="bg-red-600 hover:bg-red-500 text-white px-5 py-2 rounded text-sm font-bold cursor-pointer">저장하기</button>
                     </div>
                 </div>
             </div>
@@ -261,7 +282,7 @@
                         <option value="운영진">운영진</option>
                         <option value="클마">클마 (클랜마스터)</option>
                     </select>
-                    <button onclick="addClanMember()" class="bg-red-600 hover:bg-red-500 text-white font-bold rounded p-3 text-sm">클랜원 등록</button>
+                    <button onclick="addClanMember()" class="bg-red-600 hover:bg-red-500 text-white font-bold rounded p-3 text-sm cursor-pointer">클랜원 등록</button>
                 </div>
             </div>
 
@@ -294,8 +315,8 @@
                     <p id="current-season-info" class="text-xs text-amber-400 mt-1"></p>
                 </div>
                 <div class="flex space-x-2">
-                    <button id="toggle-attendance-status-btn" onclick="toggleAttendanceActiveStatus()" class="bg-emerald-700 text-white px-4 py-2 rounded text-xs font-bold">출석 활성화 중</button>
-                    <button id="reset-attendance-btn" onclick="resetTodayAttendance()" class="bg-red-900 text-red-200 px-4 py-2 rounded text-xs font-bold">오늘 초기화</button>
+                    <button id="toggle-attendance-status-btn" onclick="toggleAttendanceActiveStatus()" class="bg-emerald-700 text-white px-4 py-2 rounded text-xs font-bold cursor-pointer">출석 활성화 중</button>
+                    <button id="reset-attendance-btn" onclick="resetTodayAttendance()" class="bg-red-900 text-red-200 px-4 py-2 rounded text-xs font-bold cursor-pointer">오늘 초기화</button>
                 </div>
             </div>
 
@@ -306,9 +327,9 @@
                 </div>
 
                 <div id="admin-lock-form" class="flex flex-wrap items-center gap-3 pt-2">
-                    <input type="password" maxlength="4" id="admin-auth-input-pw" placeholder="운영진 관리 비밀번호 4자리 입력" class="bg-gray-800 border border-gray-700 rounded p-2 text-white text-sm w-48 text-center">
-                    <button onclick="unlockAdminAttendanceSettings()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-xs font-bold transition">잠금 해제</button>
-                    <button onclick="openSetMasterPwModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-xs font-bold transition">비밀번호 설정하기</button>
+                    <input type="password" maxlength="4" id="admin-auth-input-pw" placeholder="운영진 비밀번호 4자리" class="bg-gray-800 border border-gray-700 rounded p-2 text-white text-sm w-48 text-center">
+                    <button onclick="unlockAdminAttendanceSettings()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">잠금 해제</button>
+                    <button onclick="openSetMasterPwModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">비밀번호 설정하기</button>
                 </div>
 
                 <div id="admin-unlocked-area" class="hidden space-y-4 pt-2">
@@ -316,17 +337,17 @@
                         <div class="flex items-center space-x-3 bg-gray-800/80 p-3 rounded-lg border border-gray-700">
                             <span class="text-xs text-blue-400 font-bold w-12">13시:</span>
                             <input type="password" maxlength="4" id="admin-setting-pw-13" placeholder="4자리" class="bg-gray-900 border border-gray-700 rounded p-2 text-white text-sm w-28 text-center">
-                            <button onclick="saveAdminTimePassword('13')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-xs font-bold transition">수정</button>
+                            <button onclick="saveAdminTimePassword('13')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">수정</button>
                         </div>
                         <div class="flex items-center space-x-3 bg-gray-800/80 p-3 rounded-lg border border-gray-700">
                             <span class="text-xs text-red-400 font-bold w-12">21시:</span>
                             <input type="password" maxlength="4" id="admin-setting-pw-21" placeholder="4자리" class="bg-gray-900 border border-gray-700 rounded p-2 text-white text-sm w-28 text-center">
-                            <button onclick="saveAdminTimePassword('21')" class="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded text-xs font-bold transition">수정</button>
+                            <button onclick="saveAdminTimePassword('21')" class="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">수정</button>
                         </div>
                     </div>
                     <div class="flex justify-between items-center pt-2">
-                        <button onclick="openSetMasterPwModalFromUnlocked()" class="bg-blue-700 hover:bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-bold transition">관리자 마스터 비번 변경</button>
-                        <button onclick="lockAdminAttendanceSettings()" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded text-xs font-bold transition">다시 잠그기</button>
+                        <button onclick="openSetMasterPwModalFromUnlocked()" class="bg-blue-700 hover:bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-bold transition cursor-pointer">관리자 마스터 비번 변경</button>
+                        <button onclick="lockAdminAttendanceSettings()" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded text-xs font-bold transition cursor-pointer">다시 잠그기</button>
                     </div>
                 </div>
             </div>
@@ -339,37 +360,37 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div class="space-y-2 bg-gray-800/50 p-4 rounded-xl border border-gray-800">
                         <p class="text-blue-400 font-bold text-sm">☀️ 13시타임 (3개 모두 완료 시 1점)</p>
-                        <button onclick="checkAttendanceWithPw('13시_시작전', '13', '게헨나 시작전 출석')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2 rounded text-sm font-semibold transition">게헨나 시작전 출석</button>
-                        <button onclick="checkAttendanceWithPw('13시_3층전', '13', '3층 올라가기전')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2 rounded text-sm font-semibold transition">3층 올라가기전</button>
-                        <button onclick="checkAttendanceWithPw('13시_끝', '13', '게헨나 끝 출석')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2 rounded text-sm font-semibold transition">게헨나 끝 출석</button>
+                        <button onclick="checkAttendanceWithPw('13시_시작전', '13', '게헨나 시작전 출석')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">게헨나 시작전 출석</button>
+                        <button onclick="checkAttendanceWithPw('13시_3층전', '13', '3층 올라가기전')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">3층 올라가기전</button>
+                        <button onclick="checkAttendanceWithPw('13시_끝', '13', '게헨나 끝 출석')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">게헨나 끝 출석</button>
                     </div>
                     <div class="space-y-2 bg-gray-800/50 p-4 rounded-xl border border-gray-800">
                         <p class="text-red-400 font-bold text-sm">🌙 21시타임 (3개 모두 완료 시 1점)</p>
-                        <button onclick="checkAttendanceWithPw('21시_시작전', '21', '게헨나 시작전 출석')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2 rounded text-sm font-semibold transition">게헨나 시작전 출석</button>
-                        <button onclick="checkAttendanceWithPw('21시_3층전', '21', '3층 올라가기전')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2 rounded text-sm font-semibold transition">3층 올라가기전</button>
-                        <button onclick="checkAttendanceWithPw('21시_끝', '21', '게헨나 끝 출석')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2 rounded text-sm font-semibold transition">게헨나 끝 출석</button>
+                        <button onclick="checkAttendanceWithPw('21시_시작전', '21', '게헨나 시작전 출석')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">게헨나 시작전 출석</button>
+                        <button onclick="checkAttendanceWithPw('21시_3층전', '21', '3층 올라가기전')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">3층 올라가기전</button>
+                        <button onclick="checkAttendanceWithPw('21시_끝', '21', '게헨나 끝 출석')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">게헨나 끝 출석</button>
                     </div>
                 </div>
                 <div class="space-y-2 pt-2 border-t border-gray-800">
                     <p class="text-amber-400 font-bold text-sm">✨ 에노크 / 마슈미드 (둘 다 누르면 1점)</p>
                     <div class="grid grid-cols-2 gap-4">
-                        <button onclick="checkAttendancePair('enoch', '에노크')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded font-bold transition">에노크 체크</button>
-                        <button onclick="checkAttendancePair('mashumid', '마슈미드')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded font-bold transition">마슈미드 체크</button>
+                        <button onclick="checkAttendancePair('enoch', '에노크')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded font-bold transition cursor-pointer">에노크 체크</button>
+                        <button onclick="checkAttendancePair('mashumid', '마슈미드')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded font-bold transition cursor-pointer">마슈미드 체크</button>
                     </div>
                 </div>
                 <div class="space-y-2 pt-2 border-t border-gray-800">
                     <p class="text-purple-400 font-bold text-sm">⚔️ 쟁탈전 / 점령전 / 전초전 (점령전: 1점 / 전초전+쟁탈전: 둘 다 누르면 1점)</p>
                     <div class="grid grid-cols-3 gap-2">
-                        <button onclick="checkAttendancePvP('occupation', '점령전')" class="bg-purple-800 hover:bg-purple-700 text-white p-2.5 rounded font-bold transition">점령전</button>
-                        <button onclick="checkAttendancePvP('outpost', '전초전')" class="bg-purple-800 hover:bg-purple-700 text-white p-2.5 rounded font-bold transition">전초전</button>
-                        <button onclick="checkAttendancePvP('skirmish', '쟁탈전')" class="bg-purple-800 hover:bg-purple-700 text-white p-2.5 rounded font-bold transition">쟁탈전</button>
+                        <button onclick="checkAttendancePvP('occupation', '점령전')" class="bg-purple-800 hover:bg-purple-700 text-white p-2.5 rounded font-bold transition cursor-pointer">점령전</button>
+                        <button onclick="checkAttendancePvP('outpost', '전초전')" class="bg-purple-800 hover:bg-purple-700 text-white p-2.5 rounded font-bold transition cursor-pointer">전초전</button>
+                        <button onclick="checkAttendancePvP('skirmish', '쟁탈전')" class="bg-purple-800 hover:bg-purple-700 text-white p-2.5 rounded font-bold transition cursor-pointer">쟁탈전</button>
                     </div>
                 </div>
                 <div class="space-y-2 pt-2 border-t border-gray-800">
                     <p class="text-emerald-400 font-bold text-sm">🛡️ 클랜임무 / 클랜수호 (둘 다 누르면 1점)</p>
                     <div class="grid grid-cols-2 gap-4">
-                        <button onclick="checkAttendancePair('mission', '클랜임무')" class="bg-emerald-800 hover:bg-emerald-700 text-white p-3 rounded font-bold transition">클랜임무 체크</button>
-                        <button onclick="checkAttendancePair('defense', '클랜수호')" class="bg-emerald-800 hover:bg-emerald-700 text-white p-3 rounded font-bold transition">클랜수호 체크</button>
+                        <button onclick="checkAttendancePair('mission', '클랜임무')" class="bg-emerald-800 hover:bg-emerald-700 text-white p-3 rounded font-bold transition cursor-pointer">클랜임무 체크</button>
+                        <button onclick="checkAttendancePair('defense', '클랜수호')" class="bg-emerald-800 hover:bg-emerald-700 text-white p-3 rounded font-bold transition cursor-pointer">클랜수호 체크</button>
                     </div>
                 </div>
             </div>
@@ -389,7 +410,7 @@
             <h2 class="text-2xl font-bold text-white">🔍 클랜원 상세 참여율 조회</h2>
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex flex-col md:flex-row gap-3">
                 <input type="text" id="search-keyword" placeholder="조회할 클랜원 닉네임 입력" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm flex-grow">
-                <button onclick="searchMemberHistory()" class="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded text-sm font-bold transition">검색</button>
+                <button onclick="searchMemberHistory()" class="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded text-sm font-bold transition cursor-pointer">검색</button>
             </div>
             <div id="search-result-container" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow text-gray-300 text-sm space-y-2">
                 닉네임을 입력하고 검색 버튼을 눌러주세요.
@@ -406,7 +427,7 @@
                         <input type="number" id="total-dia-input" placeholder="예: 151543" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm">
                     </div>
                     <div class="md:col-span-3">
-                        <button onclick="calculateDiaDistribution()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded text-sm transition h-[46px]">분배 계산하기</button>
+                        <button onclick="calculateDiaDistribution()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded text-sm transition h-[46px] cursor-pointer">분배 계산하기</button>
                     </div>
                 </div>
             </div>
@@ -485,10 +506,10 @@
             document.getElementById('tab-' + tabId).classList.remove('hidden');
 
             document.querySelectorAll('.pc-sidebar nav button').forEach(btn => {
-                btn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition";
+                btn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer";
             });
             const activePcBtn = document.getElementById('nav-' + tabId);
-            if(activePcBtn) activePcBtn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white transition";
+            if(activePcBtn) activePcBtn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white transition cursor-pointer";
 
             document.querySelectorAll('.mobile-tab-btn').forEach(btn => btn.classList.remove('active'));
             const activeMobBtn = document.getElementById('mob-nav-' + tabId);
@@ -717,7 +738,7 @@
             
             const editBtnContainer = document.getElementById('notice-edit-btn-container');
             if(currentUserRole === 'staff') {
-                editBtnContainer.innerHTML = `<button onclick="startNoticeEdit()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded text-xs font-bold transition">공지 수정</button>`;
+                editBtnContainer.innerHTML = `<button onclick="startNoticeEdit()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">공지 수정</button>`;
             } else {
                 editBtnContainer.innerHTML = '';
             }
@@ -900,15 +921,15 @@
                     <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 transition">
                         <td class="py-3 px-4 font-bold text-amber-400 flex items-center space-x-1">
                             <span>${idx + 1}</span>
-                            <button onclick="moveMemberOrder(${idx}, -1, '${groupType}')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded ml-1 focus:outline-none">▲</button>
-                            <button onclick="moveMemberOrder(${idx}, 1, '${groupType}')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded focus:outline-none">▼</button>
+                            <button onclick="moveMemberOrder(${idx}, -1, '${groupType}')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded ml-1 focus:outline-none cursor-pointer">▲</button>
+                            <button onclick="moveMemberOrder(${idx}, 1, '${groupType}')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded focus:outline-none cursor-pointer">▼</button>
                         </td>
                         <td class="py-3 px-4 font-semibold text-white">${m.name}</td>
                         <td class="py-3 px-4 text-gray-300">${m.cls}</td>
                         <td class="py-3 px-4 text-gray-300">${m.powerType === 'blind' ? '<span class="text-purple-400 font-bold">블라인드</span>' : m.power.toLocaleString() + '만'}</td>
                         <td class="py-3 px-4"><span class="px-2 py-1 rounded text-xs ${m.role === '클마' ? 'bg-red-900 text-red-200' : m.role === '운영진' ? 'bg-amber-900 text-amber-200' : 'bg-gray-800 text-gray-300'}">${m.role}</span></td>
                         <td class="py-3 px-4 text-center admin-col-header">
-                            <button onclick="deleteMember(${m.id})" class="bg-red-900/60 hover:bg-red-800 text-red-200 px-2.5 py-1 rounded text-xs font-bold transition">삭제</button>
+                            <button onclick="deleteMember(${m.id})" class="bg-red-900/60 hover:bg-red-800 text-red-200 px-2.5 py-1 rounded text-xs font-bold transition cursor-pointer">삭제</button>
                         </td>
                     </tr>
                 `).join('');
@@ -928,10 +949,10 @@
 
             const btnStatus = document.getElementById('toggle-attendance-status-btn');
             if(isAttendanceActive) {
-                btnStatus.className = "bg-emerald-700 text-white px-4 py-2 rounded text-xs font-bold transition";
+                btnStatus.className = "bg-emerald-700 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer";
                 btnStatus.innerText = "출석 활성화 중";
             } else {
-                btnStatus.className = "bg-gray-700 text-white px-4 py-2 rounded text-xs font-bold transition";
+                btnStatus.className = "bg-gray-700 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer";
                 btnStatus.innerText = "출석 마감됨";
             }
 
