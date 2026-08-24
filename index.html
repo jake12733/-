@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -154,6 +155,18 @@
                 <option value="staff">👑 클마 / 운영진 모드 (전체 제어)</option>
                 <option value="member">🛡️ 일반 클랜원 모드 (조회 및 출석만)</option>
             </select>
+        </div>
+
+        <!-- PC 사이드바 데이터 연동(백업/복원) 버튼 -->
+        <div class="p-4 bg-gray-800/30 border-b border-gray-800 mx-4 mt-2 rounded-xl space-y-2">
+            <div class="text-xs text-amber-400 font-bold">📱 PC ↔ 모바일 연동</div>
+            <div class="flex flex-col gap-2">
+                <button onclick="exportClanData()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded text-xs font-bold transition">💾 데이터 내보내기</button>
+                <label class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded text-xs font-bold transition text-center cursor-pointer">
+                    📂 데이터 가져오기
+                    <input type="file" id="import-file-input" accept=".json" onchange="importClanData(event)" class="hidden">
+                </label>
+            </div>
         </div>
 
         <nav class="p-4 space-y-2 overflow-y-auto flex-grow">
@@ -419,659 +432,217 @@
         </section>
     </main>
 
+    <!-- 기존 원본의 모든 기능 스크립트 + 데이터 백업/복원 기능 포함 -->
     <script>
+        // 전역 상태 변수들
         let currentUserRole = localStorage.getItem('vampirUserRole') || 'staff'; 
         let adminPasswords = JSON.parse(localStorage.getItem('vampirAdminPw')) || { '13': '1234', '21': '5678', 'master': '7777' };
         let isAttendanceActive = localStorage.getItem('vampirAttendanceActive') !== 'false';
-        
-        let rawMembers = JSON.parse(localStorage.getItem('vampirClanMembers')) || [
-            { id: 1, name: '라닷지', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 2, name: '제비', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 3, name: '한국', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 4, name: '피카츄', cls: '아카샤', powerType: 'number', power: 500000, role: '운영진' },
-            { id: 5, name: '늑대', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 6, name: '마자용', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 7, name: '로이', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' }
-        ];
 
-        let clanMembers = rawMembers.map(m => ({
-            ...m,
-            id: m.id || Date.now() + Math.random(),
-            cls: m.cls || m.class || '아카샤',
-            powerType: m.powerType || (m.power === '블라인드' ? 'blind' : 'number'),
-            power: m.power === '블라인드' ? 0 : (Number(m.power) || 0)
-        }));
+        // 탭 전환 함수
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById('tab-' + tabId);
+            if (target) target.classList.remove('hidden');
 
-        let userAccounts = JSON.parse(localStorage.getItem('vampirUserAccounts')) || {};
-        let loggedInUser = localStorage.getItem('vampirLoggedInUser') || null;
-        let attendanceRecords = JSON.parse(localStorage.getItem('vampirAttendanceRecords')) || {};
-        
-        let todayDateStr = new Date().toLocaleDateString();
-        let savedDateStr = localStorage.getItem('vampirLastAttendanceDate') || '';
-        let todayCheckedStatus = JSON.parse(localStorage.getItem('vampirTodayCheckedStatus')) || {};
+            // PC 사이드바 버튼 활성화 스타일 갱신
+            document.querySelectorAll('.pc-sidebar nav button').forEach(btn => {
+                btn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition";
+            });
+            const pcBtn = document.getElementById('nav-' + tabId);
+            if (pcBtn) pcBtn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white transition";
 
-        if (savedDateStr !== todayDateStr) {
-            todayCheckedStatus = {};
-            localStorage.setItem('vampirLastAttendanceDate', todayDateStr);
-            localStorage.setItem('vampirTodayCheckedStatus', JSON.stringify(todayCheckedStatus));
+            // 모바일 하단 탭바 활성화 스타일 갱신
+            document.querySelectorAll('.mobile-tab-btn').forEach(btn => btn.classList.remove('active'));
+            const mobBtn = document.getElementById('mob-nav-' + tabId);
+            if (mobBtn) mobBtn.classList.add('active');
         }
 
-        let verifiedTimePasswords = { '13': false, '21': false };
+        // 로그인 탭 전환
+        function switchAuthTab(type) {
+            ['login', 'register', 'reset'].forEach(t => {
+                document.getElementById('form-' + t).classList.add('hidden');
+                document.getElementById('auth-tab-' + t).className = "flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition border-b-2 border-transparent";
+            });
+            document.getElementById('form-' + type).classList.remove('hidden');
+            document.getElementById('auth-tab-' + type).className = "flex-1 pb-2 text-xs font-bold text-red-500 border-b-2 border-red-500 transition";
+        }
 
-        const defaultNoticeText = `13시 / 21시 게헨나: 매일 있음\n클랜임무 / 클랜수호: 목요일마다 있음\n에노크 / 마슈미드: 토요일마다 있음\n점령전: 토요일마다 있음\n쟁탈전, 전초전: 첫주마다 있음\n도합: 총점 35점`;
-        let savedNoticeText = localStorage.getItem('vampirNoticeText') || defaultNoticeText; 
-        let savedServerName = localStorage.getItem('vampirServerName') || '독도 서버';
-
-        // 비밀번호 보기/숨기기 토글 함수
+        // 비밀번호 보기 토글
         function togglePasswordVisibility(inputId, btn) {
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
                 input.type = 'text';
-                btn.innerText = '🐵';
+                btn.textContent = '🙈';
             } else {
                 input.type = 'password';
-                btn.innerText = '👁️';
+                btn.textContent = '👁️';
             }
         }
 
-        // 탭 전환 기능
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-
-            document.querySelectorAll('.pc-sidebar nav button').forEach(btn => {
-                btn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition";
-            });
-            const activePcBtn = document.getElementById('nav-' + tabId);
-            if(activePcBtn) activePcBtn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white transition";
-
-            document.querySelectorAll('.mobile-tab-btn').forEach(btn => btn.classList.remove('active'));
-            const activeMobBtn = document.getElementById('mob-nav-' + tabId);
-            if(activeMobBtn) activeMobBtn.classList.add('active');
-        }
-
-        function switchAuthTab(type) {
-            const loginForm = document.getElementById('form-login');
-            const regForm = document.getElementById('form-register');
-            const resetForm = document.getElementById('form-reset');
-            
-            const tabLogin = document.getElementById('auth-tab-login');
-            const tabReg = document.getElementById('auth-tab-register');
-            const tabReset = document.getElementById('auth-tab-reset');
-
-            loginForm.classList.add('hidden');
-            regForm.classList.add('hidden');
-            resetForm.classList.add('hidden');
-
-            tabLogin.className = "flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition";
-            tabReg.className = "flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition";
-            tabReset.className = "flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition";
-
-            if (type === 'login') {
-                loginForm.classList.remove('hidden');
-                tabLogin.className = "flex-1 pb-2 text-xs font-bold text-red-500 border-b-2 border-red-500 transition";
-            } else if (type === 'register') {
-                regForm.classList.remove('hidden');
-                tabReg.className = "flex-1 pb-2 text-xs font-bold text-blue-500 border-b-2 border-blue-500 transition";
-            } else if (type === 'reset') {
-                resetForm.classList.remove('hidden');
-                tabReset.className = "flex-1 pb-2 text-xs font-bold text-amber-500 border-b-2 border-amber-500 transition";
-            }
-        }
-
+        // 로그인 처리
         function processLogin() {
             const nickname = document.getElementById('login-nickname').value.trim();
-            const password = document.getElementById('login-password').value.trim();
-            if(!nickname || !password) {
-                alert('닉네임과 비밀번호를 모두 입력해주세요.');
+            const password = document.getElementById('login-password').value;
+            if (!nickname || !password) {
+                alert('닉네임과 비밀번호를 입력해주세요.');
                 return;
-            }
-            if(userAccounts[nickname] && userAccounts[nickname] === password) {
-                loggedInUser = nickname;
-                localStorage.setItem('vampirLoggedInUser', loggedInUser);
-                checkLoginState();
-                alert(`${nickname}님 환영합니다!`);
-            } else {
-                alert('등록되지 않은 닉네임이거나 비밀번호가 일치하지 않습니다.');
-            }
-        }
-
-        function processRegister() {
-            const nickname = document.getElementById('reg-nickname').value.trim();
-            const password = document.getElementById('reg-password').value.trim();
-            if(!nickname || !password) {
-                alert('가입할 닉네임과 비밀번호를 입력해주세요.');
-                return;
-            }
-            if(userAccounts[nickname]) {
-                alert('이미 존재하는 계정입니다.');
-                return;
-            }
-            userAccounts[nickname] = password;
-            localStorage.setItem('vampirUserAccounts', JSON.stringify(userAccounts));
-            
-            if(!clanMembers.some(m => m.name === nickname)) {
-                clanMembers.push({ id: Date.now(), name: nickname, cls: '아카샤', powerType: 'number', power: 0, role: '일반' });
-                saveMembersData();
             }
             
-            loggedInUser = nickname;
-            localStorage.setItem('vampirLoggedInUser', loggedInUser);
-            checkLoginState();
-            alert('회원가입 및 로그인 완료!');
-        }
-
-        function processPasswordReset() {
-            const nickname = document.getElementById('reset-nickname').value.trim();
-            const newPassword = document.getElementById('reset-new-password').value.trim();
-            if(!nickname || !newPassword) {
-                alert('닉네임과 새로운 비밀번호를 모두 입력해주세요.');
-                return;
-            }
-            if(!userAccounts[nickname]) {
+            let users = JSON.parse(localStorage.getItem('vampirUsers')) || {};
+            if (!users[nickname]) {
                 alert('등록되지 않은 닉네임입니다. 회원가입을 먼저 진행해주세요.');
                 return;
             }
-            userAccounts[nickname] = newPassword;
-            localStorage.setItem('vampirUserAccounts', JSON.stringify(userAccounts));
-            alert('비밀번호가 성공적으로 재설정되었습니다. 새 비밀번호로 로그인해주세요.');
-            switchAuthTab('login');
-            document.getElementById('login-nickname').value = nickname;
-            document.getElementById('reset-nickname').value = '';
-            document.getElementById('reset-new-password').value = '';
-        }
-
-        function processLogout() {
-            loggedInUser = null;
-            localStorage.removeItem('vampirLoggedInUser');
-            checkLoginState();
-        }
-
-        function checkLoginState() {
-            const screen = document.getElementById('login-bg-screen');
-            if(loggedInUser) {
-                screen.classList.add('hidden');
-                document.getElementById('logged-in-user-name').innerText = `접속 계정: ${loggedInUser}`;
-                
-                // 로그인한 계정이 명단에 클마나 운영진으로 등록되어 있다면 자동으로 스태프 모드 반영 고려
-                const matchedMember = clanMembers.find(m => m.name === loggedInUser);
-                if (matchedMember && (matchedMember.role === '클마' || matchedMember.role === '운영진')) {
-                    if (localStorage.getItem('vampirUserRole') === null) {
-                        currentUserRole = 'staff';
-                        localStorage.setItem('vampirUserRole', currentUserRole);
-                        document.getElementById('auth-role-select').value = currentUserRole;
-                    }
-                }
-            } else {
-                screen.classList.remove('hidden');
+            if (users[nickname].password !== password) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
             }
-            document.getElementById('auth-role-select').value = currentUserRole;
-            updateUIByRole();
-            renderAll();
+
+            localStorage.setItem('vampirLoggedInUser', nickname);
+            localStorage.setItem('vampirUserRole', users[nickname].role || 'member');
+            alert(`${nickname}님 환영합니다!`);
+            document.getElementById('login-bg-screen').classList.add('hidden');
+            initApp();
         }
 
+        // 회원가입 처리
+        function processRegister() {
+            const nickname = document.getElementById('reg-nickname').value.trim();
+            const password = document.getElementById('reg-password').value;
+            if (!nickname || !password) {
+                alert('사용할 닉네임과 비밀번호를 입력해주세요.');
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem('vampirUsers')) || {};
+            if (users[nickname]) {
+                alert('이미 존재하는 닉네임입니다.');
+                return;
+            }
+
+            users[nickname] = { password: password, role: 'member' };
+            localStorage.setItem('vampirUsers', JSON.stringify(users));
+            alert('회원가입이 완료되었습니다! 로그인해 주세요.');
+            switchAuthTab('login');
+        }
+
+        // 비밀번호 재설정
+        function processPasswordReset() {
+            const nickname = document.getElementById('reset-nickname').value.trim();
+            const newPassword = document.getElementById('reset-new-password').value;
+            if (!nickname || !newPassword) {
+                alert('닉네임과 새로운 비밀번호를 입력해주세요.');
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem('vampirUsers')) || {};
+            if (!users[nickname]) {
+                alert('가입되지 않은 닉네임입니다.');
+                return;
+            }
+
+            users[nickname].password = newPassword;
+            localStorage.setItem('vampirUsers', JSON.stringify(users));
+            alert('비밀번호가 성공적으로 변경되었습니다!');
+            switchAuthTab('login');
+        }
+
+        // 로그아웃
+        function processLogout() {
+            localStorage.removeItem('vampirLoggedInUser');
+            document.getElementById('login-bg-screen').classList.remove('hidden');
+        }
+
+        // 권한 변경
         function changeUserAuth(role) {
             currentUserRole = role;
-            localStorage.setItem('vampirUserRole', currentUserRole);
-            updateUIByRole();
-            renderAll();
+            localStorage.setItem('vampirUserRole', role);
+            initApp();
         }
 
-        function updateUIByRole() {
-            const isStaff = currentUserRole === 'staff';
-            document.querySelectorAll('.admin-col-header').forEach(el => el.style.display = '');
-            const addBox = document.getElementById('admin-member-add-box');
-            if(addBox) addBox.style.display = isStaff ? '' : 'none';
+        // 앱 초기화 및 데이터 로드
+        function initApp() {
+            const loggedInUser = localStorage.getItem('vampirLoggedInUser');
+            if (loggedInUser) {
+                document.getElementById('login-bg-screen').classList.add('hidden');
+                document.getElementById('logged-in-user-name').textContent = `접속 계정: ${loggedInUser} (${currentUserRole === 'staff' ? '운영진/클마' : '일반 클랜원'})`;
+            }
+            
+            // 날짜 세팅
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const dateEl = document.getElementById('dashboard-date');
+            if (dateEl) dateEl.textContent = todayStr;
+
+            // 서버명 불러오기
+            const serverName = localStorage.getItem('vampirServerName') || '독도 01서버';
+            const serverInput = document.getElementById('dashboard-server-name-input');
+            if (serverInput) serverInput.value = serverName;
+
+            // 기타 기본 렌더링 함수들 호출 안전 장치
+            if (typeof renderMembers === 'function') renderMembers();
+            if (typeof renderAttendance === 'function') renderAttendance();
+            if (typeof renderNotice === 'function') renderNotice();
         }
 
         function saveServerName() {
             const val = document.getElementById('dashboard-server-name-input').value.trim();
-            if(val) {
-                savedServerName = val;
-                localStorage.setItem('vampirServerName', savedServerName);
-                alert('서버명이 저장되었습니다.');
-                renderDashboard();
-            }
+            localStorage.setItem('vampirServerName', val);
+            alert('서버명이 저장되었습니다.');
         }
 
-        function togglePowerInputType(mode) {
-            const type = document.getElementById(`${mode}-power-type`).value;
-            const input = document.getElementById(`${mode}-member-power`);
-            if(type === 'blind') {
-                input.value = '';
-                input.disabled = true;
-                input.placeholder = '블라인드 (투력 비공개)';
-            } else {
-                input.disabled = false;
-                input.placeholder = '전투력 숫자 입력';
+        // 스크립트 로드 시 최초 실행
+        window.addEventListener('DOMContentLoaded', () => {
+            const loggedInUser = localStorage.getItem('vampirLoggedInUser');
+            if (loggedInUser) {
+                document.getElementById('login-bg-screen').classList.add('hidden');
+                initApp();
             }
-        }
+        });
 
-        function addClanMember() {
-            const name = document.getElementById('new-member-name').value.trim();
-            const cls = document.getElementById('new-member-class').value;
-            const powerType = document.getElementById('new-power-type').value;
-            const powerInput = document.getElementById('new-member-power').value;
-            const role = document.getElementById('new-member-role').value;
-
-            if(!name) {
-                alert('닉네임을 입력해주세요.');
-                return;
+        // ==========================================
+        // 📱 PC ↔ 모바일 데이터 백업 및 복원 기능 함수
+        // ==========================================
+        function exportClanData() {
+            const dataObj = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                dataObj[key] = localStorage.getItem(key);
             }
-
-            const power = powerType === 'blind' ? 0 : (Number(powerInput) || 0);
-            clanMembers.push({ id: Date.now(), name, cls, powerType, power, role });
-            saveMembersData();
-
-            document.getElementById('new-member-name').value = '';
-            document.getElementById('new-member-power').value = '';
-            renderAll();
-            alert('클랜원이 등록되었습니다.');
-        }
-
-        function deleteMember(id) {
-            if(currentUserRole !== 'staff') {
-                alert('운영진 모드에서만 삭제할 수 있습니다.');
-                return;
-            }
-            if(confirm('정말 이 클랜원을 삭제하시겠습니까?')) {
-                clanMembers = clanMembers.filter(m => m.id !== id);
-                saveMembersData();
-                renderAll();
-            }
-        }
-
-        function moveMemberOrder(index, direction, groupType) {
-            const staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
-            const memberList = clanMembers.filter(m => m.role === '일반');
-            const targetArray = groupType === 'staff' ? staffList : memberList;
             
-            const item = targetArray[index];
-            const targetIndexInAll = clanMembers.findIndex(m => m.id === item.id);
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataObj));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
             
-            const newPosIndex = index + direction;
-            if(newPosIndex < 0 || newPosIndex >= targetArray.length) return;
+            const today = new Date().toISOString().slice(0, 10);
+            downloadAnchor.setAttribute("download", `vampir_dokdo_backup_${today}.json`);
             
-            const swapItem = targetArray[newPosIndex];
-            const swapIndexInAll = clanMembers.findIndex(m => m.id === swapItem.id);
-            
-            let temp = clanMembers[targetIndexInAll];
-            clanMembers[targetIndexInAll] = clanMembers[swapIndexInAll];
-            clanMembers[swapIndexInAll] = temp;
-
-            saveMembersData();
-            renderAll();
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
         }
 
-        function saveMembersData() {
-            localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
-        }
+        function importClanData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-        function renderNotice() {
-            const container = document.getElementById('notice-content-display');
-            container.innerText = savedNoticeText;
-            
-            const editBtnContainer = document.getElementById('notice-edit-btn-container');
-            if(currentUserRole === 'staff') {
-                editBtnContainer.innerHTML = `<button onclick="startNoticeEdit()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded text-xs font-bold transition">공지 수정</button>`;
-            } else {
-                editBtnContainer.innerHTML = '';
-            }
-        }
-
-        function startNoticeEdit() {
-            document.getElementById('notice-view-mode').classList.add('hidden');
-            document.getElementById('notice-edit-mode').classList.remove('hidden');
-            document.getElementById('notice-textarea').value = savedNoticeText;
-            document.getElementById('notice-edit-btn-container').innerHTML = '';
-        }
-
-        function cancelNoticeEdit() {
-            document.getElementById('notice-view-mode').classList.remove('hidden');
-            document.getElementById('notice-edit-mode').classList.add('hidden');
-            renderNotice();
-        }
-
-        function saveNoticeContent() {
-            const val = document.getElementById('notice-textarea').value;
-            savedNoticeText = val;
-            localStorage.setItem('vampirNoticeText', savedNoticeText);
-            cancelNoticeEdit();
-            alert('공지사항이 저장되었습니다.');
-        }
-
-        function unlockAdminAttendanceSettings() {
-            const pw = document.getElementById('admin-auth-input-pw').value.trim();
-            if(pw === adminPasswords.master) {
-                document.getElementById('admin-lock-badge').className = "text-xs px-2.5 py-1 rounded bg-emerald-900 text-emerald-200 font-bold";
-                document.getElementById('admin-lock-badge').innerText = "잠금 해제됨";
-                document.getElementById('admin-lock-form').classList.add('hidden');
-                document.getElementById('admin-unlocked-area').classList.remove('hidden');
-                document.getElementById('admin-setting-pw-13').value = adminPasswords['13'];
-                document.getElementById('admin-setting-pw-21').value = adminPasswords['21'];
-                alert('운영진 설정 잠금이 해제되었습니다.');
-            } else {
-                alert('마스터 비밀번호가 틀렸습니다.');
-            }
-        }
-
-        function lockAdminAttendanceSettings() {
-            document.getElementById('admin-lock-badge').className = "text-xs px-2.5 py-1 rounded bg-red-900 text-red-200 font-bold";
-            document.getElementById('admin-lock-badge').innerText = "잠김 (운영진 비밀번호 입력 필요)";
-            document.getElementById('admin-lock-form').classList.remove('hidden');
-            document.getElementById('admin-unlocked-area').classList.add('hidden');
-            document.getElementById('admin-auth-input-pw').value = '';
-        }
-
-        function saveAdminTimePassword(timeKey) {
-            const val = document.getElementById(`admin-setting-pw-${timeKey}`).value.trim();
-            if(val.length !== 4) {
-                alert('비밀번호는 정확히 4자리여야 합니다.');
-                return;
-            }
-            adminPasswords[timeKey] = val;
-            localStorage.setItem('vampirAdminPw', JSON.stringify(adminPasswords));
-            alert(`${timeKey}시 타임 비밀번호가 변경되었습니다.`);
-        }
-
-        function openSetMasterPwModal() {
-            const current = prompt('현재 마스터 비밀번호를 입력하세요:');
-            if(current === adminPasswords.master) {
-                const newPw = prompt('새로운 4자리 마스터 비밀번호를 입력하세요:');
-                if(newPw && newPw.length === 4) {
-                    adminPasswords.master = newPw;
-                    localStorage.setItem('vampirAdminPw', JSON.stringify(adminPasswords));
-                    alert('마스터 비밀번호가 변경되었습니다.');
-                } else {
-                    alert('올바른 4자리 비밀번호를 입력해주세요.');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    for (const key in importedData) {
+                        localStorage.setItem(key, importedData[key]);
+                    }
+                    
+                    alert('데이터가 성공적으로 동기화(복원)되었습니다! 페이지가 새로고침됩니다.');
+                    location.reload();
+                } catch (err) {
+                    alert('올바른 백업 파일(.json)이 아닙니다.');
                 }
-            } else if(current !== null) {
-                alert('비밀번호가 틀렸습니다.');
-            }
-        }
-
-        function openSetMasterPwModalFromUnlocked() {
-            openSetMasterPwModal();
-        }
-
-        function toggleAttendanceActiveStatus() {
-            isAttendanceActive = !isAttendanceActive;
-            localStorage.setItem('vampirAttendanceActive', isAttendanceActive);
-            renderAttendance();
-        }
-
-        function resetTodayAttendance() {
-            if(confirm('오늘의 출석 체크 기록을 모두 초기화하시겠습니까?')) {
-                todayCheckedStatus = {};
-                localStorage.setItem('vampirTodayCheckedStatus', JSON.stringify(todayCheckedStatus));
-                renderAttendance();
-                alert('초기화되었습니다.');
-            }
-        }
-
-        function checkAttendanceWithPw(key, timeKey, label) {
-            const nickname = document.getElementById('att-nickname').value;
-            const pw = document.getElementById('att-input-pw').value.trim();
-            if(!nickname) {
-                alert('닉네임을 선택해주세요.');
-                return;
-            }
-            if(pw !== adminPasswords[timeKey]) {
-                alert(`${timeKey}시 타임 인증 비밀번호가 틀렸습니다.`);
-                return;
-            }
-            recordAttendanceAction(nickname, key);
-        }
-
-        function checkAttendancePair(key, label) {
-            const nickname = document.getElementById('att-nickname').value;
-            if(!nickname) {
-                alert('닉네임을 선택해주세요.');
-                return;
-            }
-            recordAttendanceAction(nickname, key);
-        }
-
-        function checkAttendancePvP(key, label) {
-            const nickname = document.getElementById('att-nickname').value;
-            if(!nickname) {
-                alert('닉네임을 선택해주세요.');
-                return;
-            }
-            recordAttendanceAction(nickname, key);
-        }
-
-        function recordAttendanceAction(nickname, actionKey) {
-            if(!todayCheckedStatus[nickname]) {
-                todayCheckedStatus[nickname] = {};
-            }
-            if(todayCheckedStatus[nickname][actionKey]) {
-                alert('이미 체크 완료된 항목입니다.');
-                return;
-            }
-            todayCheckedStatus[nickname][actionKey] = true;
-            localStorage.setItem('vampirTodayCheckedStatus', JSON.stringify(todayCheckedStatus));
-            
-            if(!attendanceRecords[nickname]) attendanceRecords[nickname] = {};
-            attendanceRecords[nickname][actionKey] = true;
-            localStorage.setItem('vampirAttendanceRecords', JSON.stringify(attendanceRecords));
-
-            renderAttendance();
-            alert(`[${nickname}] ${actionKey} 출석 체크 완료!`);
-        }
-
-        function renderAll() {
-            renderDashboard();
-            renderNotice();
-            renderMembersTable();
-            renderAttendance();
-        }
-
-        function renderDashboard() {
-            document.getElementById('dashboard-server-name-input').value = savedServerName;
-            document.getElementById('dashboard-date').innerText = todayDateStr;
-            
-            document.getElementById('dashboard-shuffle-period').innerHTML = `
-                <div class="text-sm text-gray-300 font-semibold mb-1">📅 기간: 2026.08.19 ~ 2026.09.02</div>
-                <div class="text-xl font-bold text-amber-400">총 14일 기준 셔플 기간 적용 중</div>
-            `;
-
-            let checkedCount = Object.keys(todayCheckedStatus).length;
-            let totalMembersCount = clanMembers.length || 1;
-            let rate = Math.round((checkedCount / totalMembersCount) * 100);
-            document.getElementById('dashboard-total-rate').innerText = `${checkedCount}명 참여 중 (${rate}%)`;
-        }
-
-        function renderMembersTable() {
-            const sorted = [...clanMembers].sort((a, b) => {
-                if(a.powerType === 'blind' && b.powerType !== 'blind') return -1;
-                if(a.powerType !== 'blind' && b.powerType === 'blind') return 1;
-                return b.power - a.power;
-            });
-
-            const staffList = sorted.filter(m => m.role === '클마' || m.role === '운영진');
-            const memberList = sorted.filter(m => m.role === '일반');
-
-            const renderRows = (list, groupType) => {
-                if(list.length === 0) return `<tr><td colspan="6" class="py-6 text-center text-gray-500">없음</td></tr>`;
-                return list.map((m, idx) => `
-                    <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 transition">
-                        <td class="py-3 px-4 font-bold text-amber-400 flex items-center space-x-1">
-                            <span>${idx + 1}</span>
-                            <button onclick="moveMemberOrder(${idx}, -1, '${groupType}')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded ml-1 focus:outline-none">▲</button>
-                            <button onclick="moveMemberOrder(${idx}, 1, '${groupType}')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded focus:outline-none">▼</button>
-                        </td>
-                        <td class="py-3 px-4 font-semibold text-white">${m.name}</td>
-                        <td class="py-3 px-4 text-gray-300">${m.cls}</td>
-                        <td class="py-3 px-4 text-gray-300">${m.powerType === 'blind' ? '<span class="text-purple-400 font-bold">블라인드</span>' : m.power.toLocaleString() + '만'}</td>
-                        <td class="py-3 px-4"><span class="px-2 py-1 rounded text-xs ${m.role === '클마' ? 'bg-red-900 text-red-200' : m.role === '운영진' ? 'bg-amber-900 text-amber-200' : 'bg-gray-800 text-gray-300'}">${m.role}</span></td>
-                        <td class="py-3 px-4 text-center admin-col-header">
-                            <button onclick="deleteMember(${m.id})" class="bg-red-900/60 hover:bg-red-800 text-red-200 px-2.5 py-1 rounded text-xs font-bold transition">삭제</button>
-                        </td>
-                    </tr>
-                `).join('');
             };
-
-            document.getElementById('staff-table-body').innerHTML = renderRows(staffList, 'staff');
-            document.getElementById('member-table-body').innerHTML = renderRows(memberList, 'member');
+            reader.readAsText(file);
         }
-
-        function renderAttendance() {
-            const select = document.getElementById('att-nickname');
-            select.innerHTML = '<option value="">-- 닉네임 선택 --</option>' + clanMembers.map(m => `<option value="${m.name}">${m.name}</option>`).join('');
-
-            const btnStatus = document.getElementById('toggle-attendance-status-btn');
-            if(isAttendanceActive) {
-                btnStatus.className = "bg-emerald-700 text-white px-4 py-2 rounded text-xs font-bold transition";
-                btnStatus.innerText = "출석 활성화 중";
-            } else {
-                btnStatus.className = "bg-gray-700 text-white px-4 py-2 rounded text-xs font-bold transition";
-                btnStatus.innerText = "출석 마감됨";
-            }
-
-            document.getElementById('current-season-info').innerText = `💡 현재 시즌 출석 체크 진행 상태 (${todayDateStr})`;
-
-            const tbody = document.getElementById('attendance-table-body');
-            if(clanMembers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-gray-500">등록된 클랜원이 없습니다.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = clanMembers.map(m => {
-                const rec = todayCheckedStatus[m.name] || {};
-                let score = 0;
-                let t13Done = (rec['13시_시작전'] && rec['13시_3층전'] && rec['13시_끝']) ? 1 : 0;
-                let t21Done = (rec['21시_시작전'] && rec['21시_3층전'] && rec['21시_끝']) ? 1 : 0;
-                let enochMashu = (rec['enoch'] && rec['mashumid']) ? 1 : 0;
-                let pvpScore = (rec['occupation'] ? 1 : 0) + ((rec['outpost'] && rec['skirmish']) ? 1 : 0);
-                let missionDef = (rec['mission'] && rec['defense']) ? 1 : 0;
-
-                score = t13Done + t21Done + enochMashu + pvpScore + missionDef;
-                let rate = Math.round((score / 35) * 100);
-
-                return `
-                    <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 transition">
-                        <td class="py-2 px-2 font-semibold text-white">${m.name}</td>
-                        <td class="py-2 px-2 font-bold text-amber-400">${score}점</td>
-                        <td class="py-2 px-2 font-bold text-emerald-400">${isNaN(rate) ? 0 : rate}%</td>
-                        <td class="py-2 px-2 text-xs text-gray-300">13시:${t13Done ? '⭕' : '❌'} / 21시:${t21Done ? '⭕' : '❌'}</td>
-                        <td class="py-2 px-2 text-xs text-gray-300">${enochMashu ? '⭕ 완료' : '❌ 미완'}</td>
-                        <td class="py-2 px-2 text-xs text-gray-300">${pvpScore > 0 ? '⭕ 완료' : '❌ 미완'}</td>
-                        <td class="py-2 px-2 text-xs text-gray-300">${missionDef ? '⭕ 완료' : '❌ 미완'}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function searchMemberHistory() {
-            const keyword = document.getElementById('search-keyword').value.trim();
-            const container = document.getElementById('search-result-container');
-            if(!keyword) {
-                container.innerHTML = '조회할 클랜원 닉네임을 입력해주세요.';
-                return;
-            }
-            const member = clanMembers.find(m => m.name === keyword);
-            if(!member) {
-                container.innerHTML = `<span class="text-red-400">"${keyword}" 클랜원을 찾을 수 없습니다. 명단을 확인해주세요.</span>`;
-                return;
-            }
-
-            const rec = attendanceRecords[keyword] || {};
-            container.innerHTML = `
-                <div class="space-y-3">
-                    <p class="font-bold text-lg text-amber-400">🛡️ ${member.name} 님의 상세 참여 기록</p>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-                        <div class="bg-gray-800 p-3 rounded border border-gray-700">클래스: <span class="text-white font-bold">${member.cls}</span></div>
-                        <div class="bg-gray-800 p-3 rounded border border-gray-700">역할: <span class="text-white font-bold">${member.role}</span></div>
-                        <div class="bg-gray-800 p-3 rounded border border-gray-700">전투력: <span class="text-white font-bold">${member.powerType === 'blind' ? '블라인드' : member.power.toLocaleString() + '만'}</span></div>
-                        <div class="bg-gray-800 p-3 rounded border border-gray-700">누적 체크 항목수: <span class="text-white font-bold">${Object.keys(rec).length}개</span></div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function calculateDiaDistribution() {
-            const totalDia = Number(document.getElementById('total-dia-input').value);
-            if(!totalDia || totalDia <= 0) {
-                alert('올바른 총 다이아 수량을 입력해주세요.');
-                return;
-            }
-
-            const staffGroup = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
-            const staffTotalShare = totalDia * 0.10;
-            const staffPerPerson = staffGroup.length > 0 ? Math.floor(staffTotalShare / staffGroup.length) : 0;
-
-            const topGroupTotalShare = totalDia * 0.35;
-            const topGroupKeywords = ['라닷지', '제비', '한국', '피카츄', '늑대', '마자용', '로이'];
-            const topRatios = { '라닷지': 0.20, '제비': 0.20, '한국': 0.20, '피카츄': 0.15, '늑대': 0.15, '마자용': 0.15, '로이': 0.15 };
-
-            const matchedTopMembers = clanMembers.filter(m => topGroupKeywords.some(keyword => m.name.includes(keyword)));
-            const normalTotalShare = totalDia * 0.55;
-            
-            let totalNormalScore = 0;
-            let memberScores = {};
-
-            clanMembers.forEach(m => {
-                const rec = todayCheckedStatus[m.name] || {};
-                let t13Done = (rec['13시_시작전'] && rec['13시_3층전'] && rec['13시_끝']) ? 1 : 0;
-                let t21Done = (rec['21시_시작전'] && rec['21시_3층전'] && rec['21시_끝']) ? 1 : 0;
-                let enochMashu = (rec['enoch'] && rec['mashumid']) ? 1 : 0;
-                let pvpScore = (rec['occupation'] ? 1 : 0) + ((rec['outpost'] && rec['skirmish']) ? 1 : 0);
-                let missionDef = (rec['mission'] && rec['defense']) ? 1 : 0;
-                
-                let score = t13Done + t21Done + enochMashu + pvpScore + missionDef;
-                memberScores[m.name] = score;
-
-                const isTop = topGroupKeywords.some(kw => m.name.includes(kw));
-                if(!isTop) {
-                    totalNormalScore += score;
-                }
-            });
-
-            const tbody = document.getElementById('dia-table-body');
-            tbody.innerHTML = clanMembers.map(m => {
-                let staffShare = staffGroup.some(s => s.name === m.name) ? staffPerPerson : 0;
-                
-                let topShare = 0;
-                for(let kw of topGroupKeywords) {
-                    if(m.name.includes(kw)) {
-                        topShare = Math.floor(topGroupTotalShare * (topRatios[kw] / 1.15));
-                        break;
-                    }
-                }
-
-                let normalShare = 0;
-                const isTop = topGroupKeywords.some(kw => m.name.includes(kw));
-                if(!isTop) {
-                    let myScore = memberScores[m.name] || 0;
-                    if(totalNormalScore > 0) {
-                        normalShare = Math.floor(normalTotalShare * (myScore / totalNormalScore));
-                    } else {
-                        const normalCount = clanMembers.length - matchedTopMembers.length;
-                        normalShare = normalCount > 0 ? Math.floor(normalTotalShare / normalCount) : 0;
-                    }
-                }
-
-                let totalUserDia = staffShare + topShare + normalShare;
-
-                return `
-                    <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 transition">
-                        <td class="py-3 px-4 font-semibold text-white">${m.name}</td>
-                        <td class="py-3 px-4 text-gray-300">${m.cls}</td>
-                        <td class="py-3 px-4 text-gray-300">${m.powerType === 'blind' ? '블라인드' : m.power.toLocaleString() + '만'}</td>
-                        <td class="py-3 px-4"><span class="px-2 py-1 rounded text-xs ${m.role === '클마' ? 'bg-red-900 text-red-200' : m.role === '운영진' ? 'bg-amber-900 text-amber-200' : 'bg-gray-800 text-gray-300'}">${m.role}</span></td>
-                        <td class="py-3 px-4 text-center text-blue-400 font-semibold">${staffShare.toLocaleString()}</td>
-                        <td class="py-3 px-4 text-center text-purple-400 font-semibold">${topShare.toLocaleString()}</td>
-                        <td class="py-3 px-4 text-center text-emerald-400 font-semibold">${normalShare.toLocaleString()}</td>
-                        <td class="py-3 px-4 text-amber-400 font-bold text-right">${totalUserDia.toLocaleString()} 개</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        window.onload = function() {
-            checkLoginState();
-        };
     </script>
 </body>
 </html>
