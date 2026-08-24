@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>뱀피르 독도 클랜 관리</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -681,7 +681,6 @@
             }
         }
 
-        // [수정된 부분] 전체 배열 내에서 해당 그룹 내 상대 위치를 찾아 안전하게 순서를 교체합니다.
         function moveMemberOrder(index, direction, groupType) {
             const staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
             const memberList = clanMembers.filter(m => m.role === '일반');
@@ -696,7 +695,6 @@
             const swapItem = targetArray[newPosIndex];
             const swapIndexInAll = clanMembers.findIndex(m => m.id === swapItem.id);
             
-            // clanMembers 전체 배열에서 두 항목의 위치를 서로 맞바꿈
             let temp = clanMembers[targetIndexInAll];
             clanMembers[targetIndexInAll] = clanMembers[swapIndexInAll];
             clanMembers[swapIndexInAll] = temp;
@@ -888,7 +886,6 @@
             document.getElementById('dashboard-total-rate').innerText = `${checkedCount}명 참여 중 (${rate}%)`;
         }
 
-        // [수정된 부분] 임의 정렬 상태가 유지되도록 clanMembers 배열 순서를 그대로 사용하여 렌더링합니다.
         function renderMembersTable() {
             const staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
             const memberList = clanMembers.filter(m => m.role === '일반');
