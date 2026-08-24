@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko" translate="no">
 <head>
@@ -235,7 +234,7 @@
                     <div id="members-edit-btn-container"></div>
                 </div>
             </div>
-            <p class="text-xs text-gray-400">💡 블라인드 인원은 자동으로 맨 위에 정렬되며, [▲] [▼] 버튼으로 순서를 직접 바꿀 수 있습니다.[cite: 1]</p>
+            <p class="text-xs text-gray-400">💡 블라인드 인원은 자동으로 맨 위에 정렬되며, [▲] [▼] 버튼으로 순서를 직접 바꿀 수 있습니다[cite: 1].</p>
             
             <div id="admin-member-add-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="font-bold text-white text-sm">➕ 클랜원 추가하기</div>
@@ -413,7 +412,7 @@
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="text-xs text-gray-400 space-y-1">
                     <p>• <strong class="text-amber-400">운영진 주급 (10%)</strong>: 운영진 및 클마 멤버들에게 균등 분배</p>
-                    <p>• <strong class="text-amber-400">상위 투력 그룹별 분배 (35%)</strong>: 지정된 그룹 고정 비율 분배</p>
+                    <p>• <strong class="text-amber-400">상위 투력 그룹별 분배 (35%)</strong>: 전투력 순위 1~3위(각 20%), 4~7위(각 15%) 차등 분배</p>
                     <p>• <strong class="text-amber-400">일반 (55%)</strong>: 35점 만점 기준 일반 클랜원들의 참여 퍼센트에 따라 차등 분배</p>
                 </div>
                 <div class="overflow-x-auto">
@@ -499,12 +498,23 @@
             };
         });
 
-        // 최초 로딩 시 또는 저장된 데이터가 있을 때 블라인드 인원들을 각 그룹(운영진/일반)의 맨 위로 자동 정렬
+        // 직급 우선순위 판별 함수 (클마: 1, 운영진: 2, 일반: 3)
+        function getRolePriority(role) {
+            if (role === '클마') return 1;
+            if (role === '운영진') return 2;
+            return 3;
+        }
+
         function sortBlindMembersToTop() {
             let staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
             let memberList = clanMembers.filter(m => m.role === '일반');
 
+            // 운영진 내부에서 클마가 맨 위로 오도록 정렬 추가
             staffList.sort((a, b) => {
+                const pA = getRolePriority(a.role);
+                const pB = getRolePriority(b.role);
+                if (pA !== pB) return pA - pB;
+
                 if (a.powerType === 'blind' && b.powerType !== 'blind') return -1;
                 if (a.powerType !== 'blind' && b.powerType === 'blind') return 1;
                 return 0;
@@ -540,7 +550,6 @@
         let savedNoticeText = localStorage.getItem('vampirNoticeText') || defaultNoticeText; 
         let savedServerName = localStorage.getItem('vampirServerName') || '독도 서버';
 
-        // 비밀번호 보기/숨기기 토글 함수
         function togglePasswordVisibility(inputId, btn) {
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
@@ -552,7 +561,6 @@
             }
         }
 
-        // 탭 전환 기능
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById('tab-' + tabId).classList.remove('hidden');
@@ -1059,11 +1067,10 @@
 
         function renderAttendance() {
             const select = document.getElementById('att-nickname');
-            const currentSelectedValue = select.value; // 현재 선택된 닉네임 백업
+            const currentSelectedValue = select.value;
 
             select.innerHTML = '<option value="">-- 닉네임 선택 --</option>' + clanMembers.map(m => `<option value="${m.name}">${m.name}</option>`).join('');
             
-            // 이전 선택값이 존재하면 유지
             if (currentSelectedValue && clanMembers.some(m => m.name === currentSelectedValue)) {
                 select.value = currentSelectedValue;
             }
@@ -1145,21 +1152,33 @@
                 return;
             }
 
-            const staffGroup = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
+            // 다이아 분배 시 클마(1순위) > 운영진(2순위) > 일반(3순위) 순서 정렬
+            let sortedMembers = [...clanMembers].sort((a, b) => {
+                const pA = getRolePriority(a.role);
+                const pB = getRolePriority(b.role);
+                if (pA !== pB) return pA - pB;
+
+                if (a.powerType === 'blind' && b.powerType !== 'blind') return 1;
+                if (a.powerType !== 'blind' && b.powerType === 'blind') return -1;
+                return b.power - a.power;
+            });
+
+            const staffGroup = sortedMembers.filter(m => m.role === '클마' || m.role === '운영진');
             const staffTotalShare = totalDia * 0.10;
             const staffPerPerson = staffGroup.length > 0 ? Math.floor(staffTotalShare / staffGroup.length) : 0;
 
             const topGroupTotalShare = totalDia * 0.35;
-            const topGroupKeywords = ['DOKDO결마로', 'DOKDO우주', 'DOKDO기모찌', 'DOKDO사장', 'DOKDO꼬부기', 'DOKDO2', 'DOKDO망나뇽'];
-            const topRatios = { 'DOKDO결마로': 0.20, 'DOKDO우주': 0.20, 'DOKDO기모찌': 0.20, 'DOKDO사장': 0.15, 'DOKDO꼬부기': 0.15, 'DOKDO2': 0.15, 'DOKDO망나뇽': 0.15 };
+            
+            let validPowerMembers = sortedMembers.filter(m => m.powerType !== 'blind');
+            let rank1to3 = validPowerMembers.slice(0, 3);
+            let rank4to7 = validPowerMembers.slice(3, 7);
 
-            const matchedTopMembers = clanMembers.filter(m => topGroupKeywords.some(keyword => m.name.includes(keyword)));
             const normalTotalShare = totalDia * 0.55;
             
             let totalNormalScore = 0;
             let memberScores = {};
 
-            clanMembers.forEach(m => {
+            sortedMembers.forEach(m => {
                 const rec = todayCheckedStatus[m.name] || {};
                 let t13Done = (rec['13시_시작전'] && rec['13시_3층전'] && rec['13시_끝']) ? 1 : 0;
                 let t21Done = (rec['21시_시작전'] && rec['21시_3층전'] && rec['21시_끝']) ? 1 : 0;
@@ -1170,32 +1189,32 @@
                 let score = t13Done + t21Done + enochMashu + pvpScore + missionDef;
                 memberScores[m.name] = score;
 
-                const isTop = topGroupKeywords.some(kw => m.name.includes(kw));
-                if(!isTop) {
+                let isTop7 = validPowerMembers.findIndex(vm => vm.name === m.name) < 7;
+                if(!isTop7) {
                     totalNormalScore += score;
                 }
             });
 
             const tbody = document.getElementById('dia-table-body');
-            tbody.innerHTML = clanMembers.map(m => {
+            tbody.innerHTML = sortedMembers.map(m => {
                 let staffShare = staffGroup.some(s => s.name === m.name) ? staffPerPerson : 0;
                 
                 let topShare = 0;
-                for(let kw of topGroupKeywords) {
-                    if(m.name.includes(kw)) {
-                        topShare = Math.floor(topGroupTotalShare * (topRatios[kw] / 1.15));
-                        break;
-                    }
+                let validIdx = validPowerMembers.findIndex(vm => vm.name === m.name);
+                if (validIdx >= 0 && validIdx < 3) {
+                    topShare = Math.floor(topGroupTotalShare * 0.20);
+                } else if (validIdx >= 3 && validIdx < 7) {
+                    topShare = Math.floor(topGroupTotalShare * 0.15);
                 }
 
                 let normalShare = 0;
-                const isTop = topGroupKeywords.some(kw => m.name.includes(kw));
-                if(!isTop) {
+                let isTop7 = validIdx >= 0 && validIdx < 7;
+                if(!isTop7) {
                     let myScore = memberScores[m.name] || 0;
                     if(totalNormalScore > 0) {
                         normalShare = Math.floor(normalTotalShare * (myScore / totalNormalScore));
                     } else {
-                        const normalCount = clanMembers.length - matchedTopMembers.length;
+                        const normalCount = sortedMembers.length - Math.min(7, validPowerMembers.length);
                         normalShare = normalCount > 0 ? Math.floor(normalTotalShare / normalCount) : 0;
                     }
                 }
