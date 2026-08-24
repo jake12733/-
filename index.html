@@ -468,7 +468,7 @@
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
                 input.type = 'text';
-                btn.innerText = '🐵'; // 보이게 될 때 아이콘 변경 (선택사항, 기본 이모지 👁️ 유지 가능)
+                btn.innerText = '🐵';
             } else {
                 input.type = 'password';
                 btn.innerText = '👁️';
@@ -593,9 +593,20 @@
             if(loggedInUser) {
                 screen.classList.add('hidden');
                 document.getElementById('logged-in-user-name').innerText = `접속 계정: ${loggedInUser}`;
+                
+                // 로그인한 계정이 명단에 클마나 운영진으로 등록되어 있다면 자동으로 스태프 모드 반영 고려
+                const matchedMember = clanMembers.find(m => m.name === loggedInUser);
+                if (matchedMember && (matchedMember.role === '클마' || matchedMember.role === '운영진')) {
+                    if (localStorage.getItem('vampirUserRole') === null) {
+                        currentUserRole = 'staff';
+                        localStorage.setItem('vampirUserRole', currentUserRole);
+                        document.getElementById('auth-role-select').value = currentUserRole;
+                    }
+                }
             } else {
                 screen.classList.remove('hidden');
             }
+            document.getElementById('auth-role-select').value = currentUserRole;
             updateUIByRole();
             renderAll();
         }
@@ -609,7 +620,7 @@
 
         function updateUIByRole() {
             const isStaff = currentUserRole === 'staff';
-            document.querySelectorAll('.admin-col-header').forEach(el => el.style.display = isStaff ? '' : 'none');
+            document.querySelectorAll('.admin-col-header').forEach(el => el.style.display = '');
             const addBox = document.getElementById('admin-member-add-box');
             if(addBox) addBox.style.display = isStaff ? '' : 'none';
         }
@@ -660,6 +671,10 @@
         }
 
         function deleteMember(id) {
+            if(currentUserRole !== 'staff') {
+                alert('운영진 모드에서만 삭제할 수 있습니다.');
+                return;
+            }
             if(confirm('정말 이 클랜원을 삭제하시겠습니까?')) {
                 clanMembers = clanMembers.filter(m => m.id !== id);
                 saveMembersData();
@@ -882,15 +897,16 @@
                 if(list.length === 0) return `<tr><td colspan="6" class="py-6 text-center text-gray-500">없음</td></tr>`;
                 return list.map((m, idx) => `
                     <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 transition">
-                        <td class="py-3 px-4 font-bold text-amber-400">
-                            ${idx + 1} 
-                            ${currentUserRole === 'staff' ? `<button onclick="moveMemberOrder(${idx}, -1, '${groupType}')" class="text-xs text-gray-400 hover:text-white ml-1">▲</button><button onclick="moveMemberOrder(${idx}, 1, '${groupType}')" class="text-xs text-gray-400 hover:text-white">▼</button>` : ''}
+                        <td class="py-3 px-4 font-bold text-amber-400 flex items-center space-x-1">
+                            <span>${idx + 1}</span>
+                            <button onclick="moveMemberOrder(${idx}, -1, '${groupType}')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded ml-1 focus:outline-none">▲</button>
+                            <button onclick="moveMemberOrder(${idx}, 1, '${groupType}')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded focus:outline-none">▼</button>
                         </td>
                         <td class="py-3 px-4 font-semibold text-white">${m.name}</td>
                         <td class="py-3 px-4 text-gray-300">${m.cls}</td>
                         <td class="py-3 px-4 text-gray-300">${m.powerType === 'blind' ? '<span class="text-purple-400 font-bold">블라인드</span>' : m.power.toLocaleString() + '만'}</td>
                         <td class="py-3 px-4"><span class="px-2 py-1 rounded text-xs ${m.role === '클마' ? 'bg-red-900 text-red-200' : m.role === '운영진' ? 'bg-amber-900 text-amber-200' : 'bg-gray-800 text-gray-300'}">${m.role}</span></td>
-                        <td class="py-3 px-4 text-center admin-col-header" style="display: ${currentUserRole === 'staff' ? '' : 'none'};">
+                        <td class="py-3 px-4 text-center admin-col-header">
                             <button onclick="deleteMember(${m.id})" class="bg-red-900/60 hover:bg-red-800 text-red-200 px-2.5 py-1 rounded text-xs font-bold transition">삭제</button>
                         </td>
                     </tr>
