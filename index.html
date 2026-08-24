@@ -1,9 +1,10 @@
 
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" translate="no">
 <head>
     <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>뱀피르 독도 클랜 관리</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -229,8 +230,13 @@
 
         <!-- 클랜원 명단 탭 -->
         <section id="tab-members" class="tab-content hidden space-y-6">
-            <h2 class="text-2xl font-bold text-white">👥 클랜원 명단 및 역할 관리</h2>
-            <p class="text-xs text-gray-400">💡 블라인드 인원은 자동으로 맨 위에 정렬되며, [▲] [▼] 버튼으로 순서를 직접 바꿀 수 있습니다.</p>
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <h2 class="text-2xl font-bold text-white">👥 클랜원 명단 및 역할 관리</h2>
+                    <div id="members-edit-btn-container"></div>
+                </div>
+            </div>
+            <p class="text-xs text-gray-400">💡 블라인드 인원은 자동으로 맨 위에 정렬되며, [▲] [▼] 버튼으로 순서를 직접 바꿀 수 있습니다.[cite: 1]</p>
             
             <div id="admin-member-add-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="font-bold text-white text-sm">➕ 클랜원 추가하기</div>
@@ -408,8 +414,8 @@
             <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
                 <div class="text-xs text-gray-400 space-y-1">
                     <p>• <strong class="text-amber-400">운영진 주급 (10%)</strong>: 운영진 및 클마 멤버들에게 균등 분배</p>
-                    <p>• <strong class="text-amber-400">상위 투력 그룹별 분배 (35%)</strong>: 라닷지/제비/한국(각 20%) 및 마자용/피카츄/늑대/로이(각 15%) 고정 비율 분배</p>
-                    <p>• <strong class="text-amber-400">일반 (55%)</strong>: 상위 투력 그룹 인원들을 제외하고, 35점 만점 기준 일반 클랜원들의 참여 퍼센트에 따라 차등 분배</p>
+                    <p>• <strong class="text-amber-400">상위 투력 그룹별 분배 (35%)</strong>: 지정된 그룹 고정 비율 분배</p>
+                    <p>• <strong class="text-amber-400">일반 (55%)</strong>: 35점 만점 기준 일반 클랜원들의 참여 퍼센트에 따라 차등 분배</p>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm whitespace-nowrap">
@@ -426,23 +432,73 @@
         let adminPasswords = JSON.parse(localStorage.getItem('vampirAdminPw')) || { '13': '1234', '21': '5678', 'master': '7777' };
         let isAttendanceActive = localStorage.getItem('vampirAttendanceActive') !== 'false';
         
-        let rawMembers = JSON.parse(localStorage.getItem('vampirClanMembers')) || [
-            { id: 1, name: '라닷지', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 2, name: '제비', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 3, name: '한국', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 4, name: '피카츄', cls: '아카샤', powerType: 'number', power: 500000, role: '운영진' },
-            { id: 5, name: '늑대', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 6, name: '마자용', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 7, name: '로이', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' }
+        let rawMembers = [
+            { id: 1, name: 'DOKDO망나뇽', cls: '아카샤', powerType: 'number', power: 1420944, role: '클마' },
+            { id: 2, name: 'DOKDO피카츄', cls: '카니지', powerType: 'blind', power: 0, role: '운영진' },
+            { id: 3, name: 'DOKDO수호', cls: '바이퍼', powerType: 'number', power: 1324246, role: '운영진' },
+            { id: 4, name: 'DOKDO패왕', cls: '바이퍼', powerType: 'number', power: 1181133, role: '운영진' },
+            { id: 5, name: 'DOKDO우주', cls: '바이퍼', powerType: 'number', power: 1477005, role: '일반' },
+            { id: 6, name: 'DOKDO기모찌', cls: '블러드스테인', powerType: 'number', power: 1466746, role: '일반' },
+            { id: 7, name: 'DOKDO사장', cls: '아카샤', powerType: 'number', power: 1464504, role: '일반' },
+            { id: 8, name: 'DOKDO꼬부기', cls: '바이퍼', powerType: 'number', power: 1435705, role: '일반' },
+            { id: 9, name: 'DOKDO2', cls: '카니지', powerType: 'number', power: 1433081, role: '일반' },
+            { id: 10, name: 'DOKDO1SG', cls: '블러드스테인', powerType: 'number', power: 1425463, role: '일반' },
+            { id: 11, name: 'DOKDO캬하핫', cls: '카니지', powerType: 'number', power: 1406639, role: '일반' },
+            { id: 12, name: 'DOKDO유령', cls: '바이퍼', powerType: 'number', power: 1383242, role: '일반' },
+            { id: 13, name: 'DOKDO와하핫', cls: '아카샤', powerType: 'number', power: 1372691, role: '일반' },
+            { id: 14, name: 'DOKDO나옹이', cls: '카니지', powerType: 'number', power: 1371607, role: '일반' },
+            { id: 15, name: 'DOKDO흑표', cls: '카니지', powerType: 'number', power: 1362238, role: '일반' },
+            { id: 16, name: 'DOKDO맥주', cls: '바이퍼', powerType: 'number', power: 1358586, role: '일반' },
+            { id: 17, name: 'DOKDO빙바', cls: '블러드스테인', powerType: 'number', power: 1322075, role: '일반' },
+            { id: 18, name: 'DOKDO아하핫', cls: '바이퍼', powerType: 'number', power: 1311030, role: '일반' },
+            { id: 19, name: 'DOKDO9', cls: '블러드스테인', powerType: 'number', power: 1295189, role: '일반' },
+            { id: 20, name: 'DOKDO호미', cls: '그림리퍼', powerType: 'number', power: 1286773, role: '일반' },
+            { id: 21, name: 'DOKDO모션', cls: '카니지', powerType: 'number', power: 1285730, role: '일반' },
+            { id: 22, name: 'DOKDO찔꺽이', cls: '아카샤', powerType: 'number', power: 1265314, role: '일반' },
+            { id: 23, name: 'DOKDO냐짱', cls: '바이퍼', powerType: 'number', power: 1263830, role: '일반' },
+            { id: 24, name: 'DOKDO풀악셀', cls: '블러드스테인', powerType: 'number', power: 1260617, role: '일반' },
+            { id: 25, name: 'DOKDO라팍', cls: '그림리퍼', powerType: 'number', power: 1248890, role: '일반' },
+            { id: 26, name: 'DOKDO미로', cls: '바이퍼', powerType: 'number', power: 1224193, role: '일반' },
+            { id: 27, name: 'DOKDO코코', cls: '아카샤', powerType: 'number', power: 1220377, role: '일반' },
+            { id: 28, name: 'DOKDO푸하핫', cls: '그림리퍼', powerType: 'number', power: 1196496, role: '일반' },
+            { id: 29, name: 'DOKDO해적', cls: '바이퍼', powerType: 'number', power: 1188916, role: '일반' },
+            { id: 30, name: 'DOKDO양아치', cls: '블러드스테인', powerType: 'number', power: 1176502, role: '일반' },
+            { id: 31, name: 'DOKDO가츠', cls: '블러드스테인', powerType: 'number', power: 1171767, role: '일반' },
+            { id: 32, name: 'DOKDO철가방', cls: '블러드스테인', powerType: 'number', power: 1164835, role: '일반' },
+            { id: 33, name: 'DOKDO미쓰', cls: '아카샤', powerType: 'number', power: 1157220, role: '일반' },
+            { id: 34, name: 'DOKDO푸린', cls: '그림리퍼', powerType: 'number', power: 1143753, role: '일반' },
+            { id: 35, name: '독도수비대금', cls: '카니지', powerType: 'number', power: 1096076, role: '일반' },
+            { id: 36, name: 'DOKDO우리땅', cls: '카니지', powerType: 'number', power: 1074262, role: '일반' },
+            { id: 37, name: '두리안', cls: '카니지', powerType: 'number', power: 969306, role: '일반' },
+            { id: 38, name: 'DOKDO제비', cls: '바이퍼', powerType: 'blind', power: 0, role: '일반' },
+            { id: 39, name: 'DOKDO한국', cls: '카니지', powerType: 'blind', power: 0, role: '일반' },
+            { id: 40, name: 'DOKDO늑대', cls: '바이퍼', powerType: 'blind', power: 0, role: '일반' },
+            { id: 41, name: 'DOKDO마자용', cls: '아카샤', powerType: 'blind', power: 0, role: '일반' },
+            { id: 42, name: 'DOKDO로이', cls: '블러드스테인', powerType: 'blind', power: 0, role: '일반' },
+            { id: 43, name: 'DOKDO움하핫', cls: '바이퍼', powerType: 'blind', power: 0, role: '일반' },
+            { id: 44, name: 'DOKDO갓바다', cls: '카니지', powerType: 'blind', power: 0, role: '일반' },
+            { id: 45, name: 'DOKDO크하핫', cls: '카니지', powerType: 'blind', power: 0, role: '일반' }
         ];
 
-        let clanMembers = rawMembers.map(m => ({
-            ...m,
-            id: m.id || Date.now() + Math.random(),
-            cls: m.cls || m.class || '아카샤',
-            powerType: m.powerType || (m.power === '블라인드' ? 'blind' : 'number'),
-            power: m.power === '블라인드' ? 0 : (Number(m.power) || 0)
-        }));
+        let clanMembers = rawMembers.map(m => {
+            let pType = m.powerType;
+            let pVal = m.power;
+            if(!pType) {
+                pType = (pVal === '블라인드' || pVal === 0 || pVal === '0') ? 'blind' : 'number';
+            }
+            if(pType === 'blind') {
+                pVal = 0;
+            } else {
+                pVal = Number(pVal) || 0;
+            }
+            return {
+                ...m,
+                id: m.id || Date.now() + Math.random(),
+                cls: m.cls || m.class || '아카샤',
+                powerType: pType,
+                power: pVal
+            };
+        });
 
         let userAccounts = JSON.parse(localStorage.getItem('vampirUserAccounts')) || {};
         let loggedInUser = localStorage.getItem('vampirLoggedInUser') || null;
@@ -595,7 +651,6 @@
                 screen.classList.add('hidden');
                 document.getElementById('logged-in-user-name').innerText = `접속 계정: ${loggedInUser}`;
                 
-                // 로그인한 계정이 명단에 클마나 운영진으로 등록되어 있다면 자동으로 스태프 모드 반영 고려
                 const matchedMember = clanMembers.find(m => m.name === loggedInUser);
                 if (matchedMember && (matchedMember.role === '클마' || matchedMember.role === '운영진')) {
                     if (localStorage.getItem('vampirUserRole') === null) {
@@ -683,6 +738,61 @@
             }
         }
 
+        function editMemberInfo(id) {
+            if(currentUserRole !== 'staff') {
+                alert('운영진 모드에서만 수정할 수 있습니다.');
+                return;
+            }
+            const member = clanMembers.find(m => m.id === id);
+            if(!member) return;
+
+            const newName = prompt('수정할 닉네임을 입력하세요:', member.name);
+            if(newName === null) return;
+            const trimmedName = newName.trim();
+            if(!trimmedName) {
+                alert('닉네임은 비워둘 수 없습니다.');
+                return;
+            }
+
+            const classes = ['아카샤', '바이퍼', '카니지', '블러드스테인', '그림리퍼', '블라인드'];
+            let newCls = prompt(`클래스를 입력하세요 (${classes.join(', ')}):`, member.cls);
+            if(newCls === null) return;
+            newCls = newCls.trim();
+            if(!classes.includes(newCls)) newCls = member.cls;
+
+            let newPowerType = member.powerType;
+            let newPower = member.power;
+            let pInput = prompt('전투력 숫자를 입력하세요 (블라인드인 경우 0 또는 blind 입력):', member.powerType === 'blind' ? 'blind' : member.power);
+            if(pInput !== null) {
+                pInput = pInput.trim();
+                if(pInput.toLowerCase() === 'blind' || pInput === '0' && member.powerType === 'blind') {
+                    newPowerType = 'blind';
+                    newPower = 0;
+                } else {
+                    newPowerType = 'number';
+                    newPower = Number(pInput) || 0;
+                }
+            }
+
+            const roles = ['일반', '운영진', '클마'];
+            let newRole = prompt(`역할을 입력하세요 (${roles.join(', ')}):`, member.role);
+            if(newRole !== null) {
+                newRole = newRole.trim();
+                if(roles.includes(newRole)) {
+                    member.role = newRole;
+                }
+            }
+
+            member.name = trimmedName;
+            member.cls = newCls;
+            member.powerType = newPowerType;
+            member.power = newPower;
+
+            saveMembersData();
+            renderAll();
+            alert('클랜원 정보가 수정되었습니다.');
+        }
+
         function moveMemberOrder(index, direction, groupType) {
             const staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
             const memberList = clanMembers.filter(m => m.role === '일반');
@@ -740,6 +850,15 @@
             localStorage.setItem('vampirNoticeText', savedNoticeText);
             cancelNoticeEdit();
             alert('공지사항이 저장되었습니다.');
+        }
+
+        function renderMembersEditButton() {
+            const editBtnContainer = document.getElementById('members-edit-btn-container');
+            if(currentUserRole === 'staff') {
+                editBtnContainer.innerHTML = `<button onclick="alert('클랜원 명단 전체 관리 모드입니다. 각 행의 [수정] 버튼을 이용해 세부 정보를 변경할 수 있습니다.')" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded text-xs font-bold transition">수정</button>`;
+            } else {
+                editBtnContainer.innerHTML = '';
+            }
         }
 
         function unlockAdminAttendanceSettings() {
@@ -866,6 +985,7 @@
             renderDashboard();
             renderNotice();
             renderMembersTable();
+            renderMembersEditButton();
             renderAttendance();
         }
 
@@ -905,9 +1025,10 @@
                         </td>
                         <td class="py-3 px-4 font-semibold text-white">${m.name}</td>
                         <td class="py-3 px-4 text-gray-300">${m.cls}</td>
-                        <td class="py-3 px-4 text-gray-300">${m.powerType === 'blind' ? '<span class="text-purple-400 font-bold">블라인드</span>' : m.power.toLocaleString() + '만'}</td>
+                        <td class="py-3 px-4 text-gray-300">${m.powerType === 'blind' ? '<span class="text-purple-400 font-bold">블라인드</span>' : m.power.toLocaleString()}</td>
                         <td class="py-3 px-4"><span class="px-2 py-1 rounded text-xs ${m.role === '클마' ? 'bg-red-900 text-red-200' : m.role === '운영진' ? 'bg-amber-900 text-amber-200' : 'bg-gray-800 text-gray-300'}">${m.role}</span></td>
-                        <td class="py-3 px-4 text-center admin-col-header">
+                        <td class="py-3 px-4 text-center admin-col-header space-x-1">
+                            <button onclick="editMemberInfo(${m.id})" class="bg-blue-900/60 hover:bg-blue-800 text-blue-200 px-2.5 py-1 rounded text-xs font-bold transition">수정</button>
                             <button onclick="deleteMember(${m.id})" class="bg-red-900/60 hover:bg-red-800 text-red-200 px-2.5 py-1 rounded text-xs font-bold transition">삭제</button>
                         </td>
                     </tr>
@@ -985,7 +1106,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                         <div class="bg-gray-800 p-3 rounded border border-gray-700">클래스: <span class="text-white font-bold">${member.cls}</span></div>
                         <div class="bg-gray-800 p-3 rounded border border-gray-700">역할: <span class="text-white font-bold">${member.role}</span></div>
-                        <div class="bg-gray-800 p-3 rounded border border-gray-700">전투력: <span class="text-white font-bold">${member.powerType === 'blind' ? '블라인드' : member.power.toLocaleString() + '만'}</span></div>
+                        <div class="bg-gray-800 p-3 rounded border border-gray-700">전투력: <span class="text-white font-bold">${member.powerType === 'blind' ? '블라인드' : member.power.toLocaleString()}</span></div>
                         <div class="bg-gray-800 p-3 rounded border border-gray-700">누적 체크 항목수: <span class="text-white font-bold">${Object.keys(rec).length}개</span></div>
                     </div>
                 </div>
@@ -1004,8 +1125,8 @@
             const staffPerPerson = staffGroup.length > 0 ? Math.floor(staffTotalShare / staffGroup.length) : 0;
 
             const topGroupTotalShare = totalDia * 0.35;
-            const topGroupKeywords = ['라닷지', '제비', '한국', '피카츄', '늑대', '마자용', '로이'];
-            const topRatios = { '라닷지': 0.20, '제비': 0.20, '한국': 0.20, '피카츄': 0.15, '늑대': 0.15, '마자용': 0.15, '로이': 0.15 };
+            const topGroupKeywords = ['DOKDO결마로', 'DOKDO우주', 'DOKDO기모찌', 'DOKDO사장', 'DOKDO꼬부기', 'DOKDO2', 'DOKDO망나뇽'];
+            const topRatios = { 'DOKDO결마로': 0.20, 'DOKDO우주': 0.20, 'DOKDO기모찌': 0.20, 'DOKDO사장': 0.15, 'DOKDO꼬부기': 0.15, 'DOKDO2': 0.15, 'DOKDO망나뇽': 0.15 };
 
             const matchedTopMembers = clanMembers.filter(m => topGroupKeywords.some(keyword => m.name.includes(keyword)));
             const normalTotalShare = totalDia * 0.55;
@@ -1060,7 +1181,7 @@
                     <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 transition">
                         <td class="py-3 px-4 font-semibold text-white">${m.name}</td>
                         <td class="py-3 px-4 text-gray-300">${m.cls}</td>
-                        <td class="py-3 px-4 text-gray-300">${m.powerType === 'blind' ? '블라인드' : m.power.toLocaleString() + '만'}</td>
+                        <td class="py-3 px-4 text-gray-300">${m.powerType === 'blind' ? '블라인드' : m.power.toLocaleString()}</td>
                         <td class="py-3 px-4"><span class="px-2 py-1 rounded text-xs ${m.role === '클마' ? 'bg-red-900 text-red-200' : m.role === '운영진' ? 'bg-amber-900 text-amber-200' : 'bg-gray-800 text-gray-300'}">${m.role}</span></td>
                         <td class="py-3 px-4 text-center text-blue-400 font-semibold">${staffShare.toLocaleString()}</td>
                         <td class="py-3 px-4 text-center text-purple-400 font-semibold">${topShare.toLocaleString()}</td>
