@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>뱀피르 독도 클랜 관리 - DB 연동</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
+        body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Noto Sans KR', sans-serif; }
+        .dokdo-title { font-weight: 900; font-style: italic; background: linear-gradient(180deg, #fff, #64748b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.3)); }
+        .card-bg { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(8px); border: 1px solid #1f2937; border-radius: 1rem; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- 1. Auth Screen (Login/Register) -->
+    <div id="auth-screen" class="fixed inset-0 z-[9999] flex items-center justify-center bg-[#0b0f19] p-4">
+        <div class="card-bg w-full max-w-md p-8 space-y-6">
+            <div class="text-center">
+                <h1 class="dokdo-title text-5xl">DOKDO</h1>
+                <p class="text-gray-500 text-xs mt-2 uppercase tracking-widest">Clan Management System</p>
+            </div>
+
+            <div class="flex border-b border-gray-800 text-sm font-bold">
+                <button onclick="toggleAuthMode('login')" id="tab-login" class="flex-1 pb-2 text-red-500 border-b-2 border-red-500">로그인</button>
+                <button onclick="toggleAuthMode('register')" id="tab-register" class="flex-1 pb-2 text-gray-500">회원가입</button>
+            </div>
+
+            <div class="space-y-4">
+                <input type="email" id="email" placeholder="이메일 주소" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm outline-none focus:border-red-500">
+                <input type="text" id="reg-nickname" placeholder="게임 닉네임" class="hidden w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm outline-none focus:border-red-500">
+                <input type="password" id="password" placeholder="비밀번호" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm outline-none focus:border-red-500">
+                <button onclick="handleAuth()" id="auth-btn" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded-lg transition shadow-lg shadow-red-900/20">로그인하기</button>
+            </div>
+            <p id="auth-error" class="text-xs text-red-400 text-center"></p>
+        </div>
+    </div>
+
+    <!-- 2. Wait for Approval Screen -->
+    <div id="approval-screen" class="hidden fixed inset-0 z-[9998] flex items-center justify-center bg-[#0b0f19] p-4">
+        <div class="card-bg w-full max-w-md p-8 text-center space-y-4">
+            <h2 class="text-2xl font-bold text-amber-400">승인 대기 중</h2>
+            <p class="text-gray-400 text-sm">가입 신청이 완료되었습니다.<br>운영진의 승인 후 이용 가능합니다.</p>
+            <button onclick="logout()" class="text-xs text-gray-500 underline">로그아웃 후 다시 시도</button>
+        </div>
+    </div>
+
+    <!-- 3. Main System -->
+    <div id="main-system" class="hidden flex flex-col md:flex-row min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 bg-gray-900 p-6 space-y-8 border-r border-gray-800">
+            <h1 class="dokdo-title text-2xl">DOKDO</h1>
+            <nav class="space-y-2">
+                <button onclick="showTab('dashboard')" class="w-full text-left p-3 rounded hover:bg-gray-800 text-sm font-bold">📊 대시보드</button>
+                <button onclick="showTab('attendance')" class="w-full text-left p-3 rounded hover:bg-gray-800 text-sm font-bold">✅ 출석체크</button>
+                <button id="staff-menu-btn" onclick="showTab('staff')" class="hidden w-full text-left p-3 rounded bg-red-900/20 text-red-400 text-sm font-bold border border-red-900/50">👑 운영진 관리</button>
+            </nav>
+            <div class="pt-10 border-t border-gray-800">
+                <p id="user-display" class="text-xs text-gray-400 mb-2"></p>
+                <button onclick="logout()" class="w-full bg-gray-800 text-xs py-2 rounded">로그아웃</button>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="flex-grow p-6 md:p-10 space-y-8">
+            <!-- Dashboard -->
+            <section id="tab-dashboard" class="tab-content space-y-6">
+                <h2 class="text-3xl font-bold">Dashboard</h2>
+                <div class="card-bg p-6">
+                    <h3 class="text-amber-400 font-bold mb-2">📢 클랜 공지</h3>
+                    <p id="notice-text" class="text-sm text-gray-300">공지사항을 불러오는 중...</p>
+                </div>
+            </section>
+
+            <!-- Staff Control -->
+            <section id="tab-staff" class="tab-content hidden space-y-6">
+                <h2 class="text-3xl font-bold text-red-500">Admin Control</h2>
+                <div class="card-bg p-6">
+                    <h3 class="font-bold mb-4">가입 승인 대기 명단</h3>
+                    <div id="pending-list" class="space-y-2">
+                        <!-- Pending users here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // --- 1. FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let authMode = 'login';
+        let currentUserData = null;
+
+        // --- 2. AUTH LOGIC ---
+        function toggleAuthMode(mode) {
+            authMode = mode;
+            document.getElementById('reg-nickname').classList.toggle('hidden', mode === 'login');
+            document.getElementById('auth-btn').innerText = mode === 'login' ? '로그인하기' : '회원가입 신청';
+            document.getElementById('tab-login').className = mode === 'login' ? "flex-1 pb-2 text-red-500 border-b-2 border-red-500" : "flex-1 pb-2 text-gray-500";
+            document.getElementById('tab-register').className = mode === 'register' ? "flex-1 pb-2 text-red-500 border-b-2 border-red-500" : "flex-1 pb-2 text-gray-500";
+        }
+
+        async function handleAuth() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const nickname = document.getElementById('reg-nickname').value;
+            const errorEl = document.getElementById('auth-error');
+
+            try {
+                if (authMode === 'register') {
+                    if(!nickname) throw new Error("닉네임을 입력해주세요.");
+                    const res = await auth.createUserWithEmailAndPassword(email, password);
+                    // Create user profile in Firestore
+                    await db.collection('users').doc(res.user.uid).set({
+                        uid: res.user.uid,
+                        nickname: nickname,
+                        email: email,
+                        role: 'member',
+                        status: 'pending' // New users start as pending
+                    });
+                    alert("가입 신청 완료! 운영진 승인을 기다려주세요.");
+                } else {
+                    await auth.signInWithEmailAndPassword(email, password);
+                }
+            } catch (e) {
+                errorEl.innerText = e.message;
+            }
+        }
+
+        function logout() {
+            auth.signOut().then(() => location.reload());
+        }
+
+        // --- 3. SYSTEM LOGIC ---
+        auth.onAuthStateChanged(async (user) => {
+            const authScr = document.getElementById('auth-screen');
+            const appScr = document.getElementById('approval-screen');
+            const mainScr = document.getElementById('main-system');
+
+            if (user) {
+                authScr.classList.add('hidden');
+                // Fetch User Data from Firestore
+                const doc = await db.collection('users').doc(user.uid).get();
+                currentUserData = doc.data();
+
+                if (!currentUserData || currentUserData.status === 'pending') {
+                    appScr.classList.remove('hidden');
+                    mainScr.classList.add('hidden');
+                } else {
+                    appScr.classList.add('hidden');
+                    mainScr.classList.remove('hidden');
+                    setupMainSystem();
+                }
+            } else {
+                authScr.classList.remove('hidden');
+                appScr.classList.add('hidden');
+                mainScr.classList.add('hidden');
+            }
+        });
+
+        function setupMainSystem() {
+            document.getElementById('user-display').innerText = `${currentUserData.nickname} (${currentUserData.role})`;
+            
+            // Show Admin Menu if Staff
+            if (currentUserData.role === 'staff' || currentUserData.role === 'admin') {
+                document.getElementById('staff-menu-btn').classList.remove('hidden');
+                loadPendingUsers();
+            }
+
+            // Load Global Data (Notices)
+            db.collection('settings').doc('notice').onSnapshot(doc => {
+                if(doc.exists) document.getElementById('notice-text').innerText = doc.data().text;
+            });
+        }
+
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById('tab-' + id).classList.remove('hidden');
+        }
+
+        // --- 4. STAFF ACTIONS ---
+        function loadPendingUsers() {
+            db.collection('users').where('status', '==', 'pending').onSnapshot(snap => {
+                const list = document.getElementById('pending-list');
+                list.innerHTML = '';
+                if(snap.empty) list.innerHTML = '<p class="text-xs text-gray-500">대기 중인 인원이 없습니다.</p>';
+                
+                snap.forEach(doc => {
+                    const u = doc.data();
+                    list.innerHTML += `
+                        <div class="flex items-center justify-between bg-gray-900 p-3 rounded border border-gray-800">
+                            <div>
+                                <p class="text-sm font-bold text-white">${u.nickname}</p>
+                                <p class="text-[10px] text-gray-500">${u.email}</p>
+                            </div>
+                            <button onclick="approveUser('${u.uid}')" class="bg-blue-600 px-3 py-1 rounded text-xs font-bold">승인</button>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        async function approveUser(uid) {
+            if(confirm("이 유저를 승인하시겠습니까?")) {
+                await db.collection('users').doc(uid).update({ status: 'approved' });
+                alert("승인 완료");
+            }
+        }
+    </script>
+</body>
+</html>
