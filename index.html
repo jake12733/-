@@ -2,1092 +2,169 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>뱀피르 독도 클랜 관리</title>
+    <title>DOKDO 시스템</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* 모든 브라우저 기본 스타일 및 렌더링 강제 통일 */
-        *, *::before, *::after { 
-            box-sizing: border-box; 
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* 모바일 사파리/크롬 등에서 인풋/버튼의 기기 기본 스타일(둥근 모서리, 그림자 등) 강제 제거 */
-        input, button, select, textarea {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            border-radius: 0;
-            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-        }
-
-        body { 
-            background-color: #0b0f19; 
-            color: #f3f4f6; 
-            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            word-break: keep-all;
-        }
-
-        #login-bg-screen {
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.9)), url('image_4a3c26.jpg');
-            background-size: cover;
-            background-position: center;
-        }
-
-        .dokdo-title {
-            font-family: 'Georgia', serif;
-            font-weight: 900;
-            font-style: italic;
-            letter-spacing: 4px;
-            color: #e5e7eb;
-            text-shadow: 
-                2px 2px 0px #000,
-                4px 4px 10px rgba(220, 38, 38, 0.6),
-                0 0 20px rgba(255, 255, 255, 0.2);
-            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.9));
-        }
-
-        .mobile-bottom-nav {
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            background-color: #111827 !important;
-            border-top: 1px solid #1f2937 !important;
-            display: flex !important;
-            justify-content: space-around !important;
-            padding: 8px 0 !important;
-            z-index: 99999 !important;
-        }
-
-        .mobile-tab-btn {
-            background: none;
-            border: none;
-            color: #9ca3af;
-            font-size: 10px;
-            font-weight: bold;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            flex: 1;
-        }
-        .mobile-tab-btn.active { color: #ef4444; }
-
-        @media (max-width: 767px) {
-            .pc-sidebar { display: none !important; }
-            main { padding-bottom: 90px !important; }
-        }
-    </style>
 </head>
-<body class="min-h-screen flex flex-col md:flex-row">
+<body class="bg-[#030712] text-gray-100 flex h-screen overflow-hidden">
 
-    <!-- 로그인/회원가입 메인 화면 -->
-    <div id="login-bg-screen" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-4 overflow-y-auto">
-        <div class="w-full max-w-md text-center space-y-6 my-auto">
-            <div class="space-y-1">
-                <div class="text-xs tracking-[0.3em] text-red-500 font-bold uppercase">Vampir Guild System</div>
-                <h1 class="dokdo-title text-5xl md:text-6xl">DOKDO</h1>
-                <p class="text-xs text-gray-400 italic">뱀피르: 피의 계승자 - 독도 클랜</p>
-            </div>
-            <div class="bg-gray-900/90 border border-gray-800 backdrop-blur-md p-6 md:p-8 rounded-2xl shadow-2xl space-y-6 text-left">
-                <div class="flex border-b border-gray-800 pb-2">
-                    <button onclick="switchAuthTab('login')" id="auth-tab-login" class="flex-1 pb-2 text-xs font-bold text-red-500 border-b-2 border-red-500 transition">로그인</button>
-                    <button onclick="switchAuthTab('register')" id="auth-tab-register" class="flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition">회원가입</button>
-                    <button onclick="switchAuthTab('reset')" id="auth-tab-reset" class="flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition">비번재설정</button>
+    <!-- [1] 로그인 화면 영역 -->
+    <div id="view-login" class="absolute inset-0 z-50 bg-[#030712]">
+        <!-- 배경 이미지 (bg.jpg 연결) -->
+        <div class="absolute inset-0 z-0 bg-cover bg-center" style="background-image: linear-gradient(rgba(3, 7, 18, 0.2), rgba(3, 7, 18, 0.2)), url('bg.jpg');"></div>
+
+        <!-- 로그인 박스를 캐릭터 쪽(왼쪽)으로 더 당기기 위해 정렬 및 간격 수정 -->
+        <div class="relative z-10 h-full flex items-center justify-center lg:justify-end lg:pr-32">
+            <div class="bg-[#090d16]/90 backdrop-blur-md border border-red-900/40 rounded-3xl p-14 w-[540px] shadow-[0_0_100px_rgba(0,0,0,0.95)]">
+                <!-- 로고 영역 -->
+                <div class="text-center mb-10">
+                    <h1 class="text-5xl font-black italic tracking-widest text-red-600 mb-2 drop-shadow-[0_0_20px_rgba(220,38,38,0.7)]">DOKDO</h1>
+                    <p class="text-xs text-gray-400 tracking-[0.3em] uppercase font-medium">VAMPIR DASHBOARD</p>
                 </div>
                 
-                <!-- 로그인 폼 -->
-                <div id="form-login" class="space-y-4">
-                    <div class="space-y-1">
-                        <label class="text-xs text-gray-400 font-semibold">닉네임</label>
-                        <input type="text" id="login-nickname" placeholder="가입한 닉네임 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-red-500">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs text-gray-400 font-semibold">비밀번호</label>
-                        <div class="relative">
-                            <input type="password" id="login-password" placeholder="비밀번호 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 pr-10 text-white text-sm focus:outline-none focus:border-red-500">
-                            <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-sm focus:outline-none">👁️</button>
+                <div class="space-y-6">
+                    <div>
+                        <div class="text-left mb-1 pl-1">
+                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">아이디</span>
                         </div>
+                        <input type="text" id="loginId" value="dokdo폐왕" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-lg rounded-xl px-6 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner">
                     </div>
-                    <button onclick="processLogin()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-red-900/40 cursor-pointer">로그인하기</button>
-                </div>
-
-                <!-- 회원가입 폼 -->
-                <div id="form-register" class="space-y-4 hidden">
-                    <div class="space-y-1">
-                        <label class="text-xs text-gray-400 font-semibold">사용할 닉네임</label>
-                        <input type="text" id="reg-nickname" placeholder="게임 닉네임 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-red-500">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs text-gray-400 font-semibold">비밀번호</label>
-                        <div class="relative">
-                            <input type="password" id="reg-password" placeholder="사용할 비밀번호 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 pr-10 text-white text-sm focus:outline-none focus:border-red-500">
-                            <button type="button" onclick="togglePasswordVisibility('reg-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-sm focus:outline-none">👁️</button>
+                    <div>
+                        <div class="text-left mb-1 pl-1">
+                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">비밀번호</span>
                         </div>
+                        <input type="password" placeholder="비밀번호를 입력하세요" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-lg rounded-xl px-6 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner">
                     </div>
-                    <button onclick="processRegister()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-blue-900/40 cursor-pointer">회원가입 완료</button>
-                </div>
-
-                <!-- 비밀번호 재설정 폼 -->
-                <div id="form-reset" class="space-y-4 hidden">
-                    <div class="space-y-1">
-                        <label class="text-xs text-gray-400 font-semibold">닉네임</label>
-                        <input type="text" id="reset-nickname" placeholder="가입된 닉네임 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-red-500">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs text-gray-400 font-semibold">새로운 비밀번호</label>
-                        <div class="relative">
-                            <input type="password" id="reset-new-password" placeholder="새로운 비밀번호 입력" class="w-full bg-gray-800/80 border border-gray-700 rounded-lg p-3 pr-10 text-white text-sm focus:outline-none focus:border-red-500">
-                            <button type="button" onclick="togglePasswordVisibility('reset-new-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-sm focus:outline-none">👁️</button>
-                        </div>
-                    </div>
-                    <button onclick="processPasswordReset()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold p-3 rounded-lg text-sm transition shadow-lg shadow-amber-900/40 cursor-pointer">비밀번호 변경하기</button>
+                    <button onclick="handleLogin()" class="w-full py-4 bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white text-lg font-bold tracking-wider rounded-xl transition-all cursor-pointer mt-6 shadow-[0_4px_30px_rgba(220,38,38,0.6)]">
+                        접속하기
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 모바일용 하단 고정 탭바 -->
-    <nav class="mobile-bottom-nav md:hidden">
-        <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="mobile-tab-btn active"><span style="font-size: 16px;">📊</span>대시보드</button>
-        <button onclick="switchTab('notice')" id="mob-nav-notice" class="mobile-tab-btn"><span style="font-size: 16px;">📢</span>공지</button>
-        <button onclick="switchTab('members')" id="mob-nav-members" class="mobile-tab-btn"><span style="font-size: 16px;">👥</span>명단</button>
-        <button onclick="switchTab('attendance')" id="mob-nav-attendance" class="mobile-tab-btn"><span style="font-size: 16px;">✅</span>출석</button>
-        <button onclick="switchTab('history')" id="mob-nav-history" class="mobile-tab-btn"><span style="font-size: 16px;">🔍</span>조회</button>
-        <button onclick="switchTab('dia')" id="mob-nav-dia" class="mobile-tab-btn"><span style="font-size: 16px;">💎</span>분배</button>
-    </nav>
-
-    <!-- 사이드바 (PC 전용) -->
-    <aside class="pc-sidebar w-64 bg-gray-900 border-r border-gray-800 flex flex-col shrink-0 min-h-screen">
-        <div class="p-6 border-b border-gray-800 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <span class="text-red-500 text-xl font-bold">🛡️</span>
-                <span class="text-white font-bold text-lg tracking-wider">뱀피르 독도</span>
+    <!-- [2] 대시보드 화면 영역 (로그인 전 숨김) -->
+    <div id="view-dashboard" class="hidden flex w-full h-full">
+        <!-- 사이드바 영역 -->
+        <aside class="w-64 bg-[#05070c] flex flex-col justify-between border-r border-gray-800/50 p-4">
+            <div>
+                <h1 class="text-xl font-bold italic tracking-wider text-red-600 mb-8 px-2">DOKDO</h1>
+                <nav class="space-y-2">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer">
+                        <span>📊</span> 대시보드
+                    </button>
+                    <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                        <span>👑</span> 운영진 관리
+                    </button>
+                </nav>
             </div>
-        </div>
-        
-        <div class="p-4 bg-gray-800/50 border-b border-gray-800 mx-4 mt-4 rounded-xl space-y-2">
-            <div class="text-xs text-amber-400 font-bold flex justify-between items-center">
-                <span>🔐 현재 접속 모드</span>
+
+            <div class="border-t border-gray-800/60 pt-4">
+                <div class="text-xs text-gray-400 mb-3 px-2">
+                    <span class="text-gray-200 font-semibold">dokdo폐왕</span> (admin)
+                </div>
+                <button onclick="handleLogout()" class="w-full py-2 bg-[#0d121f] hover:bg-red-600/20 hover:text-red-400 text-gray-300 text-xs font-semibold rounded-lg border border-gray-800 transition cursor-pointer">
+                    로그아웃
+                </button>
             </div>
-            <select id="auth-role-select" onchange="changeUserAuth(this.value)" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-xs text-white focus:outline-none focus:border-red-500">
-                <option value="staff">👑 클마 / 운영진 모드 (전체 제어)</option>
-                <option value="member">🛡️ 일반 클랜원 모드 (조회 및 출석만)</option>
-            </select>
-        </div>
+        </aside>
 
-        <nav class="p-4 space-y-2 overflow-y-auto flex-grow">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white transition cursor-pointer">대시보드</button>
-            <button onclick="switchTab('notice')" id="nav-notice" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer">공지사항</button>
-            <button onclick="switchTab('members')" id="nav-members" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer">👥 클랜원 명단</button>
-            <button onclick="switchTab('attendance')" id="nav-attendance" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer">출석 체크</button>
-            <button onclick="switchTab('history')" id="nav-history" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer">참여율 조회</button>
-            <button onclick="switchTab('dia')" id="nav-dia" class="w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer">💎 다이아 분배</button>
-        </nav>
-    </aside>
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="flex-1 flex flex-col h-screen overflow-y-auto p-8">
+            <!-- [대시보드 탭 내용] -->
+            <div id="tab-dashboard" class="tab-content">
+                <h2 class="text-2xl font-bold mb-6 text-gray-100">대시보드</h2>
 
-    <!-- 메인 컨텐츠 영역 -->
-    <main class="flex-grow p-4 md:p-8 space-y-6 overflow-x-hidden">
-        
-        <div class="bg-gray-900 border border-gray-800 px-6 py-4 rounded-xl shadow flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <span id="user-status-dot" class="w-3 h-3 rounded-full bg-green-500"></span>
-                <span id="logged-in-user-name" class="text-sm font-bold text-white">로그인 중</span>
-            </div>
-            <button onclick="processLogout()" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">로그아웃</button>
-        </div>
-
-        <!-- 1. 대시보드 탭 -->
-        <section id="tab-dashboard" class="tab-content space-y-6">
-            <h2 class="text-2xl font-bold text-white">대시보드</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-2">
-                    <p class="text-gray-400 text-sm">현재 서버명</p>
-                    <div class="flex space-x-2">
-                        <input type="text" id="dashboard-server-name-input" placeholder="예: 독도 01서버" class="bg-gray-800 border border-gray-700 rounded p-2 text-white text-sm flex-grow">
-                        <button onclick="saveServerName()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-2 rounded text-xs font-bold cursor-pointer">저장</button>
+                <div class="border border-red-600/40 rounded-xl p-4 bg-[#090d16] mb-6 shadow-sm">
+                    <div class="flex items-center gap-2 text-red-500 font-semibold mb-1 text-sm">
+                        <span>📢</span> 오늘의 공지
                     </div>
-                </div>
-                <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-1">
-                    <p class="text-gray-400 text-sm mb-1">오늘 날짜</p>
-                    <p id="dashboard-date" class="text-2xl font-bold text-blue-400">-</p>
-                </div>
-                <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-1">
-                    <p class="text-gray-400 text-sm mb-1">오늘 전체 참여 현황</p>
-                    <p id="dashboard-total-rate" class="text-2xl font-bold text-green-400">0명 참여 중 (0%)</p>
-                </div>
-            </div>
-            
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-2">
-                <p class="text-gray-400 text-sm">이번 셔플 기간</p>
-                <div id="dashboard-shuffle-period" class="text-xl font-bold text-amber-400">-</div>
-                <p class="text-xs text-gray-500">💡 셔플은 총 14일 기준으로 갱신됩니다.</p>
-            </div>
-        </section>
-
-        <!-- 공지사항 탭 -->
-        <section id="tab-notice" class="tab-content hidden space-y-6">
-            <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-white">📢 클랜 공지사항 및 점수 안내</h2>
-                <div id="notice-edit-btn-container"></div>
-            </div>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-6">
-                <div id="notice-view-mode" class="space-y-6">
-                    <div id="notice-content-display" class="text-gray-300 text-sm leading-relaxed bg-gray-850 p-5 rounded-xl border border-gray-800 space-y-3" style="white-space: pre-line;"></div>
-                </div>
-                <div id="notice-edit-mode" class="hidden space-y-4">
-                    <textarea id="notice-textarea" rows="10" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-red-500 font-mono"></textarea>
-                    <div class="flex justify-end space-x-3">
-                        <button onclick="cancelNoticeEdit()" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm font-bold cursor-pointer">취소</button>
-                        <button onclick="saveNoticeContent()" class="bg-red-600 hover:bg-red-500 text-white px-5 py-2 rounded text-sm font-bold cursor-pointer">저장하기</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 클랜원 명단 탭 -->
-        <section id="tab-members" class="tab-content hidden space-y-6">
-            <h2 class="text-2xl font-bold text-white">👥 클랜원 명단 및 역할 관리</h2>
-            <p class="text-xs text-gray-400">💡 [▲] [▼] 버튼으로 순서를 직접 바꿀 수 있습니다.</p>
-            
-            <div id="admin-member-add-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <div class="font-bold text-white text-sm">➕ 클랜원 추가하기</div>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-                    <input type="text" id="new-member-name" placeholder="닉네임 입력" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm">
-                    <select id="new-member-class" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm">
-                        <option value="아카샤">아카샤</option>
-                        <option value="바이퍼">바이퍼</option>
-                        <option value="카니지">카니지</option>
-                        <option value="블러드스테인">블러드스테인</option>
-                        <option value="그림리퍼">그림리퍼</option>
-                        <option value="블라인드">블라인드</option>
-                    </select>
-                    <div class="flex flex-col gap-1">
-                        <select id="new-power-type" onchange="togglePowerInputType('new')" class="bg-gray-800 border border-gray-700 rounded p-2 text-white text-xs">
-                            <option value="number">전투력 직접 입력</option>
-                            <option value="blind">블라인드</option>
-                        </select>
-                        <input type="number" id="new-member-power" value="" placeholder="전투력 숫자 입력" class="bg-gray-800 border border-gray-700 rounded p-2 text-white text-xs">
-                    </div>
-                    <select id="new-member-role" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm">
-                        <option value="일반">일반 클랜원</option>
-                        <option value="운영진">운영진</option>
-                        <option value="클마">클마 (클랜마스터)</option>
-                    </select>
-                    <button onclick="addClanMember()" class="bg-red-600 hover:bg-red-500 text-white font-bold rounded p-3 text-sm cursor-pointer">클랜원 등록</button>
-                </div>
-            </div>
-
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <h3 class="text-lg font-bold text-amber-400">👑 클마 및 운영진 리스트</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead><tr class="border-b border-gray-800 text-gray-400"><th class="py-3 px-4">순서</th><th class="py-3 px-4">닉네임</th><th class="py-3 px-4">클래스</th><th class="py-3 px-4">전투력</th><th class="py-3 px-4">역할</th><th class="py-3 px-4 text-center admin-col-header">관리</th></tr></thead>
-                        <tbody id="staff-table-body"><tr><td colspan="6" class="py-6 text-center text-gray-500">없음</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <h3 class="text-lg font-bold text-white">🛡️ 일반 클랜원 리스트</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead><tr class="border-b border-gray-800 text-gray-400"><th class="py-3 px-4">순서</th><th class="py-3 px-4">닉네임</th><th class="py-3 px-4">클래스</th><th class="py-3 px-4">전투력</th><th class="py-3 px-4">역할</th><th class="py-3 px-4 text-center admin-col-header">관리</th></tr></thead>
-                        <tbody id="member-table-body"><tr><td colspan="6" class="py-6 text-center text-gray-500">없음</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- 출석 체크 탭 -->
-        <section id="tab-attendance" class="tab-content hidden space-y-6">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-2xl font-bold text-white">출석 체크</h2>
-                    <p id="current-season-info" class="text-xs text-amber-400 mt-1"></p>
-                </div>
-                <div class="flex space-x-2">
-                    <button id="toggle-attendance-status-btn" onclick="toggleAttendanceActiveStatus()" class="bg-emerald-700 text-white px-4 py-2 rounded text-xs font-bold cursor-pointer">출석 활성화 중</button>
-                    <button id="reset-attendance-btn" onclick="resetTodayAttendance()" class="bg-red-900 text-red-200 px-4 py-2 rounded text-xs font-bold cursor-pointer">오늘 초기화</button>
-                </div>
-            </div>
-
-            <div id="admin-attendance-settings-box" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4 border-l-4 border-l-amber-500">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-amber-400">🔒 [운영진 전용] 타임별 인증 비밀번호 설정 (각 4자리)</h3>
-                    <span id="admin-lock-badge" class="text-xs px-2.5 py-1 rounded bg-red-900 text-red-200 font-bold">잠김 (운영진 비밀번호 입력 필요)</span>
+                    <p class="text-gray-300 text-sm">공지사항을 불러오고 있습니다...</p>
                 </div>
 
-                <div id="admin-lock-form" class="flex flex-wrap items-center gap-3 pt-2">
-                    <input type="password" maxlength="4" id="admin-auth-input-pw" placeholder="운영진 비밀번호 4자리" class="bg-gray-800 border border-gray-700 rounded p-2 text-white text-sm w-48 text-center">
-                    <button onclick="unlockAdminAttendanceSettings()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">잠금 해제</button>
-                    <button onclick="openSetMasterPwModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">비밀번호 설정하기</button>
-                </div>
-
-                <div id="admin-unlocked-area" class="hidden space-y-4 pt-2">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="flex items-center space-x-3 bg-gray-800/80 p-3 rounded-lg border border-gray-700">
-                            <span class="text-xs text-blue-400 font-bold w-12">13시:</span>
-                            <input type="password" maxlength="4" id="admin-setting-pw-13" placeholder="4자리" class="bg-gray-900 border border-gray-700 rounded p-2 text-white text-sm w-28 text-center">
-                            <button onclick="saveAdminTimePassword('13')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">수정</button>
-                        </div>
-                        <div class="flex items-center space-x-3 bg-gray-800/80 p-3 rounded-lg border border-gray-700">
-                            <span class="text-xs text-red-400 font-bold w-12">21시:</span>
-                            <input type="password" maxlength="4" id="admin-setting-pw-21" placeholder="4자리" class="bg-gray-900 border border-gray-700 rounded p-2 text-white text-sm w-28 text-center">
-                            <button onclick="saveAdminTimePassword('21')" class="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">수정</button>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-[#090d16] border border-gray-800/80 rounded-xl p-5 flex flex-col justify-between">
+                        <span class="text-xs text-gray-400 mb-2">현재 서버명</span>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="serverNameInput" value="모아르테2" class="bg-[#030712] border border-gray-700 text-gray-200 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-red-600 flex-1">
+                            <button onclick="saveServerName()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition cursor-pointer">저장</button>
                         </div>
                     </div>
-                    <div class="flex justify-between items-center pt-2">
-                        <button onclick="openSetMasterPwModalFromUnlocked()" class="bg-blue-700 hover:bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-bold transition cursor-pointer">관리자 마스터 비번 변경</button>
-                        <button onclick="lockAdminAttendanceSettings()" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded text-xs font-bold transition cursor-pointer">다시 잠그기</button>
+
+                    <div class="bg-[#090d16] border border-gray-800/80 rounded-xl p-5 flex flex-col justify-between">
+                        <span class="text-xs text-gray-400 mb-2">오늘 날짜</span>
+                        <div class="text-xl font-bold text-blue-400" id="currentDate">2026. 8. 26.</div>
+                    </div>
+
+                    <div class="bg-[#090d16] border border-gray-800/80 rounded-xl p-5 flex flex-col justify-between">
+                        <span class="text-xs text-gray-400 mb-2">오늘 전체 참여 현황</span>
+                        <div class="text-xl font-bold text-green-400">0명 참여 중 (0%)</div>
+                    </div>
+                </div>
+
+                <div class="bg-[#090d16] border border-gray-800/80 rounded-xl p-5">
+                    <div class="text-xs text-gray-400 mb-3">이번 셔플 기간</div>
+                    <div class="flex items-center gap-1.5 text-xs text-blue-400 mb-1">
+                        <span>📅</span> 기간: 2026.08.19 ~ 2026.09.02
+                    </div>
+                    <div class="text-lg font-bold text-amber-400 mb-2">총 14일 기준 셔플 기간 적용 중</div>
+                    <div class="flex items-center gap-1.5 text-xs text-gray-400">
+                        <span>💡</span> 셔플은 총 14일 기준으로 갱신됩니다.
                     </div>
                 </div>
             </div>
 
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <select id="att-nickname" onchange="saveSelectedAttendanceNickname(this.value)" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm"><option value="">-- 닉네임 선택 --</option></select>
-                    <input type="password" maxlength="4" id="att-input-pw" placeholder="출석 비밀번호 4자리 입력 (13/21시용)" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm">
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div class="space-y-2 bg-gray-800/50 p-4 rounded-xl border border-gray-800">
-                        <p class="text-blue-400 font-bold text-sm">☀️ 13시타임 (3개 모두 완료 시 1점)</p>
-                        <button onclick="checkAttendanceWithPw('13시_시작전', '13', '게헨나 시작전 출석')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">게헨나 시작전 출석</button>
-                        <button onclick="checkAttendanceWithPw('13시_3층전', '13', '3층 올라가기전')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">3층 올라가기전</button>
-                        <button onclick="checkAttendanceWithPw('13시_끝', '13', '게헨나 끝 출석')" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">게헨나 끝 출석</button>
-                    </div>
-                    <div class="space-y-2 bg-gray-800/50 p-4 rounded-xl border border-gray-800">
-                        <p class="text-red-400 font-bold text-sm">🌙 21시타임 (3개 모두 완료 시 1점)</p>
-                        <button onclick="checkAttendanceWithPw('21시_시작전', '21', '게헨나 시작전 출석')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">게헨나 시작전 출석</button>
-                        <button onclick="checkAttendanceWithPw('21시_3층전', '21', '3층 올라가기전')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">3층 올라가기전</button>
-                        <button onclick="checkAttendanceWithPw('21시_끝', '21', '게헨나 끝 출석')" class="w-full bg-red-800 hover:bg-red-700 text-white p-2 rounded text-sm font-semibold transition cursor-pointer">게헨나 끝 출석</button>
-                    </div>
-                </div>
-                <div class="space-y-2 pt-2 border-t border-gray-800">
-                    <p class="text-amber-400 font-bold text-sm">✨ 에노크 / 마슈미드 (둘 다 누르면 1점)</p>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button onclick="checkAttendancePair('enoch', '에노크')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded font-bold transition cursor-pointer">에노크 체크</button>
-                        <button onclick="checkAttendancePair('mashumid', '마슈미드')" class="bg-amber-700 hover:bg-amber-600 text-white p-3 rounded font-bold transition cursor-pointer">마슈미드 체크</button>
-                    </div>
-                </div>
-                <div class="space-y-2 pt-2 border-t border-gray-800">
-                    <p class="text-purple-400 font-bold text-sm">⚔️ 쟁탈전 / 점령전 / 전초전 (점령전: 1점 / 전초전+쟁탈전: 둘 다 누르면 1점)</p>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="checkAttendancePvP('occupation', '점령전')" class="bg-purple-800 hover:bg-purple-700 text-white p-2.5 rounded font-bold transition cursor-pointer">점령전</button>
-                        <button onclick="checkAttendancePvP('outpost', '전초전')" class="bg-purple-800 hover:bg-purple-700 text-white p-2.5 rounded font-bold transition cursor-pointer">전초전</button>
-                        <button onclick="checkAttendancePvP('skirmish', '쟁탈전')" class="bg-purple-800 hover:bg-purple-700 text-white p-2.5 rounded font-bold transition cursor-pointer">쟁탈전</button>
-                    </div>
-                </div>
-                <div class="space-y-2 pt-2 border-t border-gray-800">
-                    <p class="text-emerald-400 font-bold text-sm">🛡️ 클랜임무 / 클랜수호 (둘 다 누르면 1점)</p>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button onclick="checkAttendancePair('mission', '클랜임무')" class="bg-emerald-800 hover:bg-emerald-700 text-white p-3 rounded font-bold transition cursor-pointer">클랜임무 체크</button>
-                        <button onclick="checkAttendancePair('defense', '클랜수호')" class="bg-emerald-800 hover:bg-emerald-700 text-white p-3 rounded font-bold transition cursor-pointer">클랜수호 체크</button>
-                    </div>
+            <!-- [운영진 관리 탭 내용] -->
+            <div id="tab-admin" class="tab-content hidden">
+                <h2 class="text-2xl font-bold mb-6 text-gray-100">운영진 관리</h2>
+                <div class="bg-[#090d16] border border-gray-800/80 rounded-xl p-6">
+                    <p class="text-gray-300 text-sm">운영진 관리 페이지 영역입니다.</p>
                 </div>
             </div>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <h3 class="text-lg font-bold text-white">출석 클랜원별 현황</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead><tr class="border-b border-gray-800 text-gray-400"><th class="py-2 px-2">닉네임</th><th class="py-2 px-2 text-amber-400">총점 (35점 만점)</th><th class="py-2 px-2 text-emerald-400">참여율(%)</th><th class="py-2 px-2">13/21시</th><th class="py-2 px-2">에노크/마슈</th><th class="py-2 px-2">전쟁류</th><th class="py-2 px-2">임무/수호</th></tr></thead>
-                        <tbody id="attendance-table-body"><tr><td colspan="7" class="py-6 text-center text-gray-500">기록 없음</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+        </main>
+    </div>
 
-        <!-- 참여율 조회 탭 -->
-        <section id="tab-history" class="tab-content hidden space-y-6">
-            <h2 class="text-2xl font-bold text-white">🔍 클랜원 상세 참여율 조회</h2>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow flex flex-col md:flex-row gap-3">
-                <input type="text" id="search-keyword" placeholder="조회할 클랜원 닉네임 입력" class="bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm flex-grow">
-                <button onclick="searchMemberHistory()" class="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded text-sm font-bold transition cursor-pointer">검색</button>
-            </div>
-            <div id="search-result-container" class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow text-gray-300 text-sm space-y-2">
-                닉네임을 입력하고 검색 버튼을 눌러주세요.
-            </div>
-        </section>
-
-        <!-- 다이아 분배 탭 -->
-        <section id="tab-dia" class="tab-content hidden space-y-6">
-            <h2 class="text-2xl font-bold text-white">💎 클랜 다이아 분배 시스템</h2>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-                    <div class="md:col-span-9">
-                        <label class="text-sm font-bold text-amber-400">분배할 총 다이아 입력</label>
-                        <input type="number" id="total-dia-input" placeholder="예: 151543" class="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white text-sm">
-                    </div>
-                    <div class="md:col-span-3">
-                        <button onclick="calculateDiaDistribution()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-3 rounded text-sm transition h-[46px] cursor-pointer">분배 계산하기</button>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow space-y-4">
-                <div class="text-xs text-gray-400 space-y-1">
-                    <p>• <strong class="text-amber-400">운영진 주급 (10%)</strong>: 운영진 및 클마 멤버들에게 균등 분배</p>
-                    <p>• <strong class="text-amber-400">상위 투력 그룹별 분배 (35%)</strong>: 라닷지/제비/한국(각 20%) 및 마자용/피카츄/늑대/로이(각 15%) 고정 비율 분배</p>
-                    <p>• <strong class="text-amber-400">일반 (55%)</strong>: 상위 투력 그룹 인원들을 제외하고, 35점 만점 기준 출석 총점을 적용하여 차등 분배</p>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead><tr class="border-b border-gray-800 text-gray-400"><th class="py-3 px-4">닉네임</th><th class="py-3 px-4">클래스</th><th class="py-3 px-4">전투력</th><th class="py-3 px-4">역할</th><th class="py-3 px-4 text-center">운영진(10%)</th><th class="py-3 px-4 text-center">상위투력(35%)</th><th class="py-3 px-4 text-center">일반(55%)</th><th class="py-3 px-4 text-amber-400 text-right">총 분배 다이아</th></tr></thead>
-                        <tbody id="dia-table-body"><tr><td colspan="8" class="py-6 text-center text-gray-500">총 다이아 수량을 입력하고 계산하기를 누르세요.</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-    </main>
-
+    <!-- 스크립트 제어 -->
     <script>
-        let currentUserRole = localStorage.getItem('vampirUserRole') || 'staff'; 
-        let adminPasswords = JSON.parse(localStorage.getItem('vampirAdminPw')) || { '13': '1234', '21': '5678', 'master': '7777' };
-        let isAttendanceActive = localStorage.getItem('vampirAttendanceActive') !== 'false';
-        
-        let rawMembers = JSON.parse(localStorage.getItem('vampirClanMembers')) || [
-            { id: 1, name: '라닷지', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 2, name: '제비', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 3, name: '한국', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 4, name: '피카츄', cls: '아카샤', powerType: 'number', power: 500000, role: '운영진' },
-            { id: 5, name: '늑대', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 6, name: '마자용', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' },
-            { id: 7, name: '로이', cls: '아카샤', powerType: 'number', power: 500000, role: '일반' }
-        ];
-
-        let clanMembers = rawMembers.map(m => ({
-            ...m,
-            id: m.id || Date.now() + Math.random(),
-            cls: m.cls || m.class || '아카샤',
-            powerType: m.powerType || (m.power === '블라인드' ? 'blind' : 'number'),
-            power: m.power === '블라인드' ? 0 : (Number(m.power) || 0)
-        }));
-
-        let userAccounts = JSON.parse(localStorage.getItem('vampirUserAccounts')) || {};
-        let loggedInUser = localStorage.getItem('vampirLoggedInUser') || null;
-        let attendanceRecords = JSON.parse(localStorage.getItem('vampirAttendanceRecords')) || {};
-        
-        let todayDateStr = new Date().toLocaleDateString();
-        let savedDateStr = localStorage.getItem('vampirLastAttendanceDate') || '';
-        let todayCheckedStatus = JSON.parse(localStorage.getItem('vampirTodayCheckedStatus')) || {};
-
-        if (savedDateStr !== todayDateStr) {
-            todayCheckedStatus = {};
-            localStorage.setItem('vampirLastAttendanceDate', todayDateStr);
-            localStorage.setItem('vampirTodayCheckedStatus', JSON.stringify(todayCheckedStatus));
+        function handleLogin() {
+            document.getElementById('view-login').classList.add('hidden');
+            const dash = document.getElementById('view-dashboard');
+            dash.classList.remove('hidden');
+            dash.classList.add('flex');
         }
 
-        let verifiedTimePasswords = { '13': false, '21': false };
-
-        const defaultNoticeText = `13시 / 21시 게헨나: 매일 있음\n클랜임무 / 클랜수호: 목요일마다 있음\n에노크 / 마슈미드: 토요일마다 있음\n점령전: 토요일마다 있음\n쟁탈전, 전초전: 첫주마다 있음\n도합: 총점 35점`;
-        let savedNoticeText = localStorage.getItem('vampirNoticeText') || defaultNoticeText; 
-        let savedServerName = localStorage.getItem('vampirServerName') || '독도 서버';
-
-        function togglePasswordVisibility(inputId, btn) {
-            const input = document.getElementById(inputId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                btn.innerText = '🐵';
-            } else {
-                input.type = 'password';
-                btn.innerText = '👁️';
+        function handleLogout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                const dash = document.getElementById('view-dashboard');
+                dash.classList.add('hidden');
+                dash.classList.remove('flex');
+                document.getElementById('view-login').classList.remove('hidden');
             }
         }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
+        function switchTab(tabName) {
+            const dashboardTab = document.getElementById('tab-dashboard');
+            const adminTab = document.getElementById('tab-admin');
+            const navDashboard = document.getElementById('nav-dashboard');
+            const navAdmin = document.getElementById('nav-admin');
 
-            document.querySelectorAll('.pc-sidebar nav button').forEach(btn => {
-                btn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-800 transition cursor-pointer";
-            });
-            const activePcBtn = document.getElementById('nav-' + tabId);
-            if(activePcBtn) activePcBtn.className = "w-full text-left px-4 py-3 rounded-lg text-sm font-semibold bg-red-600 text-white transition cursor-pointer";
-
-            document.querySelectorAll('.mobile-tab-btn').forEach(btn => btn.classList.remove('active'));
-            const activeMobBtn = document.getElementById('mob-nav-' + tabId);
-            if(activeMobBtn) activeMobBtn.classList.add('active');
-        }
-
-        function switchAuthTab(type) {
-            const loginForm = document.getElementById('form-login');
-            const regForm = document.getElementById('form-register');
-            const resetForm = document.getElementById('form-reset');
-            
-            const tabLogin = document.getElementById('auth-tab-login');
-            const tabReg = document.getElementById('auth-tab-register');
-            const tabReset = document.getElementById('auth-tab-reset');
-
-            loginForm.classList.add('hidden');
-            regForm.classList.add('hidden');
-            resetForm.classList.add('hidden');
-
-            tabLogin.className = "flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition";
-            tabReg.className = "flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition";
-            tabReset.className = "flex-1 pb-2 text-xs font-bold text-gray-400 hover:text-white transition";
-
-            if (type === 'login') {
-                loginForm.classList.remove('hidden');
-                tabLogin.className = "flex-1 pb-2 text-xs font-bold text-red-500 border-b-2 border-red-500 transition";
-            } else if (type === 'register') {
-                regForm.classList.remove('hidden');
-                tabReg.className = "flex-1 pb-2 text-xs font-bold text-blue-500 border-b-2 border-blue-500 transition";
-            } else if (type === 'reset') {
-                resetForm.classList.remove('hidden');
-                tabReset.className = "flex-1 pb-2 text-xs font-bold text-amber-500 border-b-2 border-amber-500 transition";
+            if (tabName === 'dashboard') {
+                dashboardTab.classList.remove('hidden');
+                adminTab.classList.add('hidden');
+                navDashboard.className = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer";
+                navAdmin.className = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer";
+            } else if (tabName === 'admin') {
+                adminTab.classList.remove('hidden');
+                dashboardTab.classList.add('hidden');
+                navAdmin.className = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer";
+                navDashboard.className = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer";
             }
-        }
-
-        function processLogin() {
-            const nickname = document.getElementById('login-nickname').value.trim();
-            const password = document.getElementById('login-password').value.trim();
-            if(!nickname || !password) {
-                alert('닉네임과 비밀번호를 모두 입력해주세요.');
-                return;
-            }
-            if(userAccounts[nickname] && userAccounts[nickname] === password) {
-                loggedInUser = nickname;
-                localStorage.setItem('vampirLoggedInUser', loggedInUser);
-                checkLoginState();
-                alert(`${nickname}님 환영합니다!`);
-            } else {
-                alert('등록되지 않은 닉네임이거나 비밀번호가 일치하지 않습니다.');
-            }
-        }
-
-        function processRegister() {
-            const nickname = document.getElementById('reg-nickname').value.trim();
-            const password = document.getElementById('reg-password').value.trim();
-            if(!nickname || !password) {
-                alert('가입할 닉네임과 비밀번호를 입력해주세요.');
-                return;
-            }
-            if(userAccounts[nickname]) {
-                alert('이미 존재하는 계정입니다.');
-                return;
-            }
-            userAccounts[nickname] = password;
-            localStorage.setItem('vampirUserAccounts', JSON.stringify(userAccounts));
-            
-            if(!clanMembers.some(m => m.name === nickname)) {
-                clanMembers.push({ id: Date.now(), name: nickname, cls: '아카샤', powerType: 'number', power: 0, role: '일반' });
-                saveMembersData();
-            }
-            
-            loggedInUser = nickname;
-            localStorage.setItem('vampirLoggedInUser', loggedInUser);
-            checkLoginState();
-            alert('회원가입 및 로그인 완료!');
-        }
-
-        function processPasswordReset() {
-            const nickname = document.getElementById('reset-nickname').value.trim();
-            const newPassword = document.getElementById('reset-new-password').value.trim();
-            if(!nickname || !newPassword) {
-                alert('닉네임과 새로운 비밀번호를 모두 입력해주세요.');
-                return;
-            }
-            if(!userAccounts[nickname]) {
-                alert('등록되지 않은 닉네임입니다. 회원가입을 먼저 진행해주세요.');
-                return;
-            }
-            userAccounts[nickname] = newPassword;
-            localStorage.setItem('vampirUserAccounts', JSON.stringify(userAccounts));
-            alert('비밀번호가 성공적으로 재설정되었습니다. 새 비밀번호로 로그인해주세요.');
-            switchAuthTab('login');
-            document.getElementById('login-nickname').value = nickname;
-            document.getElementById('reset-nickname').value = '';
-            document.getElementById('reset-new-password').value = '';
-        }
-
-        function processLogout() {
-            loggedInUser = null;
-            localStorage.removeItem('vampirLoggedInUser');
-            checkLoginState();
-        }
-
-        function checkLoginState() {
-            const screen = document.getElementById('login-bg-screen');
-            if(loggedInUser) {
-                screen.classList.add('hidden');
-                document.getElementById('logged-in-user-name').innerText = `접속 계정: ${loggedInUser}`;
-                
-                const matchedMember = clanMembers.find(m => m.name === loggedInUser);
-                if (matchedMember && (matchedMember.role === '클마' || matchedMember.role === '운영진')) {
-                    if (localStorage.getItem('vampirUserRole') === null) {
-                        currentUserRole = 'staff';
-                        localStorage.setItem('vampirUserRole', currentUserRole);
-                        document.getElementById('auth-role-select').value = currentUserRole;
-                    }
-                }
-            } else {
-                screen.classList.remove('hidden');
-            }
-            document.getElementById('auth-role-select').value = currentUserRole;
-            updateUIByRole();
-            renderAll();
-        }
-
-        function changeUserAuth(role) {
-            currentUserRole = role;
-            localStorage.setItem('vampirUserRole', currentUserRole);
-            updateUIByRole();
-            renderAll();
-        }
-
-        function updateUIByRole() {
-            const isStaff = currentUserRole === 'staff';
-            document.querySelectorAll('.admin-col-header').forEach(el => el.style.display = '');
-            const addBox = document.getElementById('admin-member-add-box');
-            if(addBox) addBox.style.display = isStaff ? '' : 'none';
         }
 
         function saveServerName() {
-            const val = document.getElementById('dashboard-server-name-input').value.trim();
-            if(val) {
-                savedServerName = val;
-                localStorage.setItem('vampirServerName', savedServerName);
-                alert('서버명이 저장되었습니다.');
-                renderDashboard();
-            }
+            const serverName = document.getElementById('serverNameInput').value;
+            alert(`서버명이 "${serverName}"(으)로 저장되었습니다.`);
         }
-
-        function togglePowerInputType(mode) {
-            const type = document.getElementById(`${mode}-power-type`).value;
-            const input = document.getElementById(`${mode}-member-power`);
-            if(type === 'blind') {
-                input.value = '';
-                input.disabled = true;
-                input.placeholder = '블라인드 (투력 비공개)';
-            } else {
-                input.disabled = false;
-                input.placeholder = '전투력 숫자 입력';
-            }
-        }
-
-        function addClanMember() {
-            const name = document.getElementById('new-member-name').value.trim();
-            const cls = document.getElementById('new-member-class').value;
-            const powerType = document.getElementById('new-power-type').value;
-            const powerInput = document.getElementById('new-member-power').value;
-            const role = document.getElementById('new-member-role').value;
-
-            if(!name) {
-                alert('닉네임을 입력해주세요.');
-                return;
-            }
-
-            const power = powerType === 'blind' ? 0 : (Number(powerInput) || 0);
-            clanMembers.push({ id: Date.now(), name, cls, powerType, power, role });
-            saveMembersData();
-
-            document.getElementById('new-member-name').value = '';
-            document.getElementById('new-member-power').value = '';
-            renderAll();
-            alert('클랜원이 등록되었습니다.');
-        }
-
-        function deleteMember(id) {
-            if(currentUserRole !== 'staff') {
-                alert('운영진 모드에서만 삭제할 수 있습니다.');
-                return;
-            }
-            if(confirm('정말 이 클랜원을 삭제하시겠습니까?')) {
-                clanMembers = clanMembers.filter(m => m.id !== id);
-                saveMembersData();
-                renderAll();
-            }
-        }
-
-        function moveMemberOrder(index, direction, groupType) {
-            const staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
-            const memberList = clanMembers.filter(m => m.role === '일반');
-            const targetArray = groupType === 'staff' ? staffList : memberList;
-            
-            const item = targetArray[index];
-            const targetIndexInAll = clanMembers.findIndex(m => m.id === item.id);
-            
-            const newPosIndex = index + direction;
-            if(newPosIndex < 0 || newPosIndex >= targetArray.length) return;
-            
-            const swapItem = targetArray[newPosIndex];
-            const swapIndexInAll = clanMembers.findIndex(m => m.id === swapItem.id);
-            
-            let temp = clanMembers[targetIndexInAll];
-            clanMembers[targetIndexInAll] = clanMembers[swapIndexInAll];
-            clanMembers[swapIndexInAll] = temp;
-
-            saveMembersData();
-            renderAll();
-        }
-
-        function saveMembersData() {
-            localStorage.setItem('vampirClanMembers', JSON.stringify(clanMembers));
-        }
-
-        function renderNotice() {
-            const container = document.getElementById('notice-content-display');
-            container.innerText = savedNoticeText;
-            
-            const editBtnContainer = document.getElementById('notice-edit-btn-container');
-            if(currentUserRole === 'staff') {
-                editBtnContainer.innerHTML = `<button onclick="startNoticeEdit()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer">공지 수정</button>`;
-            } else {
-                editBtnContainer.innerHTML = '';
-            }
-        }
-
-        function startNoticeEdit() {
-            document.getElementById('notice-view-mode').classList.add('hidden');
-            document.getElementById('notice-edit-mode').classList.remove('hidden');
-            document.getElementById('notice-textarea').value = savedNoticeText;
-            document.getElementById('notice-edit-btn-container').innerHTML = '';
-        }
-
-        function cancelNoticeEdit() {
-            document.getElementById('notice-view-mode').classList.remove('hidden');
-            document.getElementById('notice-edit-mode').classList.add('hidden');
-            renderNotice();
-        }
-
-        function saveNoticeContent() {
-            const val = document.getElementById('notice-textarea').value;
-            savedNoticeText = val;
-            localStorage.setItem('vampirNoticeText', savedNoticeText);
-            cancelNoticeEdit();
-            alert('공지사항이 저장되었습니다.');
-        }
-
-        function unlockAdminAttendanceSettings() {
-            const pw = document.getElementById('admin-auth-input-pw').value.trim();
-            if(pw === adminPasswords.master) {
-                document.getElementById('admin-lock-badge').className = "text-xs px-2.5 py-1 rounded bg-emerald-900 text-emerald-200 font-bold";
-                document.getElementById('admin-lock-badge').innerText = "잠금 해제됨";
-                document.getElementById('admin-lock-form').classList.add('hidden');
-                document.getElementById('admin-unlocked-area').classList.remove('hidden');
-                document.getElementById('admin-setting-pw-13').value = adminPasswords['13'];
-                document.getElementById('admin-setting-pw-21').value = adminPasswords['21'];
-                alert('운영진 설정 잠금이 해제되었습니다.');
-            } else {
-                alert('마스터 비밀번호가 틀렸습니다.');
-            }
-        }
-
-        function lockAdminAttendanceSettings() {
-            document.getElementById('admin-lock-badge').className = "text-xs px-2.5 py-1 rounded bg-red-900 text-red-200 font-bold";
-            document.getElementById('admin-lock-badge').innerText = "잠김 (운영진 비밀번호 입력 필요)";
-            document.getElementById('admin-lock-form').classList.remove('hidden');
-            document.getElementById('admin-unlocked-area').classList.add('hidden');
-            document.getElementById('admin-auth-input-pw').value = '';
-        }
-
-        function saveAdminTimePassword(timeKey) {
-            const val = document.getElementById(`admin-setting-pw-${timeKey}`).value.trim();
-            if(val.length !== 4) {
-                alert('비밀번호는 정확히 4자리여야 합니다.');
-                return;
-            }
-            adminPasswords[timeKey] = val;
-            localStorage.setItem('vampirAdminPw', JSON.stringify(adminPasswords));
-            alert(`${timeKey}시 타임 비밀번호가 변경되었습니다.`);
-        }
-
-        function openSetMasterPwModal() {
-            const current = prompt('현재 마스터 비밀번호를 입력하세요:');
-            if(current === adminPasswords.master) {
-                const newPw = prompt('새로운 4자리 마스터 비밀번호를 입력하세요:');
-                if(newPw && newPw.length === 4) {
-                    adminPasswords.master = newPw;
-                    localStorage.setItem('vampirAdminPw', JSON.stringify(adminPasswords));
-                    alert('마스터 비밀번호가 변경되었습니다.');
-                } else {
-                    alert('올바른 4자리 비밀번호를 입력해주세요.');
-                }
-            } else if(current !== null) {
-                alert('비밀번호가 틀렸습니다.');
-            }
-        }
-
-        function openSetMasterPwModalFromUnlocked() {
-            openSetMasterPwModal();
-        }
-
-        function toggleAttendanceActiveStatus() {
-            isAttendanceActive = !isAttendanceActive;
-            localStorage.setItem('vampirAttendanceActive', isAttendanceActive);
-            renderAttendance();
-        }
-
-        function resetTodayAttendance() {
-            if(confirm('오늘의 출석 체크 기록을 모두 초기화하시겠습니까?')) {
-                todayCheckedStatus = {};
-                localStorage.setItem('vampirTodayCheckedStatus', JSON.stringify(todayCheckedStatus));
-                renderAttendance();
-                alert('초기화되었습니다.');
-            }
-        }
-
-        function saveSelectedAttendanceNickname(name) {
-            localStorage.setItem('vampirSelectedAttendanceName', name);
-        }
-
-        function checkAttendanceWithPw(key, timeKey, label) {
-            const nickname = document.getElementById('att-nickname').value;
-            const pw = document.getElementById('att-input-pw').value.trim();
-            if(!nickname) {
-                alert('닉네임을 선택해주세요.');
-                return;
-            }
-            if(pw !== adminPasswords[timeKey]) {
-                alert(`${timeKey}시 타임 인증 비밀번호가 틀렸습니다.`);
-                return;
-            }
-            recordAttendanceAction(nickname, key);
-        }
-
-        function checkAttendancePair(key, label) {
-            const nickname = document.getElementById('att-nickname').value;
-            if(!nickname) {
-                alert('닉네임을 선택해주세요.');
-                return;
-            }
-            recordAttendanceAction(nickname, key);
-        }
-
-        function checkAttendancePvP(key, label) {
-            const nickname = document.getElementById('att-nickname').value;
-            if(!nickname) {
-                alert('닉네임을 선택해주세요.');
-                return;
-            }
-            recordAttendanceAction(nickname, key);
-        }
-
-        function recordAttendanceAction(nickname, actionKey) {
-            if(!todayCheckedStatus[nickname]) {
-                todayCheckedStatus[nickname] = {};
-            }
-            if(todayCheckedStatus[nickname][actionKey]) {
-                alert('이미 체크 완료된 항목입니다.');
-                return;
-            }
-            todayCheckedStatus[nickname][actionKey] = true;
-            localStorage.setItem('vampirTodayCheckedStatus', JSON.stringify(todayCheckedStatus));
-            
-            if(!attendanceRecords[nickname]) attendanceRecords[nickname] = {};
-            attendanceRecords[nickname][actionKey] = true;
-            localStorage.setItem('vampirAttendanceRecords', JSON.stringify(attendanceRecords));
-
-            renderAttendance();
-            alert(`[${nickname}] ${actionKey} 출석 체크 완료!`);
-        }
-
-        function renderAll() {
-            renderDashboard();
-            renderNotice();
-            renderMembersTable();
-            renderAttendance();
-        }
-
-        function renderDashboard() {
-            document.getElementById('dashboard-server-name-input').value = savedServerName;
-            document.getElementById('dashboard-date').innerText = todayDateStr;
-            
-            document.getElementById('dashboard-shuffle-period').innerHTML = `
-                <div class="text-sm text-gray-300 font-semibold mb-1">📅 기간: 2026.08.19 ~ 2026.09.02</div>
-                <div class="text-xl font-bold text-amber-400">총 14일 기준 셔플 기간 적용 중</div>
-            `;
-
-            let checkedCount = Object.keys(todayCheckedStatus).length;
-            let totalMembersCount = clanMembers.length || 1;
-            let rate = Math.round((checkedCount / totalMembersCount) * 100);
-            document.getElementById('dashboard-total-rate').innerText = `${checkedCount}명 참여 중 (${rate}%)`;
-        }
-
-        function renderMembersTable() {
-            const staffList = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
-            const memberList = clanMembers.filter(m => m.role === '일반');
-
-            const renderRows = (list, groupType) => {
-                if(list.length === 0) return `<tr><td colspan="6" class="py-6 text-center text-gray-500">없음</td></tr>`;
-                return list.map((m, idx) => `
-                    <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 transition">
-                        <td class="py-3 px-4 font-bold text-amber-400 flex items-center space-x-1">
-                            <span>${idx + 1}</span>
-                            <button onclick="moveMemberOrder(${idx}, -1, '${groupType}')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded ml-1 focus:outline-none cursor-pointer">▲</button>
-                            <button onclick="moveMemberOrder(${idx}, 1, '${groupType}')" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded focus:outline-none cursor-pointer">▼</button>
-                        </td>
-                        <td class="py-3 px-4 font-semibold text-white">${m.name}</td>
-                        <td class="py-3 px-4 text-gray-300">${m.cls}</td>
-                        <td class="py-3 px-4 text-gray-300">${m.powerType === 'blind' ? '<span class="text-purple-400 font-bold">블라인드</span>' : m.power.toLocaleString() + '만'}</td>
-                        <td class="py-3 px-4"><span class="px-2 py-1 rounded text-xs ${m.role === '클마' ? 'bg-red-900 text-red-200' : m.role === '운영진' ? 'bg-amber-900 text-amber-200' : 'bg-gray-800 text-gray-300'}">${m.role}</span></td>
-                        <td class="py-3 px-4 text-center admin-col-header">
-                            <button onclick="deleteMember(${m.id})" class="bg-red-900/60 hover:bg-red-800 text-red-200 px-2.5 py-1 rounded text-xs font-bold transition cursor-pointer">삭제</button>
-                        </td>
-                    </tr>
-                `).join('');
-            };
-
-            document.getElementById('staff-table-body').innerHTML = renderRows(staffList, 'staff');
-            document.getElementById('member-table-body').innerHTML = renderRows(memberList, 'member');
-        }
-
-        function renderAttendance() {
-            const select = document.getElementById('att-nickname');
-            const savedSelectedName = localStorage.getItem('vampirSelectedAttendanceName') || '';
-            
-            select.innerHTML = '<option value="">-- 닉네임 선택 --</option>' + clanMembers.map(m => `
-                <option value="${m.name}" ${m.name === savedSelectedName ? 'selected' : ''}>${m.name}</option>
-            `).join('');
-
-            const btnStatus = document.getElementById('toggle-attendance-status-btn');
-            if(isAttendanceActive) {
-                btnStatus.className = "bg-emerald-700 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer";
-                btnStatus.innerText = "출석 활성화 중";
-            } else {
-                btnStatus.className = "bg-gray-700 text-white px-4 py-2 rounded text-xs font-bold transition cursor-pointer";
-                btnStatus.innerText = "출석 마감됨";
-            }
-
-            document.getElementById('current-season-info').innerText = `💡 현재 시즌 출석 체크 진행 상태 (${todayDateStr})`;
-
-            const tbody = document.getElementById('attendance-table-body');
-            if(clanMembers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-gray-500">등록된 클랜원이 없습니다.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = clanMembers.map(m => {
-                const rec = todayCheckedStatus[m.name] || {};
-                let score = 0;
-                let t13Done = (rec['13시_시작전'] && rec['13시_3층전'] && rec['13시_끝']) ? 1 : 0;
-                let t21Done = (rec['21시_시작전'] && rec['21시_3층전'] && rec['21시_끝']) ? 1 : 0;
-                let enochMashu = (rec['enoch'] && rec['mashumid']) ? 1 : 0;
-                let pvpScore = (rec['occupation'] ? 1 : 0) + ((rec['outpost'] && rec['skirmish']) ? 1 : 0);
-                let missionDef = (rec['mission'] && rec['defense']) ? 1 : 0;
-
-                score = t13Done + t21Done + enochMashu + pvpScore + missionDef;
-                let rate = Math.round((score / 35) * 100);
-
-                return `
-                    <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 transition">
-                        <td class="py-2 px-2 font-semibold text-white">${m.name}</td>
-                        <td class="py-2 px-2 font-bold text-amber-400">${score}점</td>
-                        <td class="py-2 px-2 font-bold text-emerald-400">${isNaN(rate) ? 0 : rate}%</td>
-                        <td class="py-2 px-2 text-xs text-gray-300">13시:${t13Done ? '⭕' : '❌'} / 21시:${t21Done ? '⭕' : '❌'}</td>
-                        <td class="py-2 px-2 text-xs text-gray-300">${enochMashu ? '⭕ 완료' : '❌ 미완'}</td>
-                        <td class="py-2 px-2 text-xs text-gray-300">${pvpScore > 0 ? '⭕ 완료' : '❌ 미완'}</td>
-                        <td class="py-2 px-2 text-xs text-gray-300">${missionDef ? '⭕ 완료' : '❌ 미완'}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function searchMemberHistory() {
-            const keyword = document.getElementById('search-keyword').value.trim();
-            const container = document.getElementById('search-result-container');
-            if(!keyword) {
-                container.innerHTML = '조회할 클랜원 닉네임을 입력해주세요.';
-                return;
-            }
-            const member = clanMembers.find(m => m.name === keyword);
-            if(!member) {
-                container.innerHTML = `<span class="text-red-400">"${keyword}" 클랜원을 찾을 수 없습니다. 명단을 확인해주세요.</span>`;
-                return;
-            }
-
-            const rec = attendanceRecords[keyword] || {};
-            container.innerHTML = `
-                <div class="space-y-3">
-                    <p class="font-bold text-lg text-amber-400">🛡️ ${member.name} 님의 상세 참여 기록</p>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-                        <div class="bg-gray-800 p-3 rounded border border-gray-700">클래스: <span class="text-white font-bold">${member.cls}</span></div>
-                        <div class="bg-gray-800 p-3 rounded border border-gray-700">역할: <span class="text-white font-bold">${member.role}</span></div>
-                        <div class="bg-gray-800 p-3 rounded border border-gray-700">전투력: <span class="text-white font-bold">${member.powerType === 'blind' ? '블라인드' : member.power.toLocaleString() + '만'}</span></div>
-                        <div class="bg-gray-800 p-3 rounded border border-gray-700">누적 체크 항목수: <span class="text-white font-bold">${Object.keys(rec).length}개</span></div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function calculateDiaDistribution() {
-            const totalDia = Number(document.getElementById('total-dia-input').value);
-            if(!totalDia || totalDia <= 0) {
-                alert('올바른 총 다이아 수량을 입력해주세요.');
-                return;
-            }
-
-            const staffGroup = clanMembers.filter(m => m.role === '클마' || m.role === '운영진');
-            const staffTotalShare = totalDia * 0.10;
-            const staffPerPerson = staffGroup.length > 0 ? Math.floor(staffTotalShare / staffGroup.length) : 0;
-
-            const topGroupTotalShare = totalDia * 0.35;
-            const topGroupKeywords = ['라닷지', '제비', '한국', '피카츄', '늑대', '마자용', '로이'];
-            const topRatios = { '라닷지': 0.20, '제비': 0.20, '한국': 0.20, '피카츄': 0.15, '늑대': 0.15, '마자용': 0.15, '로이': 0.15 };
-
-            const matchedTopMembers = clanMembers.filter(m => topGroupKeywords.some(keyword => m.name.includes(keyword)));
-            const normalTotalShare = totalDia * 0.55;
-            
-            let memberScores = {};
-
-            clanMembers.forEach(m => {
-                const rec = todayCheckedStatus[m.name] || {};
-                let t13Done = (rec['13시_시작전'] && rec['13시_3층전'] && rec['13시_끝']) ? 1 : 0;
-                let t21Done = (rec['21시_시작전'] && rec['21시_3층전'] && rec['21시_끝']) ? 1 : 0;
-                let enochMashu = (rec['enoch'] && rec['mashumid']) ? 1 : 0;
-                let pvpScore = (rec['occupation'] ? 1 : 0) + ((rec['outpost'] && rec['skirmish']) ? 1 : 0);
-                let missionDef = (rec['mission'] && rec['defense']) ? 1 : 0;
-                
-                let score = t13Done + t21Done + enochMashu + pvpScore + missionDef;
-                memberScores[m.name] = score;
-            });
-
-            const tbody = document.getElementById('dia-table-body');
-            tbody.innerHTML = clanMembers.map(m => {
-                let staffShare = staffGroup.some(s => s.name === m.name) ? staffPerPerson : 0;
-                
-                let topShare = 0;
-                for(let kw of topGroupKeywords) {
-                    if(m.name.includes(kw)) {
-                        topShare = Math.floor(topGroupTotalShare * (topRatios[kw] / 1.15));
-                        break;
-                    }
-                }
-
-                let normalShare = 0;
-                const isTop = topGroupKeywords.some(kw => m.name.includes(kw));
-                if(!isTop) {
-                    let myScore = memberScores[m.name] || 0;
-                    normalShare = Math.floor(normalTotalShare * (myScore / 35));
-                }
-
-                let totalUserDia = staffShare + topShare + normalShare;
-
-                return `
-                    <tr class="border-b border-gray-800/60 hover:bg-gray-800/30 transition">
-                        <td class="py-3 px-4 font-semibold text-white">${m.name}</td>
-                        <td class="py-3 px-4 text-gray-300">${m.cls}</td>
-                        <td class="py-3 px-4 text-gray-300">${m.powerType === 'blind' ? '블라인드' : m.power.toLocaleString() + '만'}</td>
-                        <td class="py-3 px-4"><span class="px-2 py-1 rounded text-xs ${m.role === '클마' ? 'bg-red-900 text-red-200' : m.role === '운영진' ? 'bg-amber-900 text-amber-200' : 'bg-gray-800 text-gray-300'}">${m.role}</span></td>
-                        <td class="py-3 px-4 text-center text-blue-400 font-semibold">${staffShare.toLocaleString()}</td>
-                        <td class="py-3 px-4 text-center text-purple-400 font-semibold">${topShare.toLocaleString()}</td>
-                        <td class="py-3 px-4 text-center text-emerald-400 font-semibold">${normalShare.toLocaleString()}</td>
-                        <td class="py-3 px-4 text-amber-400 font-bold text-right">${totalUserDia.toLocaleString()} 개</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        window.onload = function() {
-            checkLoginState();
-        };
     </script>
 </body>
 </html>
