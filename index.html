@@ -3,36 +3,45 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DOKDO 시스템</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBY2zXT1XH071ycsSop-_XFsuoALcFuzIc",
+            authDomain: "vampire-dokdo.firebaseapp.com",
+            databaseURL: "https://vampire-dokdo-default-rtdb.firebaseio.com",
+            projectId: "vampire-dokdo",
+            storageBucket: "vampire-dokdo.firebasestorage.app",
+            messagingSenderId: "428544566569",
+            appId: "1:428544566569:web:0c566d18c2722fc9460338",
+            measurementId: "G-JD98J0VHD2"
+        };
 
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+    </script>
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
+        html, body {
+            margin: 0;
             width: 100%;
             height: 100%;
-            margin: 0;
             overflow: hidden;
             background: #030712;
-            color: #ffffff;
+            color: #f3f4f6;
             font-family: Arial, sans-serif;
         }
 
-        /* 로그인 화면 */
         #view-login {
             position: fixed;
             inset: 0;
-            width: 100%;
-            height: 100%;
+            z-index: 50;
             overflow: hidden;
-            background: #030712;
+            background-color: #030712;
         }
 
-        /* 배경 이미지 */
         .login-background {
             position: absolute;
             inset: 0;
@@ -40,19 +49,21 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center center;
+            object-position: center;
         }
 
-        /* 배경 어둡게 */
         .login-overlay {
             position: absolute;
             inset: 0;
             z-index: 1;
-            background: rgba(0, 0, 0, 0.28);
+            background: rgba(0, 0, 0, .3);
         }
 
-        /* 로그인 카드 위치 */
-        .login-layout {
+        #view-login > div:first-of-type {
+            display: none;
+        }
+
+        #view-login > div:last-child {
             position: relative;
             z-index: 2;
             display: flex;
@@ -63,339 +74,987 @@
             padding-right: 2%;
         }
 
-        .login-card {
-            width: 380px;
-            max-width: calc(100% - 32px);
+        #view-login > div:last-child > div {
+            width: min(380px, calc(100vw - 32px));
+            box-sizing: border-box;
             padding: 28px;
-            border: 1px solid rgba(127, 29, 29, 0.7);
+            border: 1px solid rgba(127, 29, 29, .6);
             border-radius: 16px;
-            background: rgba(9, 13, 22, 0.96);
-            box-shadow: 0 0 100px rgba(0, 0, 0, 0.95);
+            background: rgba(9, 13, 22, .95);
+            box-shadow: 0 0 100px rgba(0, 0, 0, .95);
         }
 
-        .logo {
-            margin-bottom: 32px;
-            text-align: center;
-        }
-
-        .logo h1 {
+        #view-login h1 {
             margin: 0 0 8px;
             color: #dc2626;
             font-size: 46px;
             font-style: italic;
-            letter-spacing: 7px;
-            text-shadow: 0 0 20px rgba(220, 38, 38, 0.7);
+            text-align: center;
+            letter-spacing: 8px;
         }
 
-        .logo p {
-            margin: 0;
-            color: #9ca3af;
-            font-size: 11px;
-            letter-spacing: 4px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
+        #view-login p {
+            margin: 0 0 40px;
             color: #9ca3af;
             font-size: 12px;
-            font-weight: bold;
+            text-align: center;
+            letter-spacing: 5px;
         }
 
-        input {
+        #view-login label {
+            display: block;
+            margin: 0 0 8px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        #view-login input {
+            box-sizing: border-box;
             width: 100%;
-            padding: 14px;
+            margin-bottom: 24px;
+            padding: 16px;
             border: 1px solid #1f2937;
-            border-radius: 10px;
+            border-radius: 12px;
             outline: none;
             background: #030712;
-            color: #ffffff;
-            font-size: 14px;
-        }
-
-        input:focus {
-            border-color: #dc2626;
-        }
-
-        input::placeholder {
-            color: #4b5563;
-        }
-
-        .login-button {
-            width: 100%;
-            padding: 14px;
-            border: 0;
-            border-radius: 10px;
-            background: #dc2626;
-            color: #ffffff;
+            color: #f3f4f6;
             font-size: 16px;
+        }
+
+        #view-login button {
+            width: 100%;
+            padding: 16px;
+            border: 0;
+            border-radius: 12px;
+            background: #dc2626;
+            color: white;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 25px rgba(220, 38, 38, 0.6);
+            box-shadow: 0 4px 30px rgba(220, 38, 38, .6);
         }
 
-        .login-button:hover {
-            background: #ef4444;
+        .password-field {
+            position: relative;
+            margin-bottom: 24px;
         }
 
-        /* 대시보드 */
-        #view-dashboard {
-            display: none;
-            width: 100%;
-            height: 100%;
+        #view-login .password-field input {
+            margin-bottom: 0;
         }
 
-        aside {
-            width: 256px;
-            padding: 16px;
-            background: #05070c;
-            border-right: 1px solid #1f2937;
+        #view-login .password-field input {
+            padding-right: 52px;
         }
 
-        aside h2 {
-            margin: 8px 0 32px;
-            color: #dc2626;
-            font-style: italic;
-            letter-spacing: 2px;
-        }
-
-        nav button,
-        .logout-button {
-            display: block;
-            width: 100%;
-            margin-bottom: 8px;
-            padding: 12px;
+        #view-login .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            transform: translateY(-50%);
             border: 0;
-            border-radius: 8px;
             background: transparent;
             color: #9ca3af;
-            text-align: left;
-            cursor: pointer;
+            font-size: 22px;
+            box-shadow: none;
         }
 
-        nav button:hover,
-        nav button.active,
-        .logout-button:hover {
-            background: rgba(220, 38, 38, 0.15);
-            color: #ef4444;
+        #view-login .password-toggle:hover {
+            background: transparent;
+            color: #ffffff;
         }
 
-        .user-area {
-            margin-top: 70vh;
-            padding-top: 16px;
-            border-top: 1px solid #1f2937;
-            color: #9ca3af;
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .dashboard-edit-button {
+            width: auto !important;
+            padding: 9px 16px !important;
+            border: 1px solid #374151 !important;
+            border-radius: 8px !important;
+            background: #111827 !important;
+            color: #d1d5db !important;
+            font-size: 13px !important;
+            box-shadow: none !important;
+        }
+
+        .dashboard-edit-button:hover {
+            background: #1f2937 !important;
+            color: #ffffff !important;
+        }
+
+        .attendance-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .attendance-header-actions .dashboard-edit-button.is-active {
+            border-color: #047857 !important;
+            background: #065f46 !important;
+            color: #d1fae5 !important;
+        }
+
+        .attendance-header-actions .dashboard-edit-button.is-disabled {
+            border-color: #7f1d1d !important;
+            background: #450a0a !important;
+            color: #fecaca !important;
+        }
+
+        .dashboard-info {
+            color: #d1d5db;
+        }
+
+        .dashboard-info.editing [contenteditable="true"] {
+            outline: 1px dashed #ef4444;
+            outline-offset: 4px;
+            border-radius: 4px;
+        }
+
+        .dashboard-info ul {
+            margin: 0;
+            padding-left: 24px;
+        }
+
+        .dashboard-info li {
+            margin: 12px 0;
+        }
+
+        .score-total {
+            margin-top: 28px;
+            padding: 18px;
+            border: 1px solid rgba(220, 38, 38, .7);
+            border-radius: 12px;
+            background: rgba(127, 29, 29, .35);
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .attendance-page {
+            color: #d1d5db;
+        }
+
+        .attendance-page h2 {
+            margin: 0 0 4px;
+            color: #f3f4f6;
+            font-size: 24px;
+        }
+
+        .attendance-subtitle {
+            margin: 0 0 20px;
+            color: #f59e0b;
             font-size: 12px;
         }
 
-        main {
-            flex: 1;
-            height: 100%;
-            padding: 32px;
-            overflow-y: auto;
+        .attendance-card {
+            margin-bottom: 16px;
+            padding: 16px;
+            border: 1px solid #1f2937;
+            border-radius: 10px;
+            background: #111827;
         }
 
-        .panel {
-            padding: 20px;
-            border: 1px solid rgba(220, 38, 38, 0.4);
-            border-radius: 12px;
-            background: #090d16;
+        .attendance-card-title {
+            margin-bottom: 12px;
+            color: #fbbf24;
+            font-size: 13px;
+            font-weight: bold;
         }
 
-        .hidden {
-            display: none !important;
+        .admin-lock {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* 모바일 */
-        @media (max-width: 700px) {
-            .login-background {
-                object-fit: cover;
-                object-position: center;
-            }
+        .admin-lock input {
+            max-width: 180px;
+        }
 
-            .login-layout {
-                justify-content: center;
-                padding: 16px;
-            }
+        .admin-lock button {
+            width: auto !important;
+            padding: 8px 14px !important;
+            border-radius: 4px !important;
+            background: #374151 !important;
+            font-size: 12px !important;
+            box-shadow: none !important;
+        }
 
-            .login-card {
-                width: 100%;
-                padding: 28px 24px;
-            }
+        .admin-lock-message {
+            margin: 8px 0 0;
+            color: #f87171;
+            font-size: 11px;
+        }
 
-            .logo h1 {
-                font-size: 42px;
-            }
+        .admin-settings-content.hidden {
+            display: none;
+        }
 
-            #view-dashboard {
+        .attendance-settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .attendance-setting {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #1f2937;
+            font-size: 12px;
+        }
+
+        .attendance-setting input,
+        .attendance-page input,
+        .attendance-page select {
+            width: 100%;
+            margin: 0;
+            padding: 8px;
+            border: 1px solid #374151;
+            border-radius: 4px;
+            background: #111827;
+            color: #f3f4f6;
+        }
+
+        .attendance-setting button,
+        .attendance-action {
+            width: auto !important;
+            padding: 8px 12px !important;
+            border-radius: 4px !important;
+            background: #2563eb !important;
+            font-size: 12px !important;
+            box-shadow: none !important;
+        }
+
+        .attendance-action.red {
+            background: #b91c1c !important;
+        }
+
+        .attendance-select-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .attendance-label {
+            display: block;
+            margin-bottom: 6px;
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .attendance-slot {
+            padding: 12px;
+            border: 1px solid #1f2937;
+            border-radius: 8px;
+            background: #111827;
+        }
+
+        .attendance-slot h4 {
+            margin: 0 0 10px;
+            color: #60a5fa;
+            font-size: 12px;
+        }
+
+        .attendance-slot.night h4 {
+            color: #f87171;
+        }
+
+        .attendance-slot button {
+            width: 100% !important;
+            margin-bottom: 6px;
+            padding: 8px !important;
+            border-radius: 5px !important;
+            background: #2563eb !important;
+            font-size: 11px !important;
+            box-shadow: none !important;
+        }
+
+        .attendance-slot.night button {
+            background: #b91c1c !important;
+        }
+
+        .event-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .event-button {
+            width: 100%;
+            border: 0;
+            font-family: inherit;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            background: #a16207;
+            color: #fff;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .event-button.purple {
+            background: #6d28d9;
+        }
+
+        .event-button.green {
+            background: #047857;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .attendance-table th,
+        .attendance-table td {
+            padding: 10px 6px;
+            border-bottom: 1px solid #1f2937;
+            text-align: left;
+        }
+
+        .attendance-table th {
+            color: #94a3b8;
+            font-weight: normal;
+        }
+
+        .attendance-table td:first-child {
+            color: #e2e8f0;
+            font-weight: bold;
+        }
+
+        .present {
+            color: #34d399;
+        }
+
+        @media (max-width: 800px) {
+            .attendance-header-actions {
+                align-items: stretch;
                 flex-direction: column;
-                overflow-y: auto;
             }
 
-            aside {
+            .attendance-settings,
+            .attendance-select-row,
+            .attendance-grid,
+            .event-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 28px;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        #view-login .auth-tab {
+            width: 33.333%;
+            padding: 0 4px 12px;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: none;
+        }
+
+        #view-login .auth-tab.active {
+            color: #ef4444;
+            border-bottom: 2px solid #dc2626;
+        }
+
+        .auth-panel.hidden {
+            display: none;
+        }
+
+        @media (max-width: 700px) {
+            #view-login > div:last-child {
+                justify-content: center;
                 width: 100%;
-                border-right: 0;
-                border-bottom: 1px solid #1f2937;
+                padding: 16px;
+                box-sizing: border-box;
             }
 
-            .user-area {
-                margin-top: 24px;
-            }
-
-            main {
-                padding: 24px 16px;
+            #view-login > div:last-child > div {
+                padding: 32px 24px;
             }
         }
     </style>
 </head>
+<body class="bg-[#030712] text-gray-100 flex h-screen overflow-hidden m-0 p-0">
 
-<body>
-
-    <!-- 로그인 화면 -->
-    <section id="view-login">
-
-        <!-- bg_2.jpg와 index.html은 같은 폴더에 있어야 합니다 -->
-        <img
-            class="login-background"
-            src="./bg_2.jpg"
-            alt="">
-
+    <!-- [1] 로그인 화면 영역 -->
+    <div id="view-login" class="fixed inset-0 w-screen h-screen z-50 bg-[#030712] overflow-hidden">
+        <img class="login-background" src="./bg_2.jpg" alt="로그인 배경">
         <div class="login-overlay"></div>
 
-        <div class="login-layout">
-            <div class="login-card">
-
-                <div class="logo">
-                    <h1>DOKDO</h1>
-                    <p>VAMPIR DASHBOARD</p>
+        <div class="relative z-10 w-full h-full flex items-center justify-center px-4 sm:justify-end sm:pr-8 lg:pr-32">
+            <div class="bg-[#090d16]/95 backdrop-blur-md border border-red-950/60 rounded-2xl p-8 sm:p-12 w-full max-w-[560px] shadow-[0_0_100px_rgba(0,0,0,0.95)]">
+                <div class="text-center mb-10">
+                    <h1 class="text-5xl font-black italic tracking-widest text-red-600 mb-2 drop-shadow-[0_0_20px_rgba(220,38,38,0.7)]">DOKDO</h1>
+                    <p class="text-xs text-gray-400 tracking-[0.3em] uppercase font-medium">VAMPIR CLAN SYSTEM</p>
                 </div>
 
-                <form onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="loginId">아이디</label>
-                        <input
-                            id="loginId"
-                            type="text"
-                            value="dokdo폐왕"
-                            required>
+                <div class="auth-tabs">
+                    <button type="button" class="auth-tab active" onclick="switchAuthTab('login')">로그인</button>
+                    <button type="button" class="auth-tab" onclick="switchAuthTab('signup')">회원가입</button>
+                    <button type="button" class="auth-tab" onclick="switchAuthTab('reset')">비밀번호 재설정</button>
+                </div>
+
+                <div id="auth-login" class="auth-panel">
+                    <div>
+                        <div class="text-left mb-2 pl-1">
+                            <span class="text-xs font-semibold text-gray-400">닉네임</span>
+                        </div>
+                        <input type="text" id="loginId" placeholder="닉네임을 입력하세요" oninput="this.value = this.value.toUpperCase()" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner placeholder-gray-600">
                     </div>
-
-                    <div class="form-group">
-                        <label for="loginPassword">비밀번호</label>
-                        <input
-                            id="loginPassword"
-                            type="password"
-                            placeholder="비밀번호를 입력하세요"
-                            required>
+                    <div>
+                        <div class="text-left mb-2 pl-1">
+                            <span class="text-xs font-semibold text-gray-400">비밀번호</span>
+                        </div>
+                        <div class="relative password-field">
+                            <input id="loginPassword" type="password" placeholder="비밀번호를 입력하세요" oninput="this.value = this.value.toLowerCase()" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner placeholder-gray-600">
+                            <button type="button" class="password-toggle" onclick="togglePassword()" aria-label="비밀번호 보기">👁</button>
+                        </div>
                     </div>
+                    <button onclick="handleLogin()" class="w-full py-4 bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white text-lg font-bold tracking-wider rounded-xl transition-all cursor-pointer mt-6 shadow-[0_4px_30px_rgba(220,38,38,0.6)]">접속하기</button>
+                </div>
 
-                    <button
-                        class="login-button"
-                        type="submit">
-                        접속하기
-                    </button>
-                </form>
+                <div id="auth-signup" class="auth-panel hidden">
+                    <div>
+                        <div class="text-left mb-2 pl-1"><span class="text-xs font-semibold text-gray-400">닉네임</span></div>
+                        <input id="signupNickname" type="text" placeholder="사용할 닉네임을 입력하세요" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 focus:outline-none focus:border-red-600 placeholder-gray-600">
+                    </div>
+                    <div>
+                        <div class="text-left mb-2 pl-1"><span class="text-xs font-semibold text-gray-400">비밀번호</span></div>
+                        <input id="signupPassword" type="password" placeholder="비밀번호를 입력하세요" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 focus:outline-none focus:border-red-600 placeholder-gray-600">
+                    </div>
+                    <button type="button" onclick="handleSignup()" class="w-full py-4 bg-gradient-to-r from-red-700 to-red-600 text-white text-lg font-bold tracking-wider rounded-xl cursor-pointer shadow-[0_4px_30px_rgba(220,38,38,0.6)]">회원가입</button>
+                </div>
 
+                <div id="auth-reset" class="auth-panel hidden">
+                    <div>
+                        <div class="text-left mb-2 pl-1"><span class="text-xs font-semibold text-gray-400">닉네임 또는 이메일</span></div>
+                        <input type="text" placeholder="닉네임 또는 이메일을 입력하세요" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 focus:outline-none focus:border-red-600 placeholder-gray-600">
+                    </div>
+                    <button type="button" onclick="handleReset()" class="w-full py-4 bg-gradient-to-r from-red-700 to-red-600 text-white text-lg font-bold tracking-wider rounded-xl cursor-pointer shadow-[0_4px_30px_rgba(220,38,38,0.6)]">재설정 링크 받기</button>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- 대시보드 화면 -->
-    <section id="view-dashboard">
+    <!-- [2] 대시보드 화면 영역 (로그인 전 숨김) -->
+    <div id="view-dashboard" class="hidden flex w-full h-full">
+        <!-- 사이드바 영역 -->
+        <aside class="w-64 bg-[#05070c] flex flex-col justify-between border-r border-gray-800/50 p-4">
+            <div>
+                <h1 class="text-xl font-bold italic tracking-wider text-red-600 mb-8 px-2">DOKDO</h1>
+                <nav class="space-y-2">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer">
+                        <span>📊</span> 대시보드
+                    </button>
+                    <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                        <span>👑</span> 운영진 관리
+                    </button>
+                    <button onclick="switchTab('attendance')" id="nav-attendance" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                        <span>✅</span> 출석 체크
+                    </button>
+                </nav>
+            </div>
 
-        <aside>
-            <h2>DOKDO</h2>
-
-            <nav>
-                <button
-                    id="dashboard-button"
-                    class="active"
-                    onclick="switchTab('dashboard')">
-                    📊 대시보드
-                </button>
-
-                <button
-                    id="admin-button"
-                    onclick="switchTab('admin')">
-                    👑 운영진 관리
-                </button>
-            </nav>
-
-            <div class="user-area">
-                <div>dokdo폐왕 (admin)</div>
-
-                <button
-                    class="logout-button"
-                    onclick="handleLogout()">
+            <div class="border-t border-gray-800/60 pt-4">
+                <div class="text-xs text-gray-400 mb-3 px-2">
+                    <span id="current-user-name" class="text-gray-200 font-semibold">DOKDO패왕</span> (<span id="current-user-role">admin</span>)
+                </div>
+                <button onclick="handleLogout()" class="w-full py-2 bg-[#0d121f] hover:bg-red-600/20 hover:text-red-400 text-gray-300 text-xs font-semibold rounded-lg border border-gray-800 transition cursor-pointer">
                     로그아웃
                 </button>
             </div>
         </aside>
 
-        <main>
-            <div id="tab-dashboard">
-                <h1>대시보드</h1>
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="flex-1 flex flex-col h-screen overflow-y-auto p-8">
+            <!-- [대시보드 탭 내용] -->
+            <div id="tab-dashboard" class="tab-content">
+                <div class="dashboard-header mb-6">
+                    <h2 class="text-2xl font-bold text-gray-100">클랜 공지사항 및 점수 안내</h2>
+                    <button id="dashboard-edit-button" class="dashboard-edit-button" onclick="toggleDashboardEdit()">수정</button>
+                </div>
 
-                <div class="panel">
-                    <strong>📢 오늘의 공지</strong>
-                    <p>공지사항을 불러오고 있습니다...</p>
+                <div id="dashboard-info" class="dashboard-info bg-[#111827] border border-gray-800/80 rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-amber-400 border-b border-gray-800 pb-4">🗓️ 요일별 획득 가능 점수 (하루 최대 5점)</h3>
+                    <ul class="border-b border-gray-800 py-3">
+                        <li contenteditable="false"><strong>13시 / 21시 게헨나:</strong> 매일 있음 (14일 x 2점 = <span class="text-blue-400">28점</span>)</li>
+                        <li contenteditable="false"><strong>클랜임무 / 클랜수호:</strong> 목요일마다 있음 (2주 동안 목요일 2회 x 1점 = <span class="text-blue-400">2점</span>)</li>
+                        <li contenteditable="false"><strong>에노크 / 마슈미드:</strong> 토요일마다 있음 (2주 동안 토요일 2회 x 1점 = <span class="text-blue-400">2점</span>)</li>
+                        <li contenteditable="false"><strong>점령전 / 전초전:</strong> 토요일마다 있음 (2주 동안 토요일 2회 x 1점 = <span class="text-blue-400">2점</span>)</li>
+                        <li contenteditable="false"><strong>쟁탈전:</strong> 토요일마다 있음 (2주 동안 토요일 2회 x 1점 = <span class="text-blue-400">2점</span>)</li>
+                    </ul>
+
+                    <h3 class="text-lg font-bold text-emerald-400 border-b border-gray-800 py-4">🛡️ 한 시즌(14일) 총 만점 계산</h3>
+                    <ul class="py-3">
+                        <li contenteditable="false"><strong>목요일(2회) 주간:</strong> 13시/21시(2점) + 임무/수호(1점) + 특수·PVP(3점) = 하루 6점 x 2일 = <strong class="text-amber-400">12점</strong></li>
+                        <li contenteditable="false"><strong>토요일(2회) 주간:</strong> 13시/21시(2점) + 임무/수호(0점) + 특수·PVP(3점) = 하루 5점 x 2일 = <strong class="text-amber-400">10점</strong></li>
+                        <li contenteditable="false"><strong>나머지 일반 요일(10일):</strong> 13시/21시(2점) = 하루 2점 x 10일 = <strong class="text-amber-400">20점</strong></li>
+                    </ul>
+
+                    <div class="score-total" contenteditable="false">✨ 종합: 12점 + 10점 + 20점 = <strong class="text-amber-400">총 42점</strong></div>
+                </div>
+
+            </div>
+
+            <!-- [운영진 관리 탭 내용] -->
+            <div id="tab-admin" class="tab-content hidden">
+                <h2 class="text-2xl font-bold mb-6 text-gray-100">운영진 관리</h2>
+                <div class="bg-[#090d16] border border-gray-800/80 rounded-xl p-6">
+                    <p class="text-gray-300 text-sm">운영진 관리 페이지 영역입니다.</p>
                 </div>
             </div>
 
-            <div id="tab-admin" class="hidden">
-                <h1>운영진 관리</h1>
+            <div id="tab-attendance" class="tab-content hidden attendance-page">
+                <div class="dashboard-header">
+                    <div>
+                        <h2>출석 체크</h2>
+                        <p class="attendance-subtitle">현재 서버 출석 현황을 관리합니다.</p>
+                    </div>
+                    <div class="attendance-header-actions">
+                        <button id="attendance-toggle-button" class="dashboard-edit-button is-active" onclick="toggleAttendance()">출석체크 비활성화</button>
+                        <button class="dashboard-edit-button" onclick="clearAttendance()">오늘 출석 기록 전체 삭제</button>
+                    </div>
+                </div>
 
-                <div class="panel">
-                    <p>운영진 관리 페이지 영역입니다.</p>
+                <div class="attendance-card">
+                    <div class="attendance-card-title">🔒 [관리자 설정] 타임별 인증 비밀번호 (각 4자리)</div>
+                    <div id="admin-lock" class="admin-lock">
+                        <input id="admin-password" type="password" maxlength="4" placeholder="운영진 비밀번호">
+                        <button type="button" onclick="unlockAdminSettings()">잠금 해제</button>
+                    </div>
+                    <p id="admin-lock-message" class="admin-lock-message"></p>
+                    <div id="admin-settings-content" class="attendance-settings admin-settings-content hidden">
+                        <div class="attendance-setting">
+                            <strong>13시 비밀번호</strong>
+                            <input id="password-13" placeholder="4자리" maxlength="4">
+                            <button onclick="saveAttendancePassword('13')">저장</button>
+                        </div>
+                        <div class="attendance-setting">
+                            <strong>21시 비밀번호</strong>
+                            <input id="password-21" placeholder="4자리" maxlength="4">
+                            <button class="attendance-action red" onclick="saveAttendancePassword('21')">저장</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="attendance-card">
+                    <div class="attendance-select-row">
+                        <div>
+                            <label class="attendance-label" for="attendance-member">본인 닉네임 선택</label>
+                            <select id="attendance-member">
+                                <option value="">-- 명단에서 닉네임을 선택하세요 --</option>
+                                <option>DOKDO망나뇽</option>
+                                <option>DOKDO피카츄</option>
+                                <option>DOKDO패왕</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="attendance-label" for="attendance-password">타임별 인증 비밀번호</label>
+                            <input id="attendance-password" type="password" maxlength="4" placeholder="출석할 타임의 4자리 비밀번호 입력">
+                        </div>
+                    </div>
+
+                    <div class="attendance-grid">
+                        <div class="attendance-slot">
+                            <h4>🟡 13시타임</h4>
+                            <button onclick="checkAttendance('13', '게헨나 사전적 출석', this)">게헨나 사전적 출석</button>
+                            <button onclick="checkAttendance('13', '3층 올라가기전', this)">3층 올라가기전</button>
+                            <button onclick="checkAttendance('13', '게헨나 끝 출석', this)">게헨나 끝 출석</button>
+                        </div>
+                        <div class="attendance-slot night">
+                            <h4>🌙 21시타임</h4>
+                            <button onclick="checkAttendance('21', '게헨나 사전적 출석', this)">게헨나 사전적 출석</button>
+                            <button onclick="checkAttendance('21', '3층 올라가기전', this)">3층 올라가기전</button>
+                            <button onclick="checkAttendance('21', '게헨나 끝 출석', this)">게헨나 끝 출석</button>
+                        </div>
+                    </div>
+
+                    <div class="event-row">
+                        <button type="button" class="event-button" onclick="checkEvent('에노크', this)">에노크</button>
+                        <button type="button" class="event-button" onclick="checkEvent('마슈미드', this)">마슈미드</button>
+                    </div>
+                    <div class="event-row">
+                        <button type="button" class="event-button purple" onclick="checkEvent('점령전', this)">점령전</button>
+                        <button type="button" class="event-button purple" onclick="checkEvent('전초전', this)">전초전</button>
+                        <button type="button" class="event-button purple" onclick="checkEvent('쟁탈전', this)">쟁탈전</button>
+                    </div>
+                    <div class="event-row">
+                        <button type="button" class="event-button green" onclick="checkEvent('클랜임무', this)">클랜임무</button>
+                        <button type="button" class="event-button green" onclick="checkEvent('클랜수호', this)">클랜수호</button>
+                    </div>
+                </div>
+
+                <div class="attendance-card">
+                    <h3>출석 클랜원별 현황</h3>
+                    <table class="attendance-table">
+                        <thead>
+                            <tr><th>닉네임</th><th>총 점수</th><th>오늘 현황</th><th>13시/21시</th><th>에노크/마슈</th><th>쟁탈/점령/전초</th><th>임무/수호</th><th>상세 내역</th></tr>
+                        </thead>
+                        <tbody id="attendance-body">
+                            <tr><td>DOKDO망나뇽</td><td class="present">0점</td><td>미출석</td><td>-</td><td>-</td><td>-</td><td>-</td><td>없음</td></tr>
+                            <tr><td>DOKDO피카츄</td><td class="present">0점</td><td>미출석</td><td>-</td><td>-</td><td>-</td><td>-</td><td>없음</td></tr>
+                            <tr><td>DOKDO패왕</td><td class="present">0점</td><td>미출석</td><td>-</td><td>-</td><td>-</td><td>-</td><td>없음</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
+    </div>
 
-    </section>
-
+    <!-- 스크립트 제어 -->
     <script>
-        function handleLogin(event) {
-            event.preventDefault();
+        let attendanceEnabled = true;
+        const adminNicknames = ['DOKDO패왕', 'DOKDO망나뇽', 'DOKDO수호', 'DOKDO피카츄'];
 
-            document.getElementById("view-login").style.display = "none";
-            document.getElementById("view-dashboard").style.display = "flex";
+        function setCurrentUser(nickname) {
+            const role = adminNicknames.includes(nickname) ? 'admin' : 'member';
+            localStorage.setItem('dokdoCurrentUser', JSON.stringify({ nickname, role }));
+            document.getElementById('current-user-name').textContent = nickname;
+            document.getElementById('current-user-role').textContent = role;
+            document.getElementById('nav-admin').classList.toggle('hidden', role !== 'admin');
+        }
+
+        function handleLogin() {
+            const nickname = document.getElementById('loginId').value.trim().toUpperCase();
+            if (!nickname) {
+                alert('닉네임을 입력하세요.');
+                return;
+            }
+
+            setCurrentUser(nickname);
+            localStorage.setItem('dokdoLoggedIn', 'true');
+            document.getElementById('view-login').classList.add('hidden');
+            const dash = document.getElementById('view-dashboard');
+            dash.classList.remove('hidden');
+            dash.classList.add('flex');
+            loadAttendanceRecords();
         }
 
         function handleLogout() {
-            if (confirm("로그아웃 하시겠습니까?")) {
-                document.getElementById("view-dashboard").style.display = "none";
-                document.getElementById("view-login").style.display = "block";
+            if (confirm('로그아웃 하시겠습니까?')) {
+                localStorage.removeItem('dokdoLoggedIn');
+                localStorage.removeItem('dokdoCurrentUser');
+                const dash = document.getElementById('view-dashboard');
+                dash.classList.add('hidden');
+                dash.classList.remove('flex');
+                document.getElementById('view-login').classList.remove('hidden');
             }
+        }
+
+        if (localStorage.getItem('dokdoLoggedIn') === 'true') {
+            const savedUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
+            if (savedUser) setCurrentUser(savedUser.nickname);
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-dashboard').classList.remove('hidden');
+            document.getElementById('view-dashboard').classList.add('flex');
+            loadAttendanceRecords();
         }
 
         function switchTab(tabName) {
-            const dashboardTab = document.getElementById("tab-dashboard");
-            const adminTab = document.getElementById("tab-admin");
+            const dashboardTab = document.getElementById('tab-dashboard');
+            const adminTab = document.getElementById('tab-admin');
+            const attendanceTab = document.getElementById('tab-attendance');
+            const navDashboard = document.getElementById('nav-dashboard');
+            const navAdmin = document.getElementById('nav-admin');
+            const navAttendance = document.getElementById('nav-attendance');
 
-            const dashboardButton = document.getElementById("dashboard-button");
-            const adminButton = document.getElementById("admin-button");
+            const activeNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer";
+            const inactiveNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer";
 
-            if (tabName === "dashboard") {
-                dashboardTab.classList.remove("hidden");
-                adminTab.classList.add("hidden");
+            [dashboardTab, adminTab, attendanceTab].forEach((tab) => tab.classList.add('hidden'));
+            [navDashboard, navAdmin, navAttendance].forEach((nav) => nav.className = inactiveNavClass);
 
-                dashboardButton.classList.add("active");
-                adminButton.classList.remove("active");
-            }
-
-            if (tabName === "admin") {
-                dashboardTab.classList.add("hidden");
-                adminTab.classList.remove("hidden");
-
-                dashboardButton.classList.remove("active");
-                adminButton.classList.add("active");
+            if (tabName === 'dashboard') {
+                dashboardTab.classList.remove('hidden');
+                navDashboard.className = activeNavClass;
+            } else if (tabName === 'admin') {
+                adminTab.classList.remove('hidden');
+                navAdmin.className = activeNavClass;
+            } else if (tabName === 'attendance') {
+                attendanceTab.classList.remove('hidden');
+                navAttendance.className = activeNavClass;
             }
         }
-    </script>
 
+        function saveAttendancePassword(time) {
+            const password = document.getElementById(`password-${time}`).value;
+            if (password.length !== 4) {
+                alert('비밀번호는 4자리로 입력하세요.');
+                return;
+            }
+            alert(`${time}시 비밀번호가 저장되었습니다.`);
+        }
+
+        function unlockAdminSettings() {
+            const password = document.getElementById('admin-password').value;
+            const message = document.getElementById('admin-lock-message');
+
+            if (password !== '9889') {
+                message.textContent = '운영진 비밀번호가 올바르지 않습니다.';
+                return;
+            }
+
+            document.getElementById('admin-settings-content').classList.remove('hidden');
+            document.getElementById('admin-lock').classList.add('hidden');
+            message.textContent = '관리자 설정이 잠금 해제되었습니다.';
+            message.style.color = '#34d399';
+        }
+
+        function toggleAttendance() {
+            attendanceEnabled = !attendanceEnabled;
+
+            const button = document.getElementById('attendance-toggle-button');
+            const attendanceButtons = document.querySelectorAll('.attendance-slot button, .event-button');
+
+            attendanceButtons.forEach((attendanceButton) => {
+                attendanceButton.disabled = !attendanceEnabled;
+            });
+
+            button.textContent = attendanceEnabled ? '출석체크 비활성화' : '출석체크 활성화';
+            button.classList.toggle('is-active', attendanceEnabled);
+            button.classList.toggle('is-disabled', !attendanceEnabled);
+        }
+
+        function checkAttendance(time, activity, button) {
+            const member = document.getElementById('attendance-member').value;
+            const password = document.getElementById('attendance-password').value;
+
+            if (!member) {
+                alert('먼저 닉네임을 선택하세요.');
+                return;
+            }
+            if (password.length !== 4) {
+                alert('타임별 4자리 비밀번호를 입력하세요.');
+                return;
+            }
+
+            const row = [...document.querySelectorAll('#attendance-body tr')]
+                .find((candidate) => candidate.cells[0].textContent === member);
+
+            if (!row) return;
+
+            const completedKey = `time${time}Activities`;
+            const completedActivities = row.dataset[completedKey]
+                ? row.dataset[completedKey].split('|')
+                : [];
+
+            if (completedActivities.includes(activity)) return;
+
+            completedActivities.push(activity);
+            row.dataset[completedKey] = completedActivities.join('|');
+
+            updateAttendanceRow(row);
+
+        }
+
+        function checkEvent(activity, button) {
+            const member = document.getElementById('attendance-member').value;
+            if (!member) {
+                alert('먼저 닉네임을 선택하세요.');
+                return;
+            }
+
+            const row = [...document.querySelectorAll('#attendance-body tr')]
+                .find((candidate) => candidate.cells[0].textContent === member);
+            if (!row) return;
+
+            const activities = row.dataset.events ? row.dataset.events.split('|') : [];
+            if (activities.includes(activity)) return;
+
+            activities.push(activity);
+            row.dataset.events = activities.join('|');
+            updateAttendanceRow(row);
+        }
+
+        function updateAttendanceRow(row) {
+            const time13 = row.dataset.time13Activities ? row.dataset.time13Activities.split('|').filter(Boolean) : [];
+            const time21 = row.dataset.time21Activities ? row.dataset.time21Activities.split('|').filter(Boolean) : [];
+            const events = row.dataset.events ? row.dataset.events.split('|').filter(Boolean) : [];
+
+            const time13Score = time13.length === 3 ? 1 : 0;
+            const time21Score = time21.length === 3 ? 1 : 0;
+            const enokScore = events.includes('에노크') && events.includes('마슈미드') ? 1 : 0;
+            const occupationScore = events.filter((event) => event === '점령전').length;
+            const siegeScore = events.includes('전초전') && events.includes('쟁탈전') ? 1 : 0;
+            const missionScore = events.includes('클랜임무') && events.includes('클랜수호') ? 1 : 0;
+            const totalScore = time13Score + time21Score + enokScore + occupationScore + siegeScore + missionScore;
+            const timeProgress = `${time13Score + time21Score}점 (${time13.length}/3, ${time21.length}/3)`;
+            const eventDetails = `${enokScore ? '1점' : `${events.includes('에노크') ? '에노크 ' : ''}${events.includes('마슈미드') ? '마슈미드' : '-'}`} `;
+
+            row.cells[1].textContent = `${totalScore}점`;
+            row.cells[2].textContent = totalScore > 0 ? '출석 진행 중' : '미출석';
+            row.cells[3].textContent = timeProgress;
+            row.cells[4].textContent = eventDetails.trim();
+            row.cells[5].textContent = `${occupationScore}점 / ${siegeScore}점`;
+            row.cells[6].textContent = `${missionScore}점`;
+            row.cells[7].textContent = events.length || time13.length || time21.length ? '기록 있음' : '없음';
+            saveAttendanceRecord(row);
+        }
+
+        function attendanceUserKey(nickname) {
+            return encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
+        }
+
+        function saveAttendanceRecord(row) {
+            const nickname = row.cells[0].textContent;
+            database.ref(`attendance/${attendanceUserKey(nickname)}`).set({
+                nickname,
+                score: Number(row.cells[1].textContent.replace('점', '')) || 0,
+                time13Activities: row.dataset.time13Activities || '',
+                time21Activities: row.dataset.time21Activities || '',
+                events: row.dataset.events || '',
+                updatedAt: firebase.database.ServerValue.TIMESTAMP
+            }).catch(() => {});
+        }
+
+        function loadAttendanceRecords() {
+            database.ref('attendance').once('value').then((snapshot) => {
+                const records = snapshot.val() || {};
+                document.querySelectorAll('#attendance-body tr').forEach((row) => {
+                    const record = records[attendanceUserKey(row.cells[0].textContent)];
+                    if (!record) return;
+
+                    row.dataset.time13Activities = record.time13Activities || '';
+                    row.dataset.time21Activities = record.time21Activities || '';
+                    row.dataset.events = record.events || '';
+                    updateAttendanceRow(row);
+                });
+            }).catch(() => {});
+        }
+
+        function clearAttendance() {
+            if (!confirm('오늘 출석 기록을 모두 삭제하시겠습니까?')) return;
+            document.querySelectorAll('#attendance-body tr').forEach((row) => {
+                row.cells[1].textContent = '0점';
+                row.cells[2].textContent = '미출석';
+                row.cells[3].textContent = '-';
+                row.dataset.score = '0';
+                row.dataset.time13Score = '0';
+                row.dataset.time21Score = '0';
+                row.dataset.time13Activities = '';
+                row.dataset.time21Activities = '';
+                row.dataset.events = '';
+                database.ref(`attendance/${attendanceUserKey(row.cells[0].textContent)}`).remove().catch(() => {});
+            });
+            document.querySelectorAll('.attendance-slot button').forEach((button) => {
+                button.style.opacity = '1';
+            });
+            document.querySelectorAll('.event-button').forEach((button) => {
+                button.style.opacity = '1';
+            });
+        }
+
+        function togglePassword() {
+            const password = document.getElementById('loginPassword');
+            const toggle = document.querySelector('.password-toggle');
+            const isHidden = password.type === 'password';
+
+            password.type = isHidden ? 'text' : 'password';
+            toggle.textContent = isHidden ? '🙈' : '👁';
+            toggle.setAttribute('aria-label', isHidden ? '비밀번호 숨기기' : '비밀번호 보기');
+        }
+
+        function switchAuthTab(tabName) {
+            const panels = {
+                login: document.getElementById('auth-login'),
+                signup: document.getElementById('auth-signup'),
+                reset: document.getElementById('auth-reset')
+            };
+            const tabs = document.querySelectorAll('.auth-tab');
+
+            Object.keys(panels).forEach((name) => {
+                panels[name].classList.toggle('hidden', name !== tabName);
+            });
+
+            tabs.forEach((tab) => {
+                tab.classList.toggle('active', tab.textContent.includes(
+                    tabName === 'login' ? '로그인' : tabName === 'signup' ? '회원가입' : '비밀번호'
+                ));
+            });
+        }
+
+        function handleSignup() {
+            const nickname = document.getElementById('signupNickname').value.trim().toUpperCase();
+            const password = document.getElementById('signupPassword').value;
+
+            if (!nickname || !password) {
+                alert('닉네임과 비밀번호를 입력하세요.');
+                return;
+            }
+
+            const role = adminNicknames.includes(nickname) ? 'admin' : 'member';
+            const userKey = encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
+
+            database.ref(`users/${userKey}`).once('value')
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        throw new Error('이미 사용 중인 닉네임입니다.');
+                    }
+
+                    return database.ref(`users/${userKey}`).set({
+                        nickname,
+                        password,
+                        role,
+                        createdAt: firebase.database.ServerValue.TIMESTAMP
+                    });
+                })
+                .then(() => {
+                    alert(role === 'admin' ? '운영진 권한으로 회원가입되었습니다.' : '회원가입이 완료되었습니다.');
+                    document.getElementById('loginId').value = nickname;
+                    switchAuthTab('login');
+                })
+                .catch((error) => {
+                    alert(error.message || '회원가입 중 오류가 발생했습니다.');
+                });
+        }
+
+        function handleReset() {
+            alert('비밀번호 재설정 링크를 준비 중입니다.');
+        }
+
+        function toggleDashboardEdit() {
+            const info = document.getElementById('dashboard-info');
+            const button = document.getElementById('dashboard-edit-button');
+            const editableItems = info.querySelectorAll('[contenteditable]');
+            const isEditing = info.classList.toggle('editing');
+
+            editableItems.forEach((item) => {
+                item.contentEditable = isEditing ? 'true' : 'false';
+            });
+
+            button.textContent = isEditing ? '저장' : '수정';
+        }
+
+    </script>
 </body>
 </html>
