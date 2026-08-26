@@ -3,50 +3,58 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DOKDO 시스템</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        html, body {
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
             margin: 0;
+            overflow: hidden;
+            background: #030712;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+
+        /* 로그인 화면 */
+        #view-login {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
             width: 100%;
             height: 100%;
             overflow: hidden;
             background: #030712;
-            color: #f3f4f6;
-            font-family: Arial, sans-serif;
         }
 
-        #view-login {
-            position: fixed;
-            inset: 0;
-            z-index: 50;
-            overflow: hidden;
-            background-color: #030712;
-        }
-
+        /* 배경 이미지 */
         .login-background {
             position: absolute;
             inset: 0;
             z-index: 0;
+            display: block;
             width: 100%;
             height: 100%;
             object-fit: cover;
             object-position: center;
         }
 
+        /* 배경 어둡게 */
         .login-overlay {
             position: absolute;
             inset: 0;
             z-index: 1;
-            background: rgba(0, 0, 0, .3);
+            background: rgba(0, 0, 0, 0.3);
         }
 
-        #view-login > div:first-of-type {
-            display: none;
-        }
-
-        #view-login > div:last-child {
+        /* 로그인창 오른쪽 배치 */
+        .login-layout {
             position: relative;
             z-index: 2;
             display: flex;
@@ -57,205 +65,347 @@
             padding-right: 2%;
         }
 
-        #view-login > div:last-child > div {
-            width: min(380px, calc(100vw - 32px));
-            box-sizing: border-box;
+        .login-card {
+            width: 380px;
+            max-width: calc(100% - 32px);
             padding: 28px;
-            border: 1px solid rgba(127, 29, 29, .6);
+            border: 1px solid rgba(127, 29, 29, 0.7);
             border-radius: 16px;
-            background: rgba(9, 13, 22, .95);
-            box-shadow: 0 0 100px rgba(0, 0, 0, .95);
+            background: rgba(9, 13, 22, 0.96);
+            box-shadow: 0 0 100px rgba(0, 0, 0, 0.95);
         }
 
-        #view-login h1 {
+        .logo {
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .logo h1 {
             margin: 0 0 8px;
             color: #dc2626;
             font-size: 46px;
             font-style: italic;
-            text-align: center;
-            letter-spacing: 8px;
+            letter-spacing: 7px;
+            text-shadow: 0 0 20px rgba(220, 38, 38, 0.7);
         }
 
-        #view-login p {
-            margin: 0 0 40px;
+        .logo p {
+            margin: 0;
             color: #9ca3af;
-            font-size: 12px;
-            text-align: center;
-            letter-spacing: 5px;
+            font-size: 11px;
+            letter-spacing: 4px;
         }
 
-        #view-login label {
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
             display: block;
-            margin: 0 0 8px;
+            margin-bottom: 8px;
             color: #9ca3af;
             font-size: 12px;
+            font-weight: bold;
         }
 
-        #view-login input {
-            box-sizing: border-box;
+        input {
             width: 100%;
-            margin-bottom: 24px;
-            padding: 16px;
+            padding: 14px;
             border: 1px solid #1f2937;
-            border-radius: 12px;
+            border-radius: 10px;
             outline: none;
             background: #030712;
-            color: #f3f4f6;
-            font-size: 16px;
+            color: #ffffff;
+            font-size: 14px;
         }
 
-        #view-login button {
+        input:focus {
+            border-color: #dc2626;
+        }
+
+        input::placeholder {
+            color: #4b5563;
+        }
+
+        .login-button {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             border: 0;
-            border-radius: 12px;
+            border-radius: 10px;
             background: #dc2626;
-            color: white;
-            font-size: 18px;
+            color: #ffffff;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 30px rgba(220, 38, 38, .6);
+            box-shadow: 0 4px 25px rgba(220, 38, 38, 0.6);
         }
 
+        .login-button:hover {
+            background: #ef4444;
+        }
+
+        /* 대시보드 */
+        #view-dashboard {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        aside {
+            width: 256px;
+            padding: 16px;
+            background: #05070c;
+            border-right: 1px solid #1f2937;
+        }
+
+        aside h2 {
+            margin: 8px 0 32px;
+            color: #dc2626;
+            font-style: italic;
+            letter-spacing: 2px;
+        }
+
+        nav button,
+        .logout-button {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+            padding: 12px;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: #9ca3af;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        nav button:hover,
+        nav button.active,
+        .logout-button:hover {
+            background: rgba(220, 38, 38, 0.15);
+            color: #ef4444;
+        }
+
+        .user-area {
+            margin-top: 70vh;
+            padding-top: 16px;
+            border-top: 1px solid #1f2937;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        main {
+            flex: 1;
+            height: 100%;
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .panel {
+            padding: 20px;
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            border-radius: 12px;
+            background: #090d16;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 모바일 */
         @media (max-width: 700px) {
-            #view-login > div:last-child {
+            #view-login {
+                align-items: center;
                 justify-content: center;
-                width: 100%;
-                padding: 16px;
-                box-sizing: border-box;
             }
 
-            #view-login > div:last-child > div {
-                padding: 32px 24px;
+            .login-background {
+                object-fit: cover;
+            }
+
+            .login-layout {
+                justify-content: center;
+                padding: 16px;
+            }
+
+            .login-card {
+                width: 100%;
+                padding: 28px 24px;
+            }
+
+            .logo h1 {
+                font-size: 42px;
+            }
+
+            #view-dashboard {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            aside {
+                width: 100%;
+                border-right: 0;
+                border-bottom: 1px solid #1f2937;
+            }
+
+            .user-area {
+                margin-top: 24px;
+            }
+
+            main {
+                padding: 24px 16px;
             }
         }
     </style>
 </head>
-<body class="bg-[#030712] text-gray-100 flex h-screen overflow-hidden m-0 p-0">
 
-    <!-- [1] 로그인 화면 영역 -->
-    <div id="view-login" class="fixed inset-0 w-screen h-screen z-50 bg-[#030712] overflow-hidden">
-        <img class="login-background" src="./bg_2.jpg" alt="로그인 배경">
+<body>
+
+    <!-- 로그인 화면 -->
+    <section id="view-login">
+
+        <!-- index.html과 bg_2.jpg는 같은 폴더에 있어야 합니다 -->
+        <img
+            class="login-background"
+            src="./bg_2.jpg"
+            alt="로그인 배경">
+
         <div class="login-overlay"></div>
 
-        <div class="relative z-10 w-full h-full flex items-center justify-center px-4 sm:justify-end sm:pr-8 lg:pr-32">
-            <div class="bg-[#090d16]/95 backdrop-blur-md border border-red-950/60 rounded-2xl p-8 sm:p-12 w-full max-w-[560px] shadow-[0_0_100px_rgba(0,0,0,0.95)]">
-                <div class="text-center mb-10">
-                    <h1 class="text-5xl font-black italic tracking-widest text-red-600 mb-2 drop-shadow-[0_0_20px_rgba(220,38,38,0.7)]">DOKDO</h1>
-                    <p class="text-xs text-gray-400 tracking-[0.3em] uppercase font-medium">VAMPIR DASHBOARD</p>
+        <div class="login-layout">
+            <div class="login-card">
+
+                <div class="logo">
+                    <h1>DOKDO</h1>
+                    <p>VAMPIR DASHBOARD</p>
                 </div>
-                
-                <div class="space-y-6">
-                    <div>
-                        <div class="text-left mb-2 pl-1">
-                            <span class="text-xs font-semibold text-gray-400">아이디</span>
-                        </div>
-                        <input type="text" id="loginId" value="dokdo폐왕" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner placeholder-gray-600">
+
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginId">아이디</label>
+
+                        <input
+                            id="loginId"
+                            type="text"
+                            value="dokdo폐왕"
+                            required>
                     </div>
-                    <div>
-                        <div class="text-left mb-2 pl-1">
-                            <span class="text-xs font-semibold text-gray-400">비밀번호</span>
-                        </div>
-                        <div class="relative">
-                            <input type="password" placeholder="비밀번호를 입력하세요" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner placeholder-gray-600">
-                        </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">비밀번호</label>
+
+                        <input
+                            id="loginPassword"
+                            type="password"
+                            placeholder="비밀번호를 입력하세요"
+                            required>
                     </div>
-                    <button onclick="handleLogin()" class="w-full py-4 bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white text-lg font-bold tracking-wider rounded-xl transition-all cursor-pointer mt-6 shadow-[0_4px_30px_rgba(220,38,38,0.6)]">
+
+                    <button
+                        class="login-button"
+                        type="submit">
                         접속하기
                     </button>
-                </div>
+                </form>
+
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- [2] 대시보드 화면 영역 (로그인 전 숨김) -->
-    <div id="view-dashboard" class="hidden flex w-full h-full">
-        <!-- 사이드바 영역 -->
-        <aside class="w-64 bg-[#05070c] flex flex-col justify-between border-r border-gray-800/50 p-4">
-            <div>
-                <h1 class="text-xl font-bold italic tracking-wider text-red-600 mb-8 px-2">DOKDO</h1>
-                <nav class="space-y-2">
-                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer">
-                        <span>📊</span> 대시보드
-                    </button>
-                    <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
-                        <span>👑</span> 운영진 관리
-                    </button>
-                </nav>
-            </div>
+    <!-- 대시보드 화면 -->
+    <section id="view-dashboard">
 
-            <div class="border-t border-gray-800/60 pt-4">
-                <div class="text-xs text-gray-400 mb-3 px-2">
-                    <span class="text-gray-200 font-semibold">dokdo폐왕</span> (admin)
-                </div>
-                <button onclick="handleLogout()" class="w-full py-2 bg-[#0d121f] hover:bg-red-600/20 hover:text-red-400 text-gray-300 text-xs font-semibold rounded-lg border border-gray-800 transition cursor-pointer">
+        <aside>
+            <h2>DOKDO</h2>
+
+            <nav>
+                <button
+                    id="dashboard-button"
+                    class="active"
+                    onclick="switchTab('dashboard')">
+                    📊 대시보드
+                </button>
+
+                <button
+                    id="admin-button"
+                    onclick="switchTab('admin')">
+                    👑 운영진 관리
+                </button>
+            </nav>
+
+            <div class="user-area">
+                <div>dokdo폐왕 (admin)</div>
+
+                <button
+                    class="logout-button"
+                    onclick="handleLogout()">
                     로그아웃
                 </button>
             </div>
         </aside>
 
-        <!-- 메인 콘텐츠 영역 -->
-        <main class="flex-1 flex flex-col h-screen overflow-y-auto p-8">
-            <!-- [대시보드 탭 내용] -->
-            <div id="tab-dashboard" class="tab-content">
-                <h2 class="text-2xl font-bold mb-6 text-gray-100">대시보드</h2>
+        <main>
+            <!-- 대시보드 -->
+            <div id="tab-dashboard">
+                <h1>대시보드</h1>
 
-                <div class="border border-red-600/40 rounded-xl p-4 bg-[#090d16] mb-6 shadow-sm">
-                    <div class="flex items-center gap-2 text-red-500 font-semibold mb-1 text-sm">
-                        <span>📢</span> 오늘의 공지
-                    </div>
-                    <p class="text-gray-300 text-sm">공지사항을 불러오고 있습니다...</p>
+                <div class="panel">
+                    <strong>📢 오늘의 공지</strong>
+                    <p>공지사항을 불러오고 있습니다...</p>
                 </div>
-
             </div>
 
-            <!-- [운영진 관리 탭 내용] -->
-            <div id="tab-admin" class="tab-content hidden">
-                <h2 class="text-2xl font-bold mb-6 text-gray-100">운영진 관리</h2>
-                <div class="bg-[#090d16] border border-gray-800/80 rounded-xl p-6">
-                    <p class="text-gray-300 text-sm">운영진 관리 페이지 영역입니다.</p>
+            <!-- 운영진 관리 -->
+            <div id="tab-admin" class="hidden">
+                <h1>운영진 관리</h1>
+
+                <div class="panel">
+                    <p>운영진 관리 페이지 영역입니다.</p>
                 </div>
             </div>
         </main>
-    </div>
 
-    <!-- 스크립트 제어 -->
+    </section>
+
     <script>
-        function handleLogin() {
-            document.getElementById('view-login').classList.add('hidden');
-            const dash = document.getElementById('view-dashboard');
-            dash.classList.remove('hidden');
-            dash.classList.add('flex');
+        function handleLogin(event) {
+            event.preventDefault();
+
+            document.getElementById("view-login").style.display = "none";
+            document.getElementById("view-dashboard").style.display = "flex";
         }
 
         function handleLogout() {
-            if (confirm('로그아웃 하시겠습니까?')) {
-                const dash = document.getElementById('view-dashboard');
-                dash.classList.add('hidden');
-                dash.classList.remove('flex');
-                document.getElementById('view-login').classList.remove('hidden');
+            if (confirm("로그아웃 하시겠습니까?")) {
+                document.getElementById("view-dashboard").style.display = "none";
+                document.getElementById("view-login").style.display = "flex";
             }
         }
 
         function switchTab(tabName) {
-            const dashboardTab = document.getElementById('tab-dashboard');
-            const adminTab = document.getElementById('tab-admin');
-            const navDashboard = document.getElementById('nav-dashboard');
-            const navAdmin = document.getElementById('nav-admin');
+            const dashboardTab = document.getElementById("tab-dashboard");
+            const adminTab = document.getElementById("tab-admin");
 
-            if (tabName === 'dashboard') {
-                dashboardTab.classList.remove('hidden');
-                adminTab.classList.add('hidden');
-                navDashboard.className = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer";
-                navAdmin.className = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer";
-            } else if (tabName === 'admin') {
-                adminTab.classList.remove('hidden');
-                dashboardTab.classList.add('hidden');
-                navAdmin.className = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer";
-                navDashboard.className = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer";
+            const dashboardButton = document.getElementById("dashboard-button");
+            const adminButton = document.getElementById("admin-button");
+
+            if (tabName === "dashboard") {
+                dashboardTab.classList.remove("hidden");
+                adminTab.classList.add("hidden");
+
+                dashboardButton.classList.add("active");
+                adminButton.classList.remove("active");
+            }
+
+            if (tabName === "admin") {
+                dashboardTab.classList.add("hidden");
+                adminTab.classList.remove("hidden");
+
+                dashboardButton.classList.remove("active");
+                adminButton.classList.add("active");
             }
         }
-
     </script>
+
 </body>
 </html>
