@@ -240,6 +240,560 @@
             font-weight: bold;
         }
 
+        .dashboard-page {
+            color: #d1d5db;
+        }
+
+        .dashboard-page h2 {
+            margin: 0 0 28px;
+            color: #f8fafc;
+            font-size: 28px;
+            line-height: 1;
+        }
+
+        .dashboard-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 26px;
+            margin-bottom: 26px;
+        }
+
+        .dashboard-card {
+            min-height: 128px;
+            box-sizing: border-box;
+            padding: 26px;
+            border: 1px solid #263247;
+            border-radius: 12px;
+            background: #111827;
+        }
+
+        .dashboard-card-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #a9bdd7;
+            font-size: 15px;
+        }
+
+        .server-form {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .server-form input {
+            min-width: 0;
+            flex: 1;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #3b4a61;
+            border-radius: 4px;
+            outline: none;
+            background: #202b3b;
+            color: #f8fafc;
+            font-size: 16px;
+        }
+
+        .server-form input:focus {
+            border-color: #60a5fa;
+        }
+
+        .server-form button {
+            padding: 11px 15px;
+            border: 0;
+            border-radius: 4px;
+            background: #e5262b;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .dashboard-value {
+            margin: 0;
+            color: #60a5fa;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .dashboard-value.green {
+            color: #39e879;
+        }
+
+        .season-card {
+            min-height: 168px;
+        }
+
+        .season-period {
+            margin: 0 0 8px;
+            color: #e5e7eb;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .season-status {
+            margin: 0 0 10px;
+            color: #fbbf24;
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .season-note {
+            margin: 0;
+            color: #8795aa;
+            font-size: 13px;
+        }
+
+        .notice-page {
+            color: #d1d5db;
+        }
+
+        .notice-page .dashboard-header {
+            margin-bottom: 26px;
+        }
+
+        .notice-page h2 {
+            margin: 0;
+            color: #f8fafc;
+            font-size: 28px;
+        }
+
+        .notice-panel {
+            padding: 26px;
+            border: 1px solid #263247;
+            border-radius: 12px;
+            background: #111827;
+        }
+
+        .notice-content {
+            min-height: 194px;
+            padding: 26px 24px;
+            border: 1px solid #263247;
+            border-radius: 12px;
+            background: #111827;
+            color: #e5e7eb;
+            font-size: 15px;
+            line-height: 1.55;
+        }
+
+        .notice-content h3 {
+            margin: 0 0 26px;
+            color: #dbeafe;
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+        .notice-content p {
+            margin: 0 0 3px;
+        }
+
+        .notice-content p:last-child {
+            margin-top: 3px;
+        }
+
+        .member-page {
+            color: #d1d5db;
+        }
+
+        .member-page h2 {
+            margin: 0 0 8px;
+            color: #f8fafc;
+            font-size: 28px;
+        }
+
+        .member-help {
+            margin: 0 0 26px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .member-panel {
+            margin-bottom: 26px;
+            padding: 26px;
+            border: 1px solid #263247;
+            border-radius: 12px;
+            background: #111827;
+        }
+
+        .member-panel-title {
+            margin: 0 0 20px;
+            color: #f8fafc;
+            font-size: 16px;
+        }
+
+        .member-form {
+            display: grid;
+            grid-template-columns: 1.1fr 1.1fr 1.1fr 1.1fr .95fr;
+            gap: 12px;
+        }
+
+        .member-form input,
+        .member-form select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #35445a;
+            border-radius: 4px;
+            outline: none;
+            background: #202b3b;
+            color: #f8fafc;
+            font-size: 14px;
+        }
+
+        .member-form button {
+            border: 0;
+            border-radius: 4px;
+            background: #e5262b;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .member-list-panel {
+            padding: 26px;
+            border: 1px solid #263247;
+            border-radius: 12px;
+            background: #111827;
+        }
+
+        .member-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .member-table th,
+        .member-table td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #1e293b;
+            text-align: left;
+        }
+
+        .member-table th {
+            color: #9fb4d0;
+            font-weight: normal;
+        }
+
+        .member-table td:first-child,
+        .member-table td:nth-child(2) {
+            color: #f8fafc;
+            font-weight: bold;
+        }
+
+        .member-table td:first-child {
+            width: 235px;
+            color: #fbbf24;
+        }
+
+        .member-rank-controls {
+            display: inline-flex;
+            gap: 5px;
+            margin-left: 8px;
+        }
+
+        .member-rank-controls button,
+        .member-delete {
+            padding: 4px 8px;
+            border: 0;
+            border-radius: 4px;
+            background: #243246;
+            color: #dbeafe;
+            cursor: pointer;
+        }
+
+        .member-edit {
+            margin-right: 5px;
+            padding: 4px 8px;
+            border: 0;
+            border-radius: 4px;
+            background: #245b83;
+            color: #dbeafe;
+            cursor: pointer;
+        }
+
+        .member-inline-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 6px 7px;
+            border: 1px solid #49617d;
+            border-radius: 4px;
+            outline: none;
+            background: #202b3b;
+            color: #f8fafc;
+            font: inherit;
+        }
+
+        .member-delete {
+            background: #671d2a;
+            color: #fecdd3;
+        }
+
+        .member-role {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 4px;
+            background: #a9480b;
+            color: #ffedd5;
+            font-size: 12px;
+        }
+
+        .member-role.leader {
+            background: #8f1d27;
+            color: #ffe4e6;
+        }
+
+        .member-role.normal {
+            background: #243246;
+            color: #cbd5e1;
+        }
+
+        .member-power-blind {
+            color: #c084fc !important;
+        }
+
+        .diamond-page h2 {
+            margin: 0 0 26px;
+            color: #f8fafc;
+            font-size: 28px;
+        }
+
+        .diamond-input-panel,
+        .diamond-table-panel {
+            margin-bottom: 24px;
+            padding: 24px;
+            border: 1px solid #263247;
+            border-radius: 12px;
+            background: #111827;
+        }
+
+        .diamond-input-panel label {
+            display: block;
+            margin-bottom: 6px;
+            color: #fbbf24;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .diamond-form {
+            display: flex;
+            gap: 16px;
+        }
+
+        .diamond-form input {
+            min-width: 0;
+            flex: 3;
+            padding: 13px;
+            border: 1px solid #35445a;
+            border-radius: 4px;
+            outline: none;
+            background: #202b3b;
+            color: #f8fafc;
+            font-size: 14px;
+        }
+
+        .diamond-form button {
+            flex: 1;
+            border: 0;
+            border-radius: 4px;
+            background: #e5262b;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .diamond-rules {
+            margin-bottom: 24px;
+            color: #9fb4d0;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .diamond-rules strong,
+        .diamond-table th:last-child,
+        .diamond-table td:last-child {
+            color: #fbbf24;
+        }
+
+        .diamond-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .diamond-table th,
+        .diamond-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #1e293b;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .diamond-table th {
+            color: #9fb4d0;
+            font-weight: normal;
+        }
+
+        .diamond-table td:first-child {
+            color: #f8fafc;
+            font-weight: bold;
+        }
+
+        .diamond-table th:last-child,
+        .diamond-table td:last-child {
+            font-weight: bold;
+        }
+
+        .diamond-empty {
+            padding: 24px !important;
+            color: #8795aa !important;
+            text-align: center !important;
+        }
+
+        @media (max-width: 800px) {
+            .diamond-form {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .diamond-form button {
+                min-height: 42px;
+            }
+
+            .diamond-table-panel {
+                overflow-x: auto;
+            }
+
+            .diamond-table {
+                min-width: 900px;
+            }
+        }
+
+        .participation-page {
+            color: #d1d5db;
+        }
+
+        .participation-page h2 {
+            margin: 0 0 26px;
+            color: #f8fafc;
+            font-size: 28px;
+        }
+
+        .participation-search-panel,
+        .participation-result {
+            box-sizing: border-box;
+            margin-bottom: 24px;
+            padding: 24px;
+            border: 1px solid #263247;
+            border-radius: 12px;
+            background: #111827;
+        }
+
+        .participation-search {
+            display: flex;
+            gap: 12px;
+        }
+
+        .participation-search input {
+            min-width: 0;
+            flex: 1;
+            box-sizing: border-box;
+            padding: 13px;
+            border: 1px solid #35445a;
+            border-radius: 4px;
+            outline: none;
+            background: #202b3b;
+            color: #f8fafc;
+            font-size: 14px;
+        }
+
+        .participation-search button {
+            width: auto !important;
+            padding: 0 20px !important;
+            border-radius: 4px !important;
+            background: #e5262b !important;
+            font-size: 14px !important;
+            box-shadow: none !important;
+        }
+
+        .participation-result {
+            min-height: 70px;
+            margin-bottom: 0;
+            color: #dbeafe;
+            font-size: 14px;
+        }
+
+        .participation-result.empty {
+            display: flex;
+            align-items: center;
+        }
+
+        .participation-result h3 {
+            margin: 0 0 16px;
+            color: #f8fafc;
+            font-size: 18px;
+        }
+
+        .participation-stat {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .participation-stat div {
+            padding: 14px;
+            border-radius: 6px;
+            background: #202b3b;
+        }
+
+        .participation-stat strong {
+            display: block;
+            margin-top: 5px;
+            color: #34d399;
+            font-size: 18px;
+        }
+
+        @media (max-width: 700px) {
+            .participation-search,
+            .participation-stat {
+                grid-template-columns: 1fr;
+            }
+
+            .participation-search {
+                display: grid;
+            }
+
+            .participation-search button {
+                min-height: 42px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .member-form {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .member-form button {
+                min-height: 44px;
+            }
+
+            .member-table {
+                min-width: 720px;
+            }
+
+            .member-list-panel {
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-card,
+            .season-card {
+                min-height: auto;
+            }
+        }
+
         .attendance-page {
             color: #d1d5db;
             position: relative;
@@ -303,9 +857,13 @@
             width: auto !important;
             padding: 8px 14px !important;
             border-radius: 4px !important;
-            background: #374151 !important;
+            background: #e78300 !important;
             font-size: 12px !important;
             box-shadow: none !important;
+        }
+
+        .admin-lock .admin-password-settings-button {
+            background: #2563eb !important;
         }
 
         .admin-lock-message {
@@ -606,6 +1164,18 @@
                     <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer">
                         <span>📊</span> 대시보드
                     </button>
+                    <button onclick="switchTab('notice')" id="nav-notice" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                        <span>📢</span> 공지사항
+                    </button>
+                    <button onclick="switchTab('members')" id="nav-members" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                        <span>👥</span> 클랜원 명단
+                    </button>
+                    <button onclick="switchTab('participation')" id="nav-participation" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                        <span>🔍</span> 참여율 조회
+                    </button>
+                    <button onclick="switchTab('diamonds')" id="nav-diamonds" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                        <span>💎</span> 다이아 분배
+                    </button>
                     <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
                         <span>👑</span> 운영진 관리
                     </button>
@@ -628,32 +1198,107 @@
         <!-- 메인 콘텐츠 영역 -->
         <main class="flex-1 flex flex-col h-screen overflow-y-auto p-8">
             <!-- [대시보드 탭 내용] -->
-            <div id="tab-dashboard" class="tab-content">
-                <div class="dashboard-header mb-6">
-                    <h2 class="text-2xl font-bold text-gray-100">클랜 공지사항 및 점수 안내</h2>
-                    <button id="dashboard-edit-button" class="dashboard-edit-button" onclick="toggleDashboardEdit()">수정</button>
+            <div id="tab-dashboard" class="tab-content dashboard-page">
+                <h2>대시보드</h2>
+
+                <div class="dashboard-summary">
+                    <section class="dashboard-card">
+                        <span class="dashboard-card-label">현재 서버명</span>
+                        <div class="server-form">
+                            <input id="server-name" type="text" value="모아르테2" aria-label="현재 서버명">
+                            <button type="button" onclick="saveServerName()">저장</button>
+                        </div>
+                    </section>
+                    <section class="dashboard-card">
+                        <span class="dashboard-card-label">오늘 날짜</span>
+                        <p id="dashboard-date" class="dashboard-value">2026. 8. 27.</p>
+                    </section>
+                    <section class="dashboard-card">
+                        <span class="dashboard-card-label">오늘 전체 참여 현황</span>
+                        <p class="dashboard-value green">0명 참여 중 (0%)</p>
+                    </section>
                 </div>
 
-                <div id="dashboard-info" class="dashboard-info bg-[#111827] border border-gray-800/80 rounded-xl p-6">
-                    <h3 class="text-lg font-bold text-amber-400 border-b border-gray-800 pb-4">🗓️ 요일별 획득 가능 점수 (하루 최대 5점)</h3>
-                    <ul class="border-b border-gray-800 py-3">
-                        <li contenteditable="false"><strong>13시 / 21시 게헨나:</strong> 매일 있음 (14일 x 2점 = <span class="text-blue-400">28점</span>)</li>
-                        <li contenteditable="false"><strong>클랜임무 / 클랜수호:</strong> 목요일마다 있음 (2주 동안 목요일 2회 x 1점 = <span class="text-blue-400">2점</span>)</li>
-                        <li contenteditable="false"><strong>에노크 / 마슈미드:</strong> 토요일마다 있음 (2주 동안 토요일 2회 x 1점 = <span class="text-blue-400">2점</span>)</li>
-                        <li contenteditable="false"><strong>점령전 / 전초전:</strong> 토요일마다 있음 (2주 동안 토요일 2회 x 1점 = <span class="text-blue-400">2점</span>)</li>
-                        <li contenteditable="false"><strong>쟁탈전:</strong> 토요일마다 있음 (2주 동안 토요일 2회 x 1점 = <span class="text-blue-400">2점</span>)</li>
-                    </ul>
+                <section class="dashboard-card season-card">
+                    <span class="dashboard-card-label">이번 셔플 기간</span>
+                    <p id="shuffle-period" class="season-period">🗓️ 셔플 기간: 2026.08.19 ~ 2026.09.01</p>
+                    <p class="season-status">총 14일 기준 셔플 기간 적용 중</p>
+                    <p class="season-note">💡 셔플은 총 14일 기준으로 갱신됩니다.</p>
+                </section>
+            </div>
 
-                    <h3 class="text-lg font-bold text-emerald-400 border-b border-gray-800 py-4">🛡️ 한 시즌(14일) 총 만점 계산</h3>
-                    <ul class="py-3">
-                        <li contenteditable="false"><strong>목요일(2회) 주간:</strong> 13시/21시(2점) + 임무/수호(1점) + 특수·PVP(3점) = 하루 6점 x 2일 = <strong class="text-amber-400">12점</strong></li>
-                        <li contenteditable="false"><strong>토요일(2회) 주간:</strong> 13시/21시(2점) + 임무/수호(0점) + 특수·PVP(3점) = 하루 5점 x 2일 = <strong class="text-amber-400">10점</strong></li>
-                        <li contenteditable="false"><strong>나머지 일반 요일(10일):</strong> 13시/21시(2점) = 하루 2점 x 10일 = <strong class="text-amber-400">20점</strong></li>
-                    </ul>
-
-                    <div class="score-total" contenteditable="false">✨ 종합: 12점 + 10점 + 20점 = <strong class="text-amber-400">총 42점</strong></div>
+            <div id="tab-notice" class="tab-content notice-page hidden">
+                <div class="dashboard-header">
+                    <h2>📢 클랜 공지사항 및 점수 안내</h2>
+                    <button id="dashboard-edit-button" class="dashboard-edit-button" onclick="toggleDashboardEdit()">공지 수정</button>
                 </div>
 
+                <div class="notice-panel">
+                    <div id="dashboard-info" class="notice-content">
+                        <h3 contenteditable="false">🗓️ 한셔플당 획득 가능 점수</h3>
+                        <div contenteditable="false">
+                            <p>13시 / 21시 게헨나: 매일 있음 (14일 x 2점 = 28점)</p>
+                            <p>클랜임무 / 클랜수호: 목요일마다 있음 (2점)</p>
+                            <p>에노크 / 마슈미드: 토요일마다 있음 (2점)</p>
+                            <p>점령전: 토요일마다 있음 (2점)</p>
+                            <p>쟁탈전, 전초전: 셔플 첫주마다 있음 (1점)</p>
+                            <p>도합: 총점 35점</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-members" class="tab-content member-page hidden">
+                <h2>👥 클랜원 명단 및 역할 관리</h2>
+                <p class="member-help">💡 [▲] [▼] 버튼으로 순서를 직접 바꿀 수 있습니다.</p>
+
+                <section class="member-panel">
+                    <h3 class="member-panel-title">➕ 클랜원 추가하기</h3>
+                    <form class="member-form" onsubmit="addMember(event)">
+                        <input id="member-nickname" type="text" placeholder="닉네임 입력" aria-label="닉네임">
+                        <select id="member-class" aria-label="클래스">
+                            <option value="아카샤">아카샤</option>
+                            <option value="카니지">카니지</option>
+                            <option value="바이퍼">바이퍼</option>
+                            <option value="블러드스테인">블러드스테인</option>
+                            <option value="그림리퍼">그림리퍼</option>
+                        </select>
+                        <input id="member-power" type="text" placeholder="전투력 직접 입력" aria-label="전투력">
+                        <select id="member-role" aria-label="역할">
+                            <option value="일반">일반 클랜원</option>
+                            <option value="운영진">운영진</option>
+                            <option value="클마">클마</option>
+                        </select>
+                        <button type="submit">클랜원 등록</button>
+                    </form>
+                </section>
+
+                <section class="member-list-panel">
+                    <h3 class="member-panel-title text-amber-400">👑 클마 및 운영진 리스트</h3>
+                    <table class="member-table">
+                        <thead><tr><th>순서</th><th>닉네임</th><th>클래스</th><th>전투력</th><th>역할</th><th>관리</th></tr></thead>
+                        <tbody id="admin-member-body"></tbody>
+                    </table>
+                </section>
+
+                <section class="member-list-panel">
+                    <h3 class="member-panel-title">🛡️ 일반 클랜원 리스트</h3>
+                    <table class="member-table">
+                        <thead><tr><th>순서</th><th>닉네임</th><th>클래스</th><th>전투력</th><th>역할</th><th>관리</th></tr></thead>
+                        <tbody id="normal-member-body"></tbody>
+                    </table>
+                </section>
+            </div>
+
+            <div id="tab-participation" class="tab-content participation-page hidden">
+                <h2>🔍 클랜원 상세 참여율 조회</h2>
+                <div class="participation-search-panel">
+                    <div class="participation-search">
+                        <input id="participation-search-input" type="text" placeholder="조회할 클랜원 닉네임 입력" aria-label="조회할 클랜원 닉네임">
+                        <button type="button" onclick="searchParticipation()">검색</button>
+                    </div>
+                </div>
+                <div id="participation-result" class="participation-result empty">닉네임을 입력하고 검색 버튼을 눌러주세요.</div>
             </div>
 
             <!-- [운영진 관리 탭 내용] -->
@@ -671,16 +1316,17 @@
                         <p class="attendance-subtitle">현재 서버 출석 현황을 관리합니다.</p>
                     </div>
                     <div class="attendance-header-actions">
-                        <button id="attendance-toggle-button" class="dashboard-edit-button is-active" onclick="toggleAttendance()">출석체크 비활성화</button>
-                        <button id="attendance-clear-button" class="dashboard-edit-button" onclick="clearAttendance()">오늘 출석 기록 전체 삭제</button>
+                        <button id="attendance-toggle-button" class="dashboard-edit-button admin-only is-active" onclick="toggleAttendance()">출석체크 비활성화</button>
+                        <button id="attendance-clear-button" class="dashboard-edit-button admin-only" onclick="clearAttendance()">오늘 출석 기록 전체 삭제</button>
                     </div>
                 </div>
 
-                <div class="attendance-card">
-                    <div class="attendance-card-title">🔒 [관리자 설정] 타임별 인증 비밀번호 (각 4자리)</div>
+                <div class="attendance-card admin-only">
+                    <div class="attendance-card-title">🔒 [운영진 전용] 타임별 인증 비밀번호 설정 (각 4자리)</div>
                     <div id="admin-lock" class="admin-lock">
                         <input id="admin-password" type="password" maxlength="4" placeholder="운영진 비밀번호">
                         <button type="button" onclick="unlockAdminSettings()">잠금 해제</button>
+                        <button type="button" class="admin-password-settings-button" onclick="unlockAdminSettings()">비밀번호 설정하기</button>
                     </div>
                     <p id="admin-lock-message" class="admin-lock-message"></p>
                     <div id="admin-settings-content" class="attendance-settings admin-settings-content hidden">
@@ -753,9 +1399,6 @@
                             <tr><th>닉네임</th><th>총 점수</th><th>오늘 현황</th><th>13시/21시</th><th>에노크/마슈</th><th>쟁탈/점령/전초</th><th>임무/수호</th><th>상세 내역</th></tr>
                         </thead>
                         <tbody id="attendance-body">
-                            <tr><td>DOKDO망나뇽</td><td class="present">0점</td><td>미출석</td><td>-</td><td>-</td><td>-</td><td>-</td><td>없음</td></tr>
-                            <tr><td>DOKDO피카츄</td><td class="present">0점</td><td>미출석</td><td>-</td><td>-</td><td>-</td><td>-</td><td>없음</td></tr>
-                            <tr><td>DOKDO패왕</td><td class="present">0점</td><td>미출석</td><td>-</td><td>-</td><td>-</td><td>-</td><td>없음</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -811,6 +1454,409 @@
             }
         }
 
+        function saveServerName() {
+            const input = document.getElementById('server-name');
+            const serverName = input.value.trim();
+
+            if (!serverName) {
+                alert('서버명을 입력하세요.');
+                return;
+            }
+
+            localStorage.setItem('dokdoServerName', serverName);
+            input.value = serverName;
+        }
+
+        const defaultMembers = {
+            admin: [
+                { nickname: 'DOKDO망나뇽', className: '아카샤', power: '1,420,944만', role: '클마' },
+                { nickname: 'DOKDO피카츄', className: '카니지', power: '블라인드', role: '운영진' },
+                { nickname: 'DOKDO수호', className: '바이퍼', power: '1,324,246만', role: '운영진' },
+                { nickname: 'DOKDO패왕', className: '바이퍼', power: '1,181,133만', role: '운영진' }
+            ],
+            normal: [
+                { nickname: 'DOKDO라닷지', className: '바이퍼', power: '블라인드', role: '일반' },
+                { nickname: 'DOKDO제비', className: '바이퍼', power: '블라인드', role: '일반' },
+                { nickname: 'DOKDO한국', className: '카니지', power: '블라인드', role: '일반' },
+                { nickname: 'DOKDO늑대', className: '바이퍼', power: '블라인드', role: '일반' },
+                { nickname: 'DOKDO마자용', className: '아카샤', power: '블라인드', role: '일반' },
+                { nickname: 'DOKDO로이', className: '블러드스테인', power: '블라인드', role: '일반' },
+                { nickname: 'DOKDO움하핫', className: '바이퍼', power: '블라인드', role: '일반' },
+                { nickname: 'DOKDO갓바다', className: '카니지', power: '블라인드', role: '일반' },
+                { nickname: 'DOKDO크하핫', className: '카니지', power: '블라인드', role: '일반' },
+                { nickname: 'DOKDO결마로', className: '바이퍼', power: '1,494,420만', role: '일반' },
+                { nickname: 'DOKDO우주', className: '바이퍼', power: '1,477,005만', role: '일반' },
+                { nickname: 'DOKDO기모찌', className: '블러드스테인', power: '1,466,746만', role: '일반' },
+                { nickname: 'DOKDO사장', className: '아카샤', power: '1,464,504만', role: '일반' },
+                { nickname: 'DOKDO꼬부기', className: '바이퍼', power: '1,435,705만', role: '일반' },
+                { nickname: 'DOKDO2', className: '카니지', power: '1,433,081만', role: '일반' },
+                { nickname: 'DOKDO1SG', className: '블러드스테인', power: '1,425,463만', role: '일반' },
+                { nickname: 'DOKDO캬하핫', className: '카니지', power: '1,406,639만', role: '일반' },
+                { nickname: 'DOKDO유령', className: '바이퍼', power: '1,383,242만', role: '일반' },
+                { nickname: 'DOKDO와하핫', className: '아카샤', power: '1,372,691만', role: '일반' },
+                { nickname: 'DOKDO나옹이', className: '카니지', power: '1,371,607만', role: '일반' },
+                { nickname: 'DOKDO흑표', className: '카니지', power: '1,362,238만', role: '일반' },
+                { nickname: 'DOKDO맥주', className: '바이퍼', power: '1,358,586만', role: '일반' },
+                { nickname: 'DOKDO빙바', className: '블러드스테인', power: '1,322,075만', role: '일반' },
+                { nickname: 'DOKDO아하핫', className: '바이퍼', power: '1,311,030만', role: '일반' },
+                { nickname: 'DOKDO9', className: '블러드스테인', power: '1,295,189만', role: '일반' },
+                { nickname: 'DOKDO모션', className: '카니지', power: '1,285,730만', role: '일반' },
+                { nickname: 'DOKDO호미', className: '그림리퍼', power: '1,286,773만', role: '일반' },
+                { nickname: 'DOKDO찔꺽이', className: '아카샤', power: '1,265,314만', role: '일반' },
+                { nickname: 'DOKDO냐짱', className: '바이퍼', power: '1,263,830만', role: '일반' },
+                { nickname: 'DOKDO풀악셀', className: '블러드스테인', power: '1,260,617만', role: '일반' },
+                { nickname: 'DOKDO라팍', className: '그림리퍼', power: '1,248,890만', role: '일반' },
+                { nickname: 'DOKDO미로', className: '바이퍼', power: '1,224,193만', role: '일반' },
+                { nickname: 'DOKDO코코', className: '아카샤', power: '1,220,377만', role: '일반' },
+                { nickname: 'DOKDO푸하핫', className: '그림리퍼', power: '1,196,496만', role: '일반' },
+                { nickname: 'DOKDO해적', className: '바이퍼', power: '1,188,916만', role: '일반' },
+                { nickname: 'DOKDO양아치', className: '블러드스테인', power: '1,176,502만', role: '일반' },
+                { nickname: 'DOKDO가츠', className: '블러드스테인', power: '1,171,767만', role: '일반' },
+                { nickname: 'DOKDO철가방', className: '블러드스테인', power: '1,164,835만', role: '일반' },
+                { nickname: 'DOKDO미쓰', className: '아카샤', power: '1,157,220만', role: '일반' },
+                { nickname: 'DOKDO푸린', className: '그림리퍼', power: '1,143,753만', role: '일반' },
+                { nickname: '독도수비대금', className: '카니지', power: '1,096,076만', role: '일반' },
+                { nickname: 'DOKDO우리땅', className: '카니지', power: '1,074,262만', role: '일반' },
+                { nickname: 'DOKDO두리안', className: '카니지', power: '969,306만', role: '일반' }
+            ]
+        };
+
+        let memberLists;
+        const savedMemberLists = localStorage.getItem('dokdoMembers');
+        try {
+            memberLists = JSON.parse(savedMemberLists) || defaultMembers;
+        } catch (error) {
+            memberLists = defaultMembers;
+        }
+
+        const nicknameCorrections = {
+            'DOKDO움흉한': 'DOKDO움하핫',
+            'DOKDO음흉한': 'DOKDO움하핫',
+            'DOKDO라따지': 'DOKDO라닷지',
+            'DOKDO크헛': 'DOKDO크하핫',
+            'DOKDO겔마로': 'DOKDO결마로',
+            'DOKDO모부기': 'DOKDO꼬부기',
+            'DOKDO02': 'DOKDO2',
+            'DOKDO01SG': 'DOKDO1SG',
+            'DOKDO가하핫': 'DOKDO캬하핫',
+            'DOKDO찐껄이': 'DOKDO찔꺽이',
+            'DOKDO나짱': 'DOKDO냐짱',
+            'DOKDO혼악셀': 'DOKDO풀악셀',
+            'DOKDO첨갑방': 'DOKDO철가방',
+            'DOKDO미쯔': 'DOKDO미쓰',
+            'DOKDO우리랑': 'DOKDO우리땅',
+            'DOKDO야하핫': 'DOKDO와하핫'
+        };
+
+        const correctedAttendanceNames = [];
+        Object.values(memberLists).forEach((list) => {
+            list.forEach((member) => {
+                const correctedNickname = nicknameCorrections[member.nickname];
+                if (!correctedNickname) return;
+
+                correctedAttendanceNames.push([member.nickname, correctedNickname]);
+                member.nickname = correctedNickname;
+            });
+        });
+
+        if (correctedAttendanceNames.length) {
+            localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
+        }
+
+        if (!savedMemberLists) {
+            localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
+        }
+
+        function saveMemberLists() {
+            localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
+        }
+
+        const requestedMemberOrder = [
+            'DOKDO라닷지', 'DOKDO제비', 'DOKDO한국', 'DOKDO피카츄', 'DOKDO늑대',
+            'DOKDO마자용', 'DOKDO로이', 'DOKDO움하핫', 'DOKDO갓바다', 'DOKDO크하핫',
+            'DOKDO결마로', 'DOKDO우주', 'DOKDO기모찌', 'DOKDO사장', 'DOKDO꼬부기',
+            'DOKDO2', 'DOKDO망나뇽', 'DOKDO1SG', 'DOKDO캬하핫', 'DOKDO유령',
+            'DOKDO와하핫', 'DOKDO나옹이', 'DOKDO흑표', 'DOKDO맥주', 'DOKDO수호',
+            'DOKDO빙바', 'DOKDO아하핫', 'DOKDO9', 'DOKDO호미', 'DOKDO모션',
+            'DOKDO찔꺽이', 'DOKDO냐짱', 'DOKDO풀악셀', 'DOKDO라팍', 'DOKDO미로',
+            'DOKDO코코', 'DOKDO푸하핫', 'DOKDO해적', 'DOKDO패왕', 'DOKDO양아치',
+            'DOKDO가츠', 'DOKDO철가방', 'DOKDO미쓰', 'DOKDO푸린', '독도수비대금',
+            'DOKDO우리땅', 'DOKDO두리안'
+        ];
+
+        let memberOrder;
+        try {
+            memberOrder = JSON.parse(localStorage.getItem('dokdoMemberOrder')) || [...requestedMemberOrder];
+        } catch (error) {
+            memberOrder = [...requestedMemberOrder];
+        }
+        memberOrder = memberOrder.map((nickname) => nicknameCorrections[nickname] || nickname);
+
+        function compareMemberOrder(firstMember, secondMember) {
+            const firstIndex = memberOrder.indexOf(firstMember.nickname);
+            const secondIndex = memberOrder.indexOf(secondMember.nickname);
+            return (firstIndex < 0 ? memberOrder.length : firstIndex) -
+                (secondIndex < 0 ? memberOrder.length : secondIndex);
+        }
+
+        function renderMemberLists() {
+            ['admin', 'normal'].forEach((listName) => {
+                const body = document.getElementById(`${listName}-member-body`);
+                body.replaceChildren();
+
+                memberLists[listName].sort(compareMemberOrder).forEach((member, index) => {
+                    const row = document.createElement('tr');
+                    const orderCell = document.createElement('td');
+                    orderCell.textContent = `${index + 1}`;
+
+                    const controls = document.createElement('span');
+                    controls.className = 'member-rank-controls';
+                    [['▲', -1], ['▼', 1]].forEach(([label, direction]) => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.textContent = label;
+                        button.title = direction < 0 ? '위로 이동' : '아래로 이동';
+                        button.onclick = () => moveMember(listName, index, direction);
+                        controls.appendChild(button);
+                    });
+                    orderCell.appendChild(controls);
+
+                    const nicknameCell = document.createElement('td');
+                    nicknameCell.textContent = member.nickname;
+                    const classCell = document.createElement('td');
+                    classCell.textContent = member.className;
+                    const powerCell = document.createElement('td');
+                    powerCell.textContent = member.power;
+                    if (member.power === '블라인드') powerCell.className = 'member-power-blind';
+                    const roleCell = document.createElement('td');
+                    const roleBadge = document.createElement('span');
+                    roleBadge.className = `member-role ${member.role === '클마' ? 'leader' : member.role === '일반' ? 'normal' : ''}`;
+                    roleBadge.textContent = member.role;
+                    roleCell.appendChild(roleBadge);
+
+                    const actionCell = document.createElement('td');
+                    const editButton = document.createElement('button');
+                    editButton.type = 'button';
+                    editButton.className = 'member-edit';
+                    editButton.textContent = '수정';
+                    editButton.onclick = () => editMember(listName, index, row, editButton);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.type = 'button';
+                    deleteButton.className = 'member-delete';
+                    deleteButton.textContent = '삭제';
+                    deleteButton.onclick = () => deleteMember(listName, index);
+                    actionCell.append(editButton, deleteButton);
+
+                    row.append(orderCell, nicknameCell, classCell, powerCell, roleCell, actionCell);
+                    body.appendChild(row);
+                });
+            });
+        }
+
+        function renderAttendanceMembers() {
+            const body = document.getElementById('attendance-body');
+            const selectedMember = document.getElementById('attendance-member').value;
+            const allMembers = [...memberLists.admin, ...memberLists.normal]
+                .sort(compareMemberOrder);
+            body.replaceChildren();
+
+            allMembers.forEach((member) => {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td></td><td class="present">0점</td><td>미출석</td><td>-</td><td>-</td><td>-</td><td>-</td><td>없음</td>';
+                row.cells[0].textContent = member.nickname;
+                if (member.power === '블라인드') row.dataset.blindPower = 'true';
+                body.appendChild(row);
+            });
+
+            const memberSelect = document.getElementById('attendance-member');
+            memberSelect.replaceChildren(new Option('-- 명단에서 닉네임을 선택하세요 --', ''));
+            allMembers.forEach((member) => memberSelect.add(new Option(member.nickname, member.nickname)));
+            memberSelect.value = allMembers.some((member) => member.nickname === selectedMember) ? selectedMember : '';
+        }
+
+        function memberPowerValue(power) {
+            const numericPower = Number(String(power).replace(/[^0-9]/g, ''));
+            return Number.isFinite(numericPower) && numericPower > 0 ? numericPower : -1;
+        }
+
+        function addMember(event) {
+            event.preventDefault();
+            const nicknameInput = document.getElementById('member-nickname');
+            const nickname = nicknameInput.value.trim().toUpperCase();
+            const role = document.getElementById('member-role').value;
+
+            if (!nickname) {
+                alert('닉네임을 입력하세요.');
+                return;
+            }
+            if (Object.values(memberLists).flat().some((member) => member.nickname === nickname)) {
+                alert('이미 등록된 클랜원입니다.');
+                return;
+            }
+
+            const member = {
+                nickname,
+                className: document.getElementById('member-class').value,
+                power: document.getElementById('member-power').value.trim() || '블라인드',
+                role
+            };
+            memberLists[role === '일반' ? 'normal' : 'admin'].push(member);
+            if (!memberOrder.includes(member.nickname)) memberOrder.push(member.nickname);
+            saveMemberLists();
+            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
+            renderMemberLists();
+            loadAttendanceRecords();
+            event.target.reset();
+        }
+
+        function moveMember(listName, index, direction) {
+            const list = memberLists[listName];
+            const member = list[index];
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= list.length) return;
+            const targetMember = list[targetIndex];
+
+            [list[index], list[targetIndex]] = [list[targetIndex], list[index]];
+            const orderIndex = memberOrder.indexOf(member.nickname);
+            const targetOrderIndex = memberOrder.indexOf(targetMember.nickname);
+            if (orderIndex >= 0 && targetOrderIndex >= 0) {
+                [memberOrder[orderIndex], memberOrder[targetOrderIndex]] =
+                    [memberOrder[targetOrderIndex], memberOrder[orderIndex]];
+            }
+            saveMemberLists();
+            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
+            renderMemberLists();
+        }
+
+        function createMemberInput(value) {
+            const input = document.createElement('input');
+            input.className = 'member-inline-input';
+            input.value = value;
+            return input;
+        }
+
+        function createMemberSelect(value, options) {
+            const select = document.createElement('select');
+            select.className = 'member-inline-input';
+            options.forEach((optionValue) => {
+                const option = document.createElement('option');
+                option.value = optionValue;
+                option.textContent = optionValue === '일반' ? '일반 클랜원' : optionValue;
+                option.selected = optionValue === value;
+                select.appendChild(option);
+            });
+            return select;
+        }
+
+        function editMember(listName, index, row, editButton) {
+            if (editButton.textContent === '저장') {
+                saveEditedMember(listName, index, row);
+                return;
+            }
+
+            const member = memberLists[listName][index];
+            row.cells[1].replaceChildren(createMemberInput(member.nickname));
+            row.cells[2].replaceChildren(createMemberSelect(member.className, ['아카샤', '카니지', '바이퍼', '블러드스테인', '그림리퍼']));
+            row.cells[3].replaceChildren(createMemberInput(member.power));
+            row.cells[4].replaceChildren(createMemberSelect(member.role, ['일반', '운영진', '클마']));
+            editButton.textContent = '저장';
+        }
+
+        function saveEditedMember(listName, index, row) {
+            const nickname = row.cells[1].querySelector('input').value.trim().toUpperCase();
+            const currentMember = memberLists[listName][index];
+            const duplicate = Object.values(memberLists).flat().some((member, memberIndex) => {
+                const isCurrentMember = member === currentMember;
+                return !isCurrentMember && member.nickname === nickname;
+            });
+
+            if (!nickname) {
+                alert('닉네임을 입력하세요.');
+                return;
+            }
+            if (duplicate) {
+                alert('이미 등록된 클랜원입니다.');
+                return;
+            }
+
+            const updatedMember = {
+                nickname,
+                className: row.cells[2].querySelector('select').value,
+                power: row.cells[3].querySelector('input').value.trim() || '블라인드',
+                role: row.cells[4].querySelector('select').value
+            };
+            const previousNickname = currentMember.nickname;
+            const targetList = updatedMember.role === '일반' ? 'normal' : 'admin';
+            memberLists[listName][index] = updatedMember;
+            const memberOrderIndex = memberOrder.indexOf(previousNickname);
+            if (memberOrderIndex >= 0) memberOrder[memberOrderIndex] = updatedMember.nickname;
+            if (!memberOrder.includes(updatedMember.nickname)) memberOrder.push(updatedMember.nickname);
+
+            if (targetList !== listName) {
+                memberLists[listName].splice(index, 1);
+                memberLists[targetList].push(updatedMember);
+            }
+            saveMemberLists();
+            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
+            renderMemberLists();
+            renameAttendanceRecord(previousNickname, updatedMember.nickname).then(() => {
+                renderAttendanceMembers();
+                loadAttendanceRecords();
+            });
+        }
+
+        function deleteMember(listName, index) {
+            const member = memberLists[listName][index];
+            if (!confirm(`${member.nickname}님을 명단에서 삭제하시겠습니까?`)) return;
+
+            memberLists[listName].splice(index, 1);
+            memberOrder = memberOrder.filter((nickname) => nickname !== member.nickname);
+            saveMemberLists();
+            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
+            renderMemberLists();
+            loadAttendanceRecords();
+        }
+
+        renderMemberLists();
+
+        correctedAttendanceNames.forEach(([previousNickname, newNickname]) => {
+            renameAttendanceRecord(previousNickname, newNickname);
+        });
+
+        function updateDashboardDate() {
+            const today = new Date();
+            const date = `${today.getFullYear()}. ${today.getMonth() + 1}. ${today.getDate()}`;
+            document.getElementById('dashboard-date').textContent = date;
+        }
+
+        function formatShuffleDate(date) {
+            const year = date.getUTCFullYear();
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            return `${year}.${month}.${day}`;
+        }
+
+        function updateShufflePeriod() {
+            const shuffleStart = Date.UTC(2026, 7, 19);
+            const today = new Date();
+            const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+            const daysSinceFirstShuffle = Math.floor((todayUtc - shuffleStart) / 86400000);
+            const shuffleNumber = Math.floor(daysSinceFirstShuffle / 14);
+            const currentStart = new Date(shuffleStart + shuffleNumber * 14 * 86400000);
+            const currentEnd = new Date(currentStart.getTime() + 13 * 86400000);
+
+            document.getElementById('shuffle-period').textContent =
+                `🗓️ 셔플 기간: ${formatShuffleDate(currentStart)} ~ ${formatShuffleDate(currentEnd)}`;
+        }
+
+        const savedServerName = localStorage.getItem('dokdoServerName');
+        if (savedServerName) {
+            document.getElementById('server-name').value = savedServerName;
+        }
+        updateDashboardDate();
+        updateShufflePeriod();
+
         if (localStorage.getItem('dokdoLoggedIn') === 'true') {
             const savedUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
             if (savedUser) setCurrentUser(savedUser.nickname);
@@ -822,21 +1868,36 @@
 
         function switchTab(tabName) {
             const dashboardTab = document.getElementById('tab-dashboard');
+            const noticeTab = document.getElementById('tab-notice');
+            const membersTab = document.getElementById('tab-members');
+            const participationTab = document.getElementById('tab-participation');
             const adminTab = document.getElementById('tab-admin');
             const attendanceTab = document.getElementById('tab-attendance');
             const navDashboard = document.getElementById('nav-dashboard');
+            const navNotice = document.getElementById('nav-notice');
+            const navMembers = document.getElementById('nav-members');
+            const navParticipation = document.getElementById('nav-participation');
             const navAdmin = document.getElementById('nav-admin');
             const navAttendance = document.getElementById('nav-attendance');
 
             const activeNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer";
             const inactiveNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer";
 
-            [dashboardTab, adminTab, attendanceTab].forEach((tab) => tab.classList.add('hidden'));
-            [navDashboard, navAdmin, navAttendance].forEach((nav) => nav.className = inactiveNavClass);
+            [dashboardTab, noticeTab, membersTab, participationTab, adminTab, attendanceTab].forEach((tab) => tab.classList.add('hidden'));
+            [navDashboard, navNotice, navMembers, navParticipation, navAdmin, navAttendance].forEach((nav) => nav.className = inactiveNavClass);
 
             if (tabName === 'dashboard') {
                 dashboardTab.classList.remove('hidden');
                 navDashboard.className = activeNavClass;
+            } else if (tabName === 'notice') {
+                noticeTab.classList.remove('hidden');
+                navNotice.className = activeNavClass;
+            } else if (tabName === 'members') {
+                membersTab.classList.remove('hidden');
+                navMembers.className = activeNavClass;
+            } else if (tabName === 'participation') {
+                participationTab.classList.remove('hidden');
+                navParticipation.className = activeNavClass;
             } else if (tabName === 'admin') {
                 adminTab.classList.remove('hidden');
                 navAdmin.className = activeNavClass;
@@ -847,6 +1908,11 @@
         }
 
         function saveAttendancePassword(time) {
+            if (!isAdmin()) {
+                alert('운영진만 변경할 수 있습니다.');
+                return;
+            }
+
             const password = document.getElementById(`password-${time}`).value;
             if (password.length !== 4) {
                 alert('비밀번호는 4자리로 입력하세요.');
@@ -856,6 +1922,11 @@
         }
 
         function unlockAdminSettings() {
+            if (!isAdmin()) {
+                alert('운영진만 변경할 수 있습니다.');
+                return;
+            }
+
             const password = document.getElementById('admin-password').value;
             const message = document.getElementById('admin-lock-message');
 
@@ -871,6 +1942,11 @@
         }
 
         function toggleAttendance() {
+            if (!isAdmin()) {
+                alert('운영진만 변경할 수 있습니다.');
+                return;
+            }
+
             attendanceEnabled = !attendanceEnabled;
 
             const button = document.getElementById('attendance-toggle-button');
@@ -937,6 +2013,59 @@
             document.getElementById('attendance-notice').textContent = `✅ ${message}`;
         }
 
+        function searchParticipation() {
+            const input = document.getElementById('participation-search-input');
+            const result = document.getElementById('participation-result');
+            const nickname = input.value.trim().toUpperCase();
+            const member = Object.values(memberLists).flat()
+                .find((candidate) => candidate.nickname.toUpperCase() === nickname);
+
+            if (!nickname) {
+                result.className = 'participation-result empty';
+                result.textContent = '닉네임을 입력하고 검색 버튼을 눌러주세요.';
+                return;
+            }
+            if (!member) {
+                result.className = 'participation-result empty';
+                result.textContent = '등록된 클랜원을 찾을 수 없습니다.';
+                return;
+            }
+
+            database.ref(`attendance/${attendanceUserKey(member.nickname)}`).once('value')
+                .then((snapshot) => {
+                    const record = snapshot.val() || {};
+                    const totalScore = Number(record.score) || 0;
+                    const participationRate = Math.min(100, Math.round((totalScore / 35) * 100));
+
+                    result.className = 'participation-result';
+                    result.replaceChildren();
+
+                    const heading = document.createElement('h3');
+                    heading.textContent = member.nickname;
+                    const stats = document.createElement('div');
+                    stats.className = 'participation-stat';
+                    [
+                        ['총 점수', `${totalScore}점`],
+                        ['참여율', `${participationRate}%`],
+                        ['클래스', member.className],
+                        ['전투력', member.power],
+                        ['역할', member.role]
+                    ].forEach(([label, value]) => {
+                        const stat = document.createElement('div');
+                        stat.textContent = label;
+                        const strong = document.createElement('strong');
+                        strong.textContent = value;
+                        stat.appendChild(strong);
+                        stats.appendChild(stat);
+                    });
+                    result.append(heading, stats);
+                })
+                .catch(() => {
+                    result.className = 'participation-result empty';
+                    result.textContent = '참여 기록을 불러오지 못했습니다.';
+                });
+        }
+
         function updateAttendanceRow(row) {
             const time13 = row.dataset.time13Activities ? row.dataset.time13Activities.split('|').filter(Boolean) : [];
             const time21 = row.dataset.time21Activities ? row.dataset.time21Activities.split('|').filter(Boolean) : [];
@@ -966,6 +2095,24 @@
             return encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
         }
 
+        function renameAttendanceRecord(previousNickname, newNickname) {
+            if (previousNickname === newNickname) return Promise.resolve();
+
+            const previousKey = attendanceUserKey(previousNickname);
+            const newKey = attendanceUserKey(newNickname);
+
+            return database.ref(`attendance/${previousKey}`).once('value').then((snapshot) => {
+                const record = snapshot.val();
+                const updates = { [previousKey]: null };
+
+                if (record) {
+                    updates[newKey] = { ...record, nickname: newNickname };
+                }
+
+                return database.ref('attendance').update(updates);
+            }).catch(() => {});
+        }
+
         function saveAttendanceRecord(row) {
             const nickname = row.cells[0].textContent;
             database.ref(`attendance/${attendanceUserKey(nickname)}`).set({
@@ -979,9 +2126,23 @@
         }
 
         function loadAttendanceRecords() {
+            renderAttendanceMembers();
             loadMembers();
             database.ref('attendance').once('value').then((snapshot) => {
                 const records = snapshot.val() || {};
+                const validNames = new Set(Object.values(memberLists).flat().map((member) => member.nickname));
+                const staleRecordUpdates = {};
+
+                Object.entries(records).forEach(([key, record]) => {
+                    if (!record.nickname || !validNames.has(record.nickname)) {
+                        staleRecordUpdates[key] = null;
+                    }
+                });
+
+                if (Object.keys(staleRecordUpdates).length) {
+                    database.ref('attendance').update(staleRecordUpdates).catch(() => {});
+                }
+
                 document.querySelectorAll('#attendance-body tr').forEach((row) => {
                     const record = records[attendanceUserKey(row.cells[0].textContent)];
                     if (!record) return;
@@ -1013,6 +2174,11 @@
         }
 
         function clearAttendance() {
+            if (!isAdmin()) {
+                alert('운영진만 변경할 수 있습니다.');
+                return;
+            }
+
             if (!confirm('오늘 출석 기록을 모두 삭제하시겠습니까?')) return;
             document.getElementById('attendance-notice').textContent = '';
             document.querySelectorAll('#attendance-body tr').forEach((row) => {
