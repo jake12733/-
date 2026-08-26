@@ -242,6 +242,24 @@
 
         .attendance-page {
             color: #d1d5db;
+            position: relative;
+            z-index: 3;
+        }
+
+        .attendance-page button,
+        .attendance-page .event-button,
+        .attendance-page input,
+        .attendance-page select {
+            position: relative;
+            z-index: 5;
+            pointer-events: auto;
+        }
+
+        .attendance-page select {
+            display: block;
+            appearance: auto;
+            -webkit-appearance: menulist;
+            cursor: pointer;
         }
 
         .attendance-page h2 {
@@ -300,6 +318,10 @@
             display: none;
         }
 
+        .admin-only.hidden {
+            display: none !important;
+        }
+
         .attendance-settings {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -354,6 +376,14 @@
             margin-bottom: 6px;
             color: #94a3b8;
             font-size: 11px;
+        }
+
+        .attendance-notice {
+            min-height: 18px;
+            margin: 12px 0 0;
+            color: #34d399;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         .attendance-grid {
@@ -642,7 +672,7 @@
                     </div>
                     <div class="attendance-header-actions">
                         <button id="attendance-toggle-button" class="dashboard-edit-button is-active" onclick="toggleAttendance()">출석체크 비활성화</button>
-                        <button class="dashboard-edit-button" onclick="clearAttendance()">오늘 출석 기록 전체 삭제</button>
+                        <button id="attendance-clear-button" class="dashboard-edit-button" onclick="clearAttendance()">오늘 출석 기록 전체 삭제</button>
                     </div>
                 </div>
 
@@ -671,10 +701,11 @@
                     <div class="attendance-select-row">
                         <div>
                             <label class="attendance-label" for="attendance-member">본인 닉네임 선택</label>
-                            <select id="attendance-member">
+                            <select id="attendance-member" name="attendance-member" onchange="this.dataset.selected = this.value">
                                 <option value="">-- 명단에서 닉네임을 선택하세요 --</option>
                                 <option>DOKDO망나뇽</option>
                                 <option>DOKDO피카츄</option>
+                                <option>DOKDO수호</option>
                                 <option>DOKDO패왕</option>
                             </select>
                         </div>
@@ -683,6 +714,7 @@
                             <input id="attendance-password" type="password" maxlength="4" placeholder="출석할 타임의 4자리 비밀번호 입력">
                         </div>
                     </div>
+                    <p id="attendance-notice" class="attendance-notice"></p>
 
                     <div class="attendance-grid">
                         <div class="attendance-slot">
@@ -742,6 +774,14 @@
             document.getElementById('current-user-name').textContent = nickname;
             document.getElementById('current-user-role').textContent = role;
             document.getElementById('nav-admin').classList.toggle('hidden', role !== 'admin');
+            document.querySelectorAll('.admin-only').forEach((element) => {
+                element.classList.toggle('hidden', role !== 'admin');
+            });
+        }
+
+        function isAdmin() {
+            const currentUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
+            return currentUser && currentUser.role === 'admin';
         }
 
         function handleLogin() {
@@ -834,11 +874,6 @@
             attendanceEnabled = !attendanceEnabled;
 
             const button = document.getElementById('attendance-toggle-button');
-            const attendanceButtons = document.querySelectorAll('.attendance-slot button, .event-button');
-
-            attendanceButtons.forEach((attendanceButton) => {
-                attendanceButton.disabled = !attendanceEnabled;
-            });
 
             button.textContent = attendanceEnabled ? '출석체크 비활성화' : '출석체크 활성화';
             button.classList.toggle('is-active', attendanceEnabled);
@@ -874,6 +909,7 @@
             row.dataset[completedKey] = completedActivities.join('|');
 
             updateAttendanceRow(row);
+            showAttendanceNotice(`${member}님 ${time}시 ${activity} 출석이 완료되었습니다.`);
 
         }
 
@@ -894,6 +930,11 @@
             activities.push(activity);
             row.dataset.events = activities.join('|');
             updateAttendanceRow(row);
+            showAttendanceNotice(`${member}님 ${activity} 출석이 완료되었습니다.`);
+        }
+
+        function showAttendanceNotice(message) {
+            document.getElementById('attendance-notice').textContent = `✅ ${message}`;
         }
 
         function updateAttendanceRow(row) {
@@ -938,6 +979,7 @@
         }
 
         function loadAttendanceRecords() {
+            loadMembers();
             database.ref('attendance').once('value').then((snapshot) => {
                 const records = snapshot.val() || {};
                 document.querySelectorAll('#attendance-body tr').forEach((row) => {
@@ -952,8 +994,27 @@
             }).catch(() => {});
         }
 
+        function loadMembers() {
+            database.ref('users').once('value').then((snapshot) => {
+                const memberSelect = document.getElementById('attendance-member');
+                const existingNames = new Set([...memberSelect.options].map((option) => option.value));
+                const users = snapshot.val() || {};
+
+                Object.values(users).forEach((user) => {
+                    if (!user.nickname || existingNames.has(user.nickname)) return;
+
+                    const option = document.createElement('option');
+                    option.value = user.nickname;
+                    option.textContent = user.nickname;
+                    memberSelect.appendChild(option);
+                    existingNames.add(user.nickname);
+                });
+            }).catch(() => {});
+        }
+
         function clearAttendance() {
             if (!confirm('오늘 출석 기록을 모두 삭제하시겠습니까?')) return;
+            document.getElementById('attendance-notice').textContent = '';
             document.querySelectorAll('#attendance-body tr').forEach((row) => {
                 row.cells[1].textContent = '0점';
                 row.cells[2].textContent = '미출석';
@@ -967,9 +1028,11 @@
                 database.ref(`attendance/${attendanceUserKey(row.cells[0].textContent)}`).remove().catch(() => {});
             });
             document.querySelectorAll('.attendance-slot button').forEach((button) => {
+                button.disabled = false;
                 button.style.opacity = '1';
             });
             document.querySelectorAll('.event-button').forEach((button) => {
+                button.disabled = false;
                 button.style.opacity = '1';
             });
         }
