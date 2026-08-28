@@ -242,13 +242,13 @@
         }
 
         .attendance-member-reset .dashboard-edit-button {
-            border-color: #1d4ed8 !important;
-            background: #2563eb !important;
-            color: #dbeafe !important;
+            border-color: #991b1b !important;
+            background: #b91c1c !important;
+            color: #fee2e2 !important;
         }
 
         .attendance-member-reset .dashboard-edit-button:hover {
-            background: #3b82f6 !important;
+            background: #dc2626 !important;
             color: #ffffff !important;
         }
 
@@ -291,9 +291,9 @@
         }
 
         .attendance-header-actions .dashboard-edit-button.is-disabled {
-            border-color: #7f1d1d !important;
-            background: #450a0a !important;
-            color: #fecaca !important;
+            border-color: #991b1b !important;
+            background: #b91c1c !important;
+            color: #fee2e2 !important;
         }
 
         .dashboard-info {
@@ -1268,30 +1268,39 @@
         .attendance-password-group {
             display: grid;
             gap: 8px;
-            padding: 10px;
+            padding: 16px;
             border: 1px solid #374151;
             border-radius: 8px;
-            background: #111827;
+            background: #f8fafc;
         }
 
         .attendance-password-group-title {
-            color: #dbeafe;
-            font-size: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #d1d5db;
+            color: #111827;
+            font-size: 13px;
             font-weight: bold;
         }
 
         .attendance-password-empty {
-            min-height: 1px;
             order: 4;
         }
 
         .attendance-password-group.boss-group { order: 1; }
         .attendance-password-group.saturday-group { order: 2; }
         .attendance-password-group.occupation-group { order: 3; }
+        .attendance-password-empty { order: 4; }
         .attendance-password-group.outpost-group { order: 5; }
         .attendance-password-group.capture-group { order: 6; }
-        .attendance-password-group.defense-group { order: 7; }
-        .attendance-password-group.mission-group { order: 8; }
+        .attendance-password-group.mission-group { order: 7; }
+        .attendance-password-group.defense-group { order: 8; }
+        .attendance-password-group.event-password-group { order: 3; }
+        .attendance-password-group.occupation-group { grid-column: 1; }
+        .attendance-password-empty { grid-column: 2; }
+        .attendance-password-group.outpost-group { grid-column: 1; }
+        .attendance-password-group.capture-group { grid-column: 2; }
+        .attendance-password-group.mission-group { grid-column: 1; }
+        .attendance-password-group.defense-group { grid-column: 2; }
 
         .admin-settings-header {
             display: flex;
@@ -1310,18 +1319,115 @@
             flex: 0 0 auto;
         }
 
+        .admin-settings-header-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex: 0 0 auto;
+        }
+
+        .admin-settings-header-actions > button {
+            width: 132px;
+            min-width: 132px;
+            height: 36px;
+            box-sizing: border-box;
+            padding: 7px 10px !important;
+            border: 0 !important;
+            border-radius: 4px !important;
+            white-space: nowrap;
+            font-size: 12px !important;
+            line-height: 1;
+            text-align: center;
+            box-shadow: none !important;
+        }
+
+        .attendance-reset-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            grid-column: 1 / -1;
+            padding-top: 8px;
+            border-top: 1px solid #d1d5db;
+        }
+
         .admin-settings-header .admin-settings-close-button.hidden {
             display: none !important;
+        }
+
+        .admin-settings-unlock-only.hidden {
+            display: none !important;
+        }
+
+        .admin-settings-timer-reset-button {
+            min-width: 112px;
+            height: 36px;
+            box-sizing: border-box;
+            padding: 7px 12px;
+            border: 0;
+            border-radius: 4px;
+            background: #b91c1c;
+            color: #fee2e2;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .admin-settings-timer-reset-button:hover {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        .admin-settings-password-reset-button {
+            padding: 7px 12px;
+            border: 0;
+            border-radius: 4px;
+            background: #b91c1c;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .admin-settings-password-reset-button:hover {
+            background: #dc2626;
+        }
+
+        #attendance-clear-button,
+        .admin-settings-close-button {
+            min-width: 112px;
+            height: 36px;
+            box-sizing: border-box;
+            padding: 7px 12px !important;
+            white-space: nowrap;
+            font-size: 12px !important;
         }
 
         .attendance-setting {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 10px;
+            min-width: 0;
+            padding: 8px 0;
             border-radius: 8px;
-            background: #1f2937;
+            background: transparent;
             font-size: 12px;
+        }
+
+        .attendance-setting strong {
+            flex: 0 0 108px;
+            color: #111827;
+            line-height: 1.25;
+        }
+
+        .attendance-setting input {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .attendance-setting button {
+            flex: 0 0 50px;
+            min-height: 40px;
+            white-space: nowrap;
         }
 
         .attendance-setting input,
@@ -1347,13 +1453,13 @@
         }
 
         .admin-settings-close-button {
-            border: 1px solid #991b1b !important;
-            background: #b91c1c !important;
-            color: #fee2e2 !important;
+            border: 1px solid #4b5563 !important;
+            background: #6b7280 !important;
+            color: #f3f4f6 !important;
         }
 
         .admin-settings-close-button:hover {
-            background: #dc2626 !important;
+            background: #9ca3af !important;
             color: #ffffff !important;
         }
 
@@ -1451,6 +1557,31 @@
             background: #b91c1c !important;
         }
 
+        .attendance-page .attendance-slot button,
+        .attendance-page .event-button {
+            position: relative;
+            transition: opacity .2s ease, filter .2s ease;
+        }
+
+        .attendance-page .attendance-slot button.is-locked::before,
+        .attendance-page .event-button.is-locked::before {
+            content: '🔒';
+            display: inline-block;
+            margin-right: 4px;
+        }
+
+        .password-expiry {
+            display: block;
+            margin-top: 3px;
+            color: #fef08a;
+            font-size: 10px;
+            font-weight: normal;
+        }
+
+        .password-expiry.expired {
+            color: #fecaca;
+        }
+
         .event-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1508,6 +1639,14 @@
         }
 
         @media (max-width: 800px) {
+            .attendance-setting strong {
+                flex-basis: 82px;
+            }
+
+            .attendance-setting button {
+                flex-basis: 46px;
+            }
+
             .attendance-header-actions {
                 align-items: stretch;
                 flex-direction: column;
@@ -1518,6 +1657,27 @@
             .attendance-grid,
             .event-row {
                 grid-template-columns: 1fr;
+            }
+
+            .attendance-reset-controls {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .attendance-reset-controls .attendance-member-reset {
+                width: 100%;
+            }
+
+            .attendance-reset-controls .attendance-member-reset input,
+            .attendance-reset-controls .attendance-member-reset button,
+            .attendance-reset-controls > button {
+                flex: 1;
+                width: 100%;
+            }
+
+            .attendance-password-group,
+            .attendance-password-empty {
+                grid-column: 1;
             }
         }
 
@@ -2078,8 +2238,32 @@
             <!-- [운영진 관리 탭 내용] -->
             <div id="tab-admin" class="tab-content hidden">
                 <h2 class="text-2xl font-bold mb-6 text-gray-100">운영진 관리</h2>
-                <div class="bg-[#090d16] border border-gray-800/80 rounded-xl p-6">
-                    <p class="text-gray-300 text-sm">운영진 관리 페이지 영역입니다.</p>
+                <section class="member-panel">
+                    <h3 class="member-panel-title">➕ 클랜원 추가하기</h3>
+                    <form class="member-form" onsubmit="addAdminMember(event)">
+                        <input id="admin-member-nickname" type="text" placeholder="닉네임 입력" aria-label="닉네임">
+                        <select id="admin-member-class" aria-label="클래스">
+                            <option value="아카샤">아카샤</option>
+                            <option value="카니지">카니지</option>
+                            <option value="바이퍼">바이퍼</option>
+                            <option value="블러드스테인">블러드스테인</option>
+                            <option value="그림리퍼">그림리퍼</option>
+                        </select>
+                        <input id="admin-member-power" type="text" placeholder="전투력 직접 입력" aria-label="전투력">
+                        <select id="admin-member-role" aria-label="역할">
+                            <option value="일반">일반 클랜원</option>
+                            <option value="운영진">운영진</option>
+                            <option value="클마">클마</option>
+                        </select>
+                        <button type="submit">클랜원 등록</button>
+                    </form>
+                </section>
+                <div class="member-list-panel">
+                    <h3 class="member-panel-title text-amber-400">🛡️ 블라인드 전투력 입력 명단</h3>
+                    <table class="member-table">
+                        <thead><tr><th>순서</th><th>닉네임</th><th>클래스</th><th>전투력</th><th>역할</th><th>관리</th></tr></thead>
+                        <tbody id="blind-power-member-body"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -2090,19 +2274,19 @@
                         <p class="attendance-subtitle">현재 서버 출석 현황을 관리합니다.</p>
                     </div>
                     <div class="attendance-header-actions">
-                        <button id="attendance-toggle-button" class="dashboard-edit-button admin-only is-active" onclick="toggleAttendance()">출석체크 비활성화</button>
-                        <button id="attendance-clear-button" class="dashboard-edit-button admin-only" onclick="clearAttendance()">초기화</button>
-                        <div class="attendance-member-reset admin-only">
-                            <input id="attendance-reset-member" type="text" placeholder="닉네임 입력" aria-label="초기화할 닉네임">
-                            <button class="dashboard-edit-button" type="button" onclick="resetMemberAttendance()">개별 초기화</button>
-                        </div>
+                        <button id="attendance-toggle-button" class="dashboard-edit-button admin-only is-disabled" onclick="toggleAttendance()">출석체크 비활성화</button>
                     </div>
                 </div>
 
                 <div class="attendance-card admin-only">
                     <div class="admin-settings-header">
                         <div class="attendance-card-title">🔒 [운영진 전용] 타임별 인증 비밀번호 설정 (각 4자리)</div>
-                        <button id="admin-settings-close-button" type="button" class="attendance-action admin-settings-close-button hidden" onclick="closeAdminSettings()">닫기</button>
+                        <div class="admin-settings-header-actions">
+                            <button id="attendance-clear-button" class="dashboard-edit-button attendance-clear-button admin-settings-unlock-only hidden" type="button" onclick="clearAttendance()">초기화</button>
+                            <button id="admin-settings-timer-reset-button" type="button" class="admin-settings-timer-reset-button hidden" onclick="resetPasswordTimers()">타이머 초기화</button>
+                            <button id="admin-settings-password-reset-button" type="button" class="admin-settings-password-reset-button hidden" onclick="resetAllPasswords()">비번 초기화</button>
+                            <button id="admin-settings-close-button" type="button" class="attendance-action admin-settings-close-button hidden" onclick="closeAdminSettings()">닫기</button>
+                        </div>
                     </div>
                     <div id="admin-lock" class="admin-lock">
                         <input id="admin-password" type="password" maxlength="4" placeholder="운영진 비밀번호">
@@ -2114,17 +2298,40 @@
                         <div class="attendance-password-group boss-group">
                             <div class="attendance-password-group-title">게헨나 보스</div>
                             <div class="attendance-setting">
-                                <strong>13시 비밀번호</strong>
-                                <input id="password-13" placeholder="4자리" maxlength="4">
-                                <button type="button" class="password-save-13" onclick="saveAttendancePassword('13')">저장</button>
+                                <strong>5분전</strong>
+                                <input id="password-13-early" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-13" onclick="saveAttendancePassword('13-early')">저장</button>
                             </div>
                             <div class="attendance-setting">
-                                <strong>21시 비밀번호</strong>
-                                <input id="password-21" placeholder="4자리" maxlength="4">
-                                <button type="button" class="password-save-21" onclick="saveAttendancePassword('21')">저장</button>
+                                <strong>3층전</strong>
+                                <input id="password-13-floor" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-13" onclick="saveAttendancePassword('13-floor')">저장</button>
+                            </div>
+                            <div class="attendance-setting">
+                                <strong>마무리</strong>
+                                <input id="password-13-end" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-13" onclick="saveAttendancePassword('13-end')">저장</button>
                             </div>
                         </div>
                         <div class="attendance-password-group saturday-group">
+                            <div class="attendance-password-group-title">21시 타임</div>
+                            <div class="attendance-setting">
+                                <strong>5분전</strong>
+                                <input id="password-21-early" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-21" onclick="saveAttendancePassword('21-early')">저장</button>
+                            </div>
+                            <div class="attendance-setting">
+                                <strong>3층전</strong>
+                                <input id="password-21-floor" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-21" onclick="saveAttendancePassword('21-floor')">저장</button>
+                            </div>
+                            <div class="attendance-setting">
+                                <strong>마무리</strong>
+                                <input id="password-21-end" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-21" onclick="saveAttendancePassword('21-end')">저장</button>
+                            </div>
+                        </div>
+                        <div class="attendance-password-group event-password-group">
                             <div class="attendance-password-group-title">토요일 보스</div>
                             <div class="attendance-setting">
                                 <strong>에노크 비밀번호</strong>
@@ -2178,6 +2385,12 @@
                                 <button type="button" class="password-save-defense" onclick="saveEventPassword('클랜수호')">저장</button>
                             </div>
                         </div>
+                        <div class="attendance-reset-controls">
+                            <div class="attendance-member-reset admin-only">
+                                <input id="attendance-reset-member" type="text" placeholder="닉네임 입력" aria-label="초기화할 닉네임">
+                                <button class="dashboard-edit-button" type="button" onclick="resetMemberAttendance()">개별 초기화</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -2205,15 +2418,15 @@
                         <div class="attendance-grid">
                             <div class="attendance-slot">
                                 <h4>🟡 13시타임</h4>
-                                <button type="button" onclick="checkAttendance('13', '게헨나 5분전 출석', this)">게헨나 5분전 출석</button>
-                                <button type="button" onclick="checkAttendance('13', '3층 올라가기전', this)">3층 올라가기전</button>
-                                <button type="button" onclick="checkAttendance('13', '게헨나 끝 출석', this)">게헨나 끝 출석</button>
+                                <button type="button" data-password-key="13-early" onclick="checkAttendance('13', '5분전', this)">5분전</button>
+                                <button type="button" data-password-key="13-floor" onclick="checkAttendance('13', '3층전', this)">3층전</button>
+                                <button type="button" data-password-key="13-end" onclick="checkAttendance('13', '마무리', this)">마무리</button>
                             </div>
                             <div class="attendance-slot night">
                                 <h4>🌙 21시타임</h4>
-                                <button type="button" onclick="checkAttendance('21', '게헨나 5분전 출석', this)">게헨나 5분전 출석</button>
-                                <button type="button" onclick="checkAttendance('21', '3층 올라가기전', this)">3층 올라가기전</button>
-                                <button type="button" onclick="checkAttendance('21', '게헨나 끝 출석', this)">게헨나 끝 출석</button>
+                                <button type="button" data-password-key="21-early" onclick="checkAttendance('21', '5분전', this)">5분전</button>
+                                <button type="button" data-password-key="21-floor" onclick="checkAttendance('21', '3층전', this)">3층전</button>
+                                <button type="button" data-password-key="21-end" onclick="checkAttendance('21', '마무리', this)">마무리</button>
                             </div>
                         </div>
                     </div>
@@ -2221,8 +2434,8 @@
                     <div class="attendance-group">
                         <h3 class="attendance-group-title">🟢 토요일 보스</h3>
                         <div class="event-row">
-                            <button type="button" class="event-button" onclick="checkEvent('에노크', this)">에노크</button>
-                            <button type="button" class="event-button" onclick="checkEvent('마슈미드', this)">마슈미드</button>
+                            <button type="button" data-password-key="enok" class="event-button" onclick="checkEvent('에노크', this)">에노크</button>
+                            <button type="button" data-password-key="mashmid" class="event-button" onclick="checkEvent('마슈미드', this)">마슈미드</button>
                         </div>
                     </div>
 
@@ -2230,20 +2443,20 @@
                         <h3 class="attendance-group-title">⚔️ PVP</h3>
                         <p class="attendance-group-subtitle">전초전</p>
                         <div class="event-row">
-                            <button type="button" class="event-button purple" onclick="checkEvent('전초전', this)">전초전</button>
+                            <button type="button" data-password-key="outpost" class="event-button purple" onclick="checkEvent('전초전', this)">전초전</button>
                         </div>
                         <p class="attendance-group-subtitle">점령전 / 쟁탈전</p>
                         <div class="event-row">
-                            <button type="button" class="event-button purple" onclick="checkEvent('점령전', this)">점령전</button>
-                            <button type="button" class="event-button purple" onclick="checkEvent('쟁탈전', this)">쟁탈전</button>
+                            <button type="button" data-password-key="occupation" class="event-button purple" onclick="checkEvent('점령전', this)">점령전</button>
+                            <button type="button" data-password-key="capture" class="event-button purple" onclick="checkEvent('쟁탈전', this)">쟁탈전</button>
                         </div>
                     </div>
 
                     <div class="attendance-group">
                         <h3 class="attendance-group-title">🛡️ 클랜 활동</h3>
                         <div class="event-row">
-                            <button type="button" class="event-button green" onclick="checkEvent('클랜임무', this)">클랜임무</button>
-                            <button type="button" class="event-button green" onclick="checkEvent('클랜수호', this)">클랜수호</button>
+                            <button type="button" data-password-key="mission" class="event-button green" onclick="checkEvent('클랜임무', this)">클랜임무</button>
+                            <button type="button" data-password-key="defense" class="event-button green" onclick="checkEvent('클랜수호', this)">클랜수호</button>
                         </div>
                     </div>
                 </div>
@@ -2305,6 +2518,7 @@
             if (confirm('로그아웃 하시겠습니까?')) {
                 localStorage.removeItem('dokdoLoggedIn');
                 localStorage.removeItem('dokdoCurrentUser');
+                localStorage.removeItem('dokdoAdminSettingsUnlocked');
                 const dash = document.getElementById('view-dashboard');
                 dash.classList.add('hidden');
                 dash.classList.remove('flex');
@@ -2530,6 +2744,78 @@
         });
         localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
 
+        const blindPowerMembers = [
+            ['바이퍼', 'DOKDO라닷지', '1,856,204'],
+            ['바이퍼', 'DOKDO제비', '1,809,733'],
+            ['카니지', 'DOKDO한국', '1,764,953'],
+            ['카니지', 'DOKDO피카츄', '1,681,470'],
+            ['아카샤', 'DOKDO마자용', '1,666,862'],
+            ['바이퍼', 'DOKDO늑대', '1,666,032'],
+            ['블러드스테인', 'DOKDO로이', '1,623,112'],
+            ['바이퍼', 'DOKDO움하핫', '1,589,019'],
+            ['카니지', 'DOKDO갓바다', '1,555,120'],
+            ['카니지', 'DOKDO크하핫', '1,525,432']
+        ];
+        blindPowerMembers.forEach(([className, nickname, power]) => {
+            const member = Object.values(memberLists).flat().find((candidate) => candidate.nickname === nickname);
+            if (member) {
+                member.className = className;
+                member.power = power;
+            }
+        });
+        localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
+
+        function renderBlindPowerMembers() {
+            const body = document.getElementById('blind-power-member-body');
+            if (!body) return;
+            body.replaceChildren();
+            blindPowerMembers.forEach(([className, nickname, power], index) => {
+                const row = document.createElement('tr');
+                const member = Object.values(memberLists).flat().find((candidate) => candidate.nickname === nickname);
+                const role = member?.role || '일반';
+                const orderCell = document.createElement('td');
+                orderCell.textContent = `${index + 1}`;
+                const controls = document.createElement('span');
+                controls.className = 'member-rank-controls';
+                const listName = memberLists.admin.includes(member) ? 'admin' : 'normal';
+                const memberIndex = memberLists[listName].indexOf(member);
+                [['▲', -1], ['▼', 1]].forEach(([label, direction]) => {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.textContent = label;
+                    button.onclick = () => moveMember(listName, memberIndex, direction);
+                    controls.appendChild(button);
+                });
+                orderCell.appendChild(controls);
+
+                const nicknameCell = document.createElement('td');
+                nicknameCell.textContent = nickname;
+                const classCell = document.createElement('td');
+                classCell.textContent = className;
+                const powerCell = document.createElement('td');
+                powerCell.textContent = power;
+                const roleCell = document.createElement('td');
+                const roleBadge = document.createElement('span');
+                roleBadge.className = `member-role ${role === '클마' ? 'leader' : role === '일반' ? 'normal' : ''}`;
+                roleBadge.textContent = role;
+                roleCell.appendChild(roleBadge);
+                const actionCell = document.createElement('td');
+                const editButton = document.createElement('button');
+                editButton.type = 'button';
+                editButton.className = 'member-edit';
+                editButton.textContent = '수정';
+                editButton.onclick = () => editMember(listName, memberIndex, row, editButton);
+                const deleteButton = document.createElement('button');
+                deleteButton.type = 'button';
+                deleteButton.className = 'member-delete';
+                deleteButton.textContent = '삭제';
+                deleteButton.onclick = () => deleteMember(listName, memberIndex);
+                actionCell.append(editButton, deleteButton);
+                row.append(orderCell, nicknameCell, classCell, powerCell, roleCell, actionCell);
+                body.appendChild(row);
+            });
+        }
+
         if (!savedMemberLists) {
             localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
         }
@@ -2694,6 +2980,32 @@
             event.target.reset();
         }
 
+        function addAdminMember(event) {
+            event.preventDefault();
+            const nickname = document.getElementById('admin-member-nickname').value.trim().toUpperCase();
+            const role = document.getElementById('admin-member-role').value;
+            if (!nickname) {
+                alert('닉네임을 입력하세요.');
+                return;
+            }
+            if (Object.values(memberLists).flat().some((member) => member.nickname === nickname)) {
+                alert('이미 등록된 클랜원입니다.');
+                return;
+            }
+            memberLists[role === '일반' ? 'normal' : 'admin'].push({
+                nickname,
+                className: document.getElementById('admin-member-class').value,
+                power: document.getElementById('admin-member-power').value.trim() || '블라인드',
+                role
+            });
+            if (!memberOrder.includes(nickname)) memberOrder.push(nickname);
+            saveMemberLists();
+            renderMemberLists();
+            renderBlindPowerMembers();
+            renderAttendanceMembers();
+            event.target.reset();
+        }
+
         function moveMember(listName, index, direction) {
             const list = memberLists[listName];
             const member = list[index];
@@ -2803,6 +3115,7 @@
         }
 
         renderMemberLists();
+        renderBlindPowerMembers();
 
         correctedAttendanceNames.forEach(([previousNickname, newNickname]) => {
             renameAttendanceRecord(previousNickname, newNickname);
@@ -3122,6 +3435,8 @@
         updateDashboardDate();
         updateShufflePeriod();
         scheduleMidnightReset();
+        updatePasswordExpiryDisplays();
+        window.setInterval(updatePasswordExpiryDisplays, 1000);
         setCurrentShuffleRecordInputs();
         updateCurrentShuffleRecord(document.getElementById('server-name').value);
         loadShuffleRecords();
@@ -3192,21 +3507,24 @@
             }
         }
 
-        function saveAttendancePassword(time) {
+        function saveAttendancePassword(key) {
             if (!isAdmin()) {
                 alert('운영진만 변경할 수 있습니다.');
                 return;
             }
 
-            const password = document.getElementById(`password-${time}`).value;
+            const password = document.getElementById(`password-${key}`).value;
             if (password.length !== 4) {
                 alert('비밀번호는 4자리로 입력하세요.');
                 return;
             }
 
-            localStorage.setItem(`dokdoAttendancePassword${time}`, password);
-            alert(`${time}시 비밀번호가 저장되었습니다.`);
-            database.ref(`settings/attendancePasswords/${time}`).set(password).catch(() => {});
+            const expiresAt = Date.now() + 620000;
+            localStorage.setItem(`dokdoAttendancePassword${key}`, password);
+            localStorage.setItem(`dokdoAttendancePassword${key}ExpiresAt`, `${expiresAt}`);
+            alert(`${key} 비밀번호가 저장되었습니다.`);
+            database.ref(`settings/attendancePasswords/${key}`).set({ password, expiresAt }).catch(() => {});
+            updatePasswordExpiryDisplays();
         }
 
         function eventPasswordKey(activity) {
@@ -3234,9 +3552,12 @@
                 return;
             }
 
+            const expiresAt = Date.now() + 620000;
             localStorage.setItem(`dokdoEventPassword${key}`, password);
+            localStorage.setItem(`dokdoEventPassword${key}ExpiresAt`, `${expiresAt}`);
             alert(`${activity} 비밀번호가 저장되었습니다.`);
-            database.ref(`settings/eventPasswords/${key}`).set(password).catch(() => {});
+            database.ref(`settings/eventPasswords/${key}`).set({ password, expiresAt }).catch(() => {});
+            updatePasswordExpiryDisplays();
         }
 
         function unlockAdminSettings() {
@@ -3248,37 +3569,117 @@
             const password = document.getElementById('admin-password').value;
             const message = document.getElementById('admin-lock-message');
 
-            if (password !== '9889') {
+            if (localStorage.getItem('dokdoAdminSettingsUnlocked') !== 'true' && password !== '9889') {
                 message.textContent = '운영진 비밀번호가 올바르지 않습니다.';
                 return;
             }
 
+            localStorage.setItem('dokdoAdminSettingsUnlocked', 'true');
             document.getElementById('admin-settings-content').classList.remove('hidden');
             document.getElementById('admin-lock').classList.add('hidden');
             document.getElementById('admin-settings-close-button').classList.remove('hidden');
+            document.getElementById('admin-settings-timer-reset-button').classList.remove('hidden');
+            document.getElementById('admin-settings-password-reset-button').classList.remove('hidden');
+            document.getElementById('attendance-clear-button').classList.remove('hidden');
             message.textContent = '관리자 설정이 잠금 해제되었습니다.';
             message.style.color = '#34d399';
             loadAttendancePasswords();
         }
 
         function loadAttendancePasswords() {
-            ['13', '21'].forEach((time) => {
-                database.ref(`settings/attendancePasswords/${time}`).once('value').then((snapshot) => {
-                    const password = snapshot.val();
+            ['13-early', '13-floor', '13-end', '21-early', '21-floor', '21-end'].forEach((key) => {
+                database.ref(`settings/attendancePasswords/${key}`).once('value').then((snapshot) => {
+                    const saved = snapshot.val();
+                    const password = typeof saved === 'string' ? saved : saved?.password;
+                    const expiresAt = typeof saved === 'object' ? Number(saved.expiresAt) : 0;
                     if (!password) return;
-                    localStorage.setItem(`dokdoAttendancePassword${time}`, password);
-                    document.getElementById(`password-${time}`).value = password;
+                    localStorage.setItem(`dokdoAttendancePassword${key}`, password);
+                    if (expiresAt) localStorage.setItem(`dokdoAttendancePassword${key}ExpiresAt`, `${expiresAt}`);
+                    document.getElementById(`password-${key}`).value = password;
+                    updatePasswordExpiryDisplays();
                 }).catch(() => {});
             });
             ['에노크', '마슈미드', '점령전', '쟁탈전', '전초전', '클랜임무', '클랜수호'].forEach((activity) => {
                 const key = eventPasswordKey(activity);
                 database.ref(`settings/eventPasswords/${key}`).once('value').then((snapshot) => {
-                    const password = snapshot.val();
+                    const saved = snapshot.val();
+                    const password = typeof saved === 'string' ? saved : saved?.password;
+                    const expiresAt = typeof saved === 'object' ? Number(saved.expiresAt) : 0;
                     if (!password) return;
                     localStorage.setItem(`dokdoEventPassword${key}`, password);
+                    if (expiresAt) localStorage.setItem(`dokdoEventPassword${key}ExpiresAt`, `${expiresAt}`);
                     document.getElementById(`password-${key}`).value = password;
+                    updatePasswordExpiryDisplays();
                 }).catch(() => {});
             });
+        }
+
+        function passwordExpiryKey(key) {
+            return key.startsWith('13-') || key.startsWith('21-')
+                ? `dokdoAttendancePassword${key}ExpiresAt`
+                : `dokdoEventPassword${key}ExpiresAt`;
+        }
+
+        function updatePasswordExpiryDisplays() {
+            document.querySelectorAll('[data-password-key]').forEach((button) => {
+                const key = button.dataset.passwordKey;
+                let expiry = Number(localStorage.getItem(passwordExpiryKey(key))) || 0;
+                let remaining = Math.max(0, expiry - Date.now());
+                let display = button.querySelector('.password-expiry');
+                if (!display) {
+                    display = document.createElement('span');
+                    display.className = 'password-expiry';
+                    button.appendChild(display);
+                }
+                const seconds = Math.ceil(remaining / 1000);
+                display.textContent = expiry && remaining ? `남은 시간 ${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}` : '만료됨';
+                display.classList.toggle('expired', !remaining);
+                button.disabled = false;
+            });
+        }
+
+        function resetPasswordTimers() {
+            if (!isAdmin()) {
+                alert('운영진만 변경할 수 있습니다.');
+                return;
+            }
+            if (!confirm('모든 출석 비밀번호 타이머를 초기화하시겠습니까?')) return;
+
+            const keys = ['13-early', '13-floor', '13-end', '21-early', '21-floor', '21-end', 'enok', 'mashmid', 'occupation', 'capture', 'outpost', 'mission', 'defense'];
+            keys.forEach((key) => {
+                localStorage.removeItem(passwordExpiryKey(key));
+                const path = key.startsWith('13-') || key.startsWith('21-')
+                    ? `settings/attendancePasswords/${key}`
+                    : `settings/eventPasswords/${key}`;
+                database.ref(path).remove().catch(() => {});
+            });
+            updatePasswordExpiryDisplays();
+            alert('모든 출석 비밀번호 타이머가 초기화되었습니다.');
+        }
+
+        function resetAllPasswords() {
+            if (!isAdmin()) {
+                alert('운영진만 변경할 수 있습니다.');
+                return;
+            }
+            if (!confirm('모든 콘텐츠 비밀번호를 초기화하시겠습니까?')) return;
+
+            const keys = ['13-early', '13-floor', '13-end', '21-early', '21-floor', '21-end', 'enok', 'mashmid', 'occupation', 'capture', 'outpost', 'mission', 'defense'];
+            keys.forEach((key) => {
+                const localPrefix = key.startsWith('13-') || key.startsWith('21-')
+                    ? 'dokdoAttendancePassword'
+                    : 'dokdoEventPassword';
+                localStorage.removeItem(`${localPrefix}${key}`);
+                localStorage.removeItem(`${localPrefix}${key}ExpiresAt`);
+                const path = key.startsWith('13-') || key.startsWith('21-')
+                    ? `settings/attendancePasswords/${key}`
+                    : `settings/eventPasswords/${key}`;
+                database.ref(path).remove().catch(() => {});
+                const input = document.getElementById(`password-${key}`);
+                if (input) input.value = '';
+            });
+            updatePasswordExpiryDisplays();
+            alert('모든 비밀번호가 초기화되었습니다.');
         }
 
         function closeAdminSettings() {
@@ -3290,8 +3691,12 @@
             document.getElementById('admin-settings-content').classList.add('hidden');
             document.getElementById('admin-lock').classList.remove('hidden');
             document.getElementById('admin-settings-close-button').classList.add('hidden');
+            document.getElementById('admin-settings-timer-reset-button').classList.add('hidden');
+            document.getElementById('admin-settings-password-reset-button').classList.add('hidden');
+            document.getElementById('attendance-clear-button').classList.add('hidden');
             document.getElementById('admin-password').value = '';
-            document.getElementById('admin-lock-message').textContent = '';
+            document.getElementById('admin-lock-message').textContent = '관리자 인증 상태가 유지됩니다. 다시 열려면 설정 버튼을 누르세요.';
+            document.getElementById('admin-lock-message').style.color = '#2563eb';
         }
 
         function toggleAttendance() {
@@ -3305,8 +3710,18 @@
             const button = document.getElementById('attendance-toggle-button');
 
             button.textContent = attendanceEnabled ? '출석체크 비활성화' : '출석체크 활성화';
-            button.classList.toggle('is-active', attendanceEnabled);
-            button.classList.toggle('is-disabled', !attendanceEnabled);
+            button.classList.toggle('is-active', !attendanceEnabled);
+            button.classList.toggle('is-disabled', attendanceEnabled);
+            if (!attendanceEnabled) {
+                document.getElementById('attendance-password').value = '';
+            }
+            updateAttendanceLockIcons();
+        }
+
+        function updateAttendanceLockIcons() {
+            document.querySelectorAll('#tab-attendance .attendance-slot button, #tab-attendance .event-button').forEach((control) => {
+                control.classList.toggle('is-locked', !attendanceEnabled);
+            });
         }
 
         function checkAttendance(time, activity, button) {
@@ -3325,8 +3740,14 @@
                 showAttendanceNotice('타임별 4자리 비밀번호를 입력하세요.');
                 return;
             }
-
-            const localPassword = localStorage.getItem(`dokdoAttendancePassword${time}`);
+            const activityKey = activity.includes('5분전') ? 'early' : activity.includes('3층') ? 'floor' : 'end';
+            const passwordKey = `${time}-${activityKey}`;
+            const localPassword = localStorage.getItem(`dokdoAttendancePassword${passwordKey}`);
+            const localExpiry = Number(localStorage.getItem(`dokdoAttendancePassword${passwordKey}ExpiresAt`)) || 0;
+            if (!localExpiry || localExpiry <= Date.now()) {
+                showAttendanceNotice(`${activity} 비밀번호가 만료되었습니다. 다시 저장하세요.`);
+                return;
+            }
             const verifyAttendance = (savedPassword) => {
                 if (!savedPassword) {
                     showAttendanceNotice(`${time}시 비밀번호가 아직 설정되지 않았습니다.`);
@@ -3360,16 +3781,15 @@
                 row.dataset[completedKey] = completedActivities.join('|');
 
                 updateAttendanceRow(row);
-                document.getElementById('attendance-password').value = '';
                 showAttendanceNotice(`${member}님 ${time}시 ${activity} 출석이 완료되었습니다.`);
             };
 
-            if (localPassword) {
+            if (localPassword && localExpiry > Date.now()) {
                 verifyAttendance(localPassword);
                 return;
             }
 
-            database.ref(`settings/attendancePasswords/${time}`).once('value')
+            database.ref(`settings/attendancePasswords/${passwordKey}`).once('value')
                 .then((snapshot) => verifyAttendance(snapshot.val()))
                 .catch(() => showAttendanceNotice('비밀번호를 확인하지 못했습니다.'));
 
@@ -3378,6 +3798,10 @@
         function checkEvent(activity, button) {
             const member = document.getElementById('attendance-member').value;
             const password = document.getElementById('attendance-password').value;
+            if (!attendanceEnabled) {
+                showAttendanceNotice('현재 출석 체크가 비활성화되어 있습니다.');
+                return;
+            }
             if (!member) {
                 alert('먼저 닉네임을 선택하세요.');
                 return;
@@ -3386,9 +3810,13 @@
                 showAttendanceNotice(`${activity} 출석용 4자리 비밀번호를 입력하세요.`);
                 return;
             }
-
             const key = eventPasswordKey(activity);
             const localPassword = localStorage.getItem(`dokdoEventPassword${key}`);
+            const localExpiry = Number(localStorage.getItem(`dokdoEventPassword${key}ExpiresAt`)) || 0;
+            if (!localExpiry || localExpiry <= Date.now()) {
+                showAttendanceNotice(`${activity} 비밀번호가 만료되었습니다. 다시 저장하세요.`);
+                return;
+            }
             const verifyEvent = (savedPassword) => {
                 if (!savedPassword) {
                     showAttendanceNotice(`${activity} 비밀번호가 아직 설정되지 않았습니다.`);
@@ -3416,11 +3844,10 @@
                 activities.push(activity);
                 row.dataset.events = activities.join('|');
                 updateAttendanceRow(row);
-                document.getElementById('attendance-password').value = '';
                 showAttendanceNotice(`${member}님 ${activity} 출석이 완료되었습니다.`);
             };
 
-            if (localPassword) {
+            if (localPassword && localExpiry > Date.now()) {
                 verifyEvent(localPassword);
                 return;
             }
@@ -3574,6 +4001,7 @@
         function saveAttendanceRecord(row) {
             const nickname = row.cells[0].textContent;
             const score = Number(row.cells[1].textContent.match(/^\d+/)?.[0]) || 0;
+            const totalScore = score;
             const time13 = row.dataset.time13Activities ? row.dataset.time13Activities.split('|').filter(Boolean) : [];
             const time21 = row.dataset.time21Activities ? row.dataset.time21Activities.split('|').filter(Boolean) : [];
             const events = row.dataset.events ? row.dataset.events.split('|').filter(Boolean) : [];
@@ -3583,6 +4011,34 @@
                 events.includes('전초전') && events.includes('쟁탈전'),
                 events.includes('클랜임무') && events.includes('클랜수호')]
                 .filter(Boolean).length;
+            const recordId = currentShuffleId();
+            const participantKey = attendanceUserKey(nickname);
+            const participant = {
+                nickname,
+                score,
+                rate: Math.round((score / 35) * 100)
+            };
+            const dailyParticipant = {
+                nickname,
+                activities: [...time13, ...time21, ...events].join('/') || '',
+                score: dailyScore,
+                totalScore,
+                rate: Math.round((totalScore / 35) * 100)
+            };
+            const cachedRecord = shuffleRecordsCache[recordId] || {
+                startDate: dateInputValue(new Date(Number(recordId))),
+                endDate: dateInputValue(new Date(Number(recordId) + 13 * 86400000)),
+                serverName: document.getElementById('server-name').value,
+                participants: {},
+                daily: {}
+            };
+            cachedRecord.participants = { ...(cachedRecord.participants || {}), [participantKey]: participant };
+            const currentDay = currentAttendanceDay();
+            cachedRecord.daily = { ...(cachedRecord.daily || {}), [currentAttendanceDay()]: {
+                ...((cachedRecord.daily || {})[currentDay] || {}),
+                [participantKey]: dailyParticipant
+            } };
+            shuffleRecordsCache[recordId] = cachedRecord;
             database.ref(`attendance/${attendanceUserKey(nickname)}`).set({
                 nickname,
                 score,
@@ -3594,18 +4050,8 @@
                 events: row.dataset.events || '',
                 updatedAt: firebase.database.ServerValue.TIMESTAMP
             }).catch(() => {});
-            database.ref(`shuffleRecords/${currentShuffleId()}/participants/${attendanceUserKey(nickname)}`).update({
-                nickname,
-                score,
-                rate: Math.round((score / 35) * 100)
-            }).catch(() => {});
-            database.ref(`shuffleRecords/${currentShuffleId()}/daily/${currentAttendanceDay()}/${attendanceUserKey(nickname)}`).set({
-                nickname,
-                activities: [...time13, ...time21, ...events].join('/') || '',
-                score: dailyScore,
-                totalScore,
-                rate: Math.round((totalScore / 35) * 100)
-            }).catch(() => {});
+            database.ref(`shuffleRecords/${recordId}/participants/${participantKey}`).set(participant).catch(() => {});
+            database.ref(`shuffleRecords/${recordId}/daily/${currentAttendanceDay()}/${participantKey}`).set(dailyParticipant).catch(() => {});
         }
 
         function loadAttendanceRecords() {
@@ -3677,6 +4123,7 @@
             document.getElementById('attendance-notice').textContent = '';
             document.querySelectorAll('#attendance-body tr').forEach((row) => {
                 row.dataset.baseScore = 0;
+                row.cells[1].textContent = '0점 (0%)';
                 row.cells[2].textContent = '미출석';
                 row.cells[3].textContent = '-';
                 row.cells[4].textContent = '-';
@@ -3686,8 +4133,10 @@
                 row.dataset.time13Activities = '';
                 row.dataset.time21Activities = '';
                 row.dataset.events = '';
-                updateAttendanceRow(row);
+                database.ref(`attendance/${attendanceUserKey(row.cells[0].textContent)}`).remove().catch(() => {});
             });
+            database.ref(`shuffleRecords/${currentShuffleId()}/participants`).remove().catch(() => {});
+            database.ref(`shuffleRecords/${currentShuffleId()}/daily/${currentAttendanceDay()}`).remove().catch(() => {});
             document.querySelectorAll('.attendance-slot button').forEach((button) => {
                 button.disabled = false;
                 button.style.opacity = '1';
