@@ -3922,15 +3922,15 @@
 
             const time13Score = time13.length === 3 ? 1 : 0;
             const time21Score = time21.length === 3 ? 1 : 0;
-            const enokScore = events.includes('에노크') && events.includes('마슈미드') ? 1 : 0;
-            const occupationScore = events.filter((event) => event === '점령전').length;
+            const enokScore = events.includes('에노크') && events.includes('마슈미드') ? 2 : 0;
+            const occupationScore = events.includes('점령전') ? 2 : 0;
             const siegeScore = events.includes('전초전') && events.includes('쟁탈전') ? 1 : 0;
             const missionScore = events.includes('클랜임무') && events.includes('클랜수호') ? 1 : 0;
             const dailyScore = time13Score + time21Score + enokScore + occupationScore + siegeScore + missionScore;
             const totalScore = Number(row.dataset.baseScore || 0) + dailyScore;
             const participationRate = Math.round((totalScore / 35) * 100);
             const timeProgress = `${time13Score + time21Score}점 (${time13.length}/3, ${time21.length}/3)`;
-            const eventDetails = `${enokScore ? '1점' : `${events.includes('에노크') ? '에노크 ' : ''}${events.includes('마슈미드') ? '마슈미드' : '-'}`} `;
+            const eventDetails = `${enokScore ? '2점' : `${events.includes('에노크') ? '에노크 ' : ''}${events.includes('마슈미드') ? '마슈미드' : '-'}`} `;
 
             row.cells[1].textContent = `${totalScore}점 (${participationRate}%)`;
             row.cells[2].textContent = totalScore > 0 ? '출석 진행 중' : '미출석';
@@ -4010,7 +4010,9 @@
                 events.includes('점령전'),
                 events.includes('전초전') && events.includes('쟁탈전'),
                 events.includes('클랜임무') && events.includes('클랜수호')]
-                .filter(Boolean).length;
+                .filter(Boolean).length +
+                (events.includes('에노크') && events.includes('마슈미드') ? 1 : 0) +
+                (events.includes('점령전') ? 1 : 0);
             const recordId = currentShuffleId();
             const participantKey = attendanceUserKey(nickname);
             const participant = {
