@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -3259,6 +3258,27 @@
             document.getElementById('admin-settings-close-button').classList.remove('hidden');
             message.textContent = '관리자 설정이 잠금 해제되었습니다.';
             message.style.color = '#34d399';
+            loadAttendancePasswords();
+        }
+
+        function loadAttendancePasswords() {
+            ['13', '21'].forEach((time) => {
+                database.ref(`settings/attendancePasswords/${time}`).once('value').then((snapshot) => {
+                    const password = snapshot.val();
+                    if (!password) return;
+                    localStorage.setItem(`dokdoAttendancePassword${time}`, password);
+                    document.getElementById(`password-${time}`).value = password;
+                }).catch(() => {});
+            });
+            ['에노크', '마슈미드', '점령전', '쟁탈전', '전초전', '클랜임무', '클랜수호'].forEach((activity) => {
+                const key = eventPasswordKey(activity);
+                database.ref(`settings/eventPasswords/${key}`).once('value').then((snapshot) => {
+                    const password = snapshot.val();
+                    if (!password) return;
+                    localStorage.setItem(`dokdoEventPassword${key}`, password);
+                    document.getElementById(`password-${key}`).value = password;
+                }).catch(() => {});
+            });
         }
 
         function closeAdminSettings() {
