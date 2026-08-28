@@ -29,9 +29,19 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #030712;
+            background: #ffffff;
             color: #f3f4f6;
             font-family: Arial, sans-serif;
+        }
+
+        button {
+            position: relative;
+            z-index: 10;
+            pointer-events: auto;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
         }
 
         #view-login {
@@ -39,7 +49,7 @@
             inset: 0;
             z-index: 50;
             overflow: hidden;
-            background-color: #030712;
+            background-color: #ffffff;
         }
 
         .login-background {
@@ -56,7 +66,7 @@
             position: absolute;
             inset: 0;
             z-index: 1;
-            background: rgba(0, 0, 0, .3);
+            background: rgba(255, 255, 255, .82);
         }
 
         #view-login > div:first-of-type {
@@ -80,7 +90,7 @@
             padding: 28px;
             border: 1px solid rgba(127, 29, 29, .6);
             border-radius: 16px;
-            background: rgba(9, 13, 22, .95);
+            background: #ffffff;
             box-shadow: 0 0 100px rgba(0, 0, 0, .95);
         }
 
@@ -99,6 +109,34 @@
             font-size: 12px;
             text-align: center;
             letter-spacing: 5px;
+        }
+
+        #view-login .auth-tabs {
+            border-bottom-color: #d1d5db;
+        }
+
+        #view-login .auth-tab {
+            color: #6b7280;
+        }
+
+        #view-login .auth-tab.active {
+            color: #dc2626;
+        }
+
+        #view-login .text-gray-400,
+        #view-login label,
+        #view-login span {
+            color: #374151;
+        }
+
+        #view-login input {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+            color: #111827;
+        }
+
+        #view-login input::placeholder {
+            color: #64748b;
         }
 
         #view-login label {
@@ -193,10 +231,58 @@
             color: #ffffff !important;
         }
 
+        #attendance-clear-button {
+            border-color: #991b1b !important;
+            background: #b91c1c !important;
+            color: #fee2e2 !important;
+        }
+
+        #attendance-clear-button:hover {
+            background: #dc2626 !important;
+            color: #ffffff !important;
+        }
+
+        .attendance-member-reset .dashboard-edit-button {
+            border-color: #1d4ed8 !important;
+            background: #2563eb !important;
+            color: #dbeafe !important;
+        }
+
+        .attendance-member-reset .dashboard-edit-button:hover {
+            background: #3b82f6 !important;
+            color: #ffffff !important;
+        }
+
         .attendance-header-actions {
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .attendance-member-reset {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .attendance-member-reset input {
+            width: 150px;
+            box-sizing: border-box;
+            padding: 9px 10px;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            outline: none;
+            background: #111827;
+            color: #f3f4f6;
+            font-size: 13px;
+        }
+
+        .attendance-member-reset .dashboard-edit-button {
+            min-width: 96px;
+            white-space: nowrap;
+            text-align: center;
+            line-height: 1.2;
         }
 
         .attendance-header-actions .dashboard-edit-button.is-active {
@@ -340,6 +426,244 @@
             margin: 0;
             color: #8795aa;
             font-size: 13px;
+        }
+
+        .shuffle-record-page {
+            color: #d1d5db;
+        }
+
+        .shuffle-record-page h2 {
+            margin: 0 0 26px;
+            color: #f8fafc;
+            font-size: 28px;
+        }
+
+        .shuffle-record-panel {
+            margin-bottom: 24px;
+            padding: 24px;
+            border: 1px solid #263247;
+            border-radius: 12px;
+            background: #111827;
+        }
+
+        .shuffle-record-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.3fr auto;
+            gap: 12px;
+        }
+
+        .shuffle-record-form label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            color: #9fb4d0;
+            font-size: 12px;
+        }
+
+        .shuffle-record-form input,
+        .shuffle-record-form button {
+            box-sizing: border-box;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid #35445a;
+            border-radius: 4px;
+            background: #202b3b;
+            color: #f8fafc;
+            font: inherit;
+        }
+
+        .shuffle-record-form button {
+            align-self: end;
+            border: 0;
+            background: #e5262b;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .shuffle-record-search {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .shuffle-record-search select,
+        .shuffle-record-search #shuffle-search-server {
+            min-width: 0;
+        }
+
+        .shuffle-record-search #shuffle-search-nickname {
+            grid-column: 1 / 3;
+        }
+
+        .shuffle-record-search button {
+            grid-column: 3;
+        }
+
+        .shuffle-record-search input,
+        .shuffle-record-search select,
+        .shuffle-record-search button {
+            box-sizing: border-box;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid #35445a;
+            border-radius: 4px;
+            background: #202b3b;
+            color: #f8fafc;
+            font: inherit;
+        }
+
+        .shuffle-record-search button {
+            border: 0;
+            background: #2563eb;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .shuffle-record-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .shuffle-record-table th,
+        .shuffle-record-table td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #1e293b;
+            text-align: left;
+        }
+
+        .shuffle-record-table th {
+            color: #9fb4d0;
+            font-weight: normal;
+        }
+
+        .shuffle-record-table td:first-child {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+
+        .shuffle-period-button {
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #fbbf24;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .shuffle-period-button:hover {
+            color: #fde68a;
+            text-decoration: underline;
+        }
+
+        .shuffle-record-open-button {
+            padding: 7px 12px;
+            border: 0;
+            border-radius: 4px;
+            background: #2563eb;
+            color: #dbeafe;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .shuffle-record-open-button:hover {
+            background: #3b82f6;
+            color: #ffffff;
+        }
+
+        .shuffle-record-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .shuffle-detail-panel {
+            display: none;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #263247;
+        }
+
+        .shuffle-detail-panel.visible {
+            display: block;
+        }
+
+        .shuffle-detail-title {
+            margin: 0 0 16px;
+            color: #f8fafc;
+            font-size: 16px;
+        }
+
+        .shuffle-detail-close-button {
+            padding: 7px 12px;
+            border: 0;
+            border-radius: 4px;
+            background: #b91c1c;
+            color: #fee2e2;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .shuffle-detail-close-button:hover {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        .shuffle-detail-day {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 0 0 12px;
+            color: #60a5fa;
+            font-size: 14px;
+        }
+
+        .shuffle-day-open-button {
+            padding: 6px 10px;
+            border: 0;
+            border-radius: 4px;
+            background: #2563eb;
+            color: #dbeafe;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .shuffle-day-open-button:hover {
+            background: #3b82f6;
+            color: #ffffff;
+        }
+
+        .shuffle-day-content.hidden {
+            display: none;
+        }
+
+        .shuffle-detail-table {
+            width: 100%;
+            margin-bottom: 18px;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .shuffle-detail-table th,
+        .shuffle-detail-table td {
+            padding: 10px;
+            border-bottom: 1px solid #1e293b;
+            text-align: left;
+        }
+
+        .shuffle-detail-table th {
+            color: #9fb4d0;
+            font-weight: normal;
+        }
+
+        .shuffle-record-empty {
+            color: #8795aa;
+            text-align: center !important;
         }
 
         .notice-page {
@@ -647,6 +971,50 @@
             text-align: center !important;
         }
 
+        .diamond-summary {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .diamond-summary-card {
+            min-height: 88px;
+            box-sizing: border-box;
+            padding: 16px;
+            border: 1px solid #35445a;
+            border-radius: 8px;
+            background: #202b3b;
+            color: #dbeafe;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .diamond-summary-card strong {
+            display: block;
+            margin-top: 8px;
+            color: #fbbf24;
+            font-size: 20px;
+        }
+
+        .diamond-distribution-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .diamond-distribution-table th,
+        .diamond-distribution-table td {
+            padding: 11px 10px;
+            border-bottom: 1px solid #1e293b;
+            text-align: left;
+        }
+
+        .diamond-distribution-table th {
+            color: #9fb4d0;
+            font-weight: normal;
+        }
+
         @media (max-width: 800px) {
             .diamond-form {
                 display: grid;
@@ -691,7 +1059,8 @@
             gap: 12px;
         }
 
-        .participation-search input {
+        .participation-search input,
+        .participation-search select {
             min-width: 0;
             flex: 1;
             box-sizing: border-box;
@@ -751,6 +1120,10 @@
         }
 
         @media (max-width: 700px) {
+            .diamond-summary {
+                grid-template-columns: 1fr;
+            }
+
             .participation-search,
             .participation-stat {
                 grid-template-columns: 1fr;
@@ -807,6 +1180,13 @@
             position: relative;
             z-index: 5;
             pointer-events: auto;
+        }
+
+        .attendance-page button,
+        .attendance-page .event-button {
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .attendance-page select {
@@ -886,6 +1266,55 @@
             gap: 12px;
         }
 
+        .attendance-password-group {
+            display: grid;
+            gap: 8px;
+            padding: 10px;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            background: #111827;
+        }
+
+        .attendance-password-group-title {
+            color: #dbeafe;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .attendance-password-empty {
+            min-height: 1px;
+            order: 4;
+        }
+
+        .attendance-password-group.boss-group { order: 1; }
+        .attendance-password-group.saturday-group { order: 2; }
+        .attendance-password-group.occupation-group { order: 3; }
+        .attendance-password-group.outpost-group { order: 5; }
+        .attendance-password-group.capture-group { order: 6; }
+        .attendance-password-group.defense-group { order: 7; }
+        .attendance-password-group.mission-group { order: 8; }
+
+        .admin-settings-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .admin-settings-header .attendance-card-title {
+            margin-bottom: 0;
+        }
+
+        .admin-settings-header .admin-settings-close-button {
+            flex: 0 0 auto;
+        }
+
+        .admin-settings-header .admin-settings-close-button.hidden {
+            display: none !important;
+        }
+
         .attendance-setting {
             display: flex;
             align-items: center;
@@ -918,9 +1347,30 @@
             box-shadow: none !important;
         }
 
+        .admin-settings-close-button {
+            border: 1px solid #991b1b !important;
+            background: #b91c1c !important;
+            color: #fee2e2 !important;
+        }
+
+        .admin-settings-close-button:hover {
+            background: #dc2626 !important;
+            color: #ffffff !important;
+        }
+
         .attendance-action.red {
             background: #b91c1c !important;
         }
+
+        .password-save-13 { background: #2563eb !important; }
+        .password-save-21 { background: #dc2626 !important; }
+        .password-save-enok { background: #059669 !important; }
+        .password-save-mashmid { background: #d97706 !important; }
+        .password-save-occupation { background: #7c3aed !important; }
+        .password-save-capture { background: #db2777 !important; }
+        .password-save-outpost { background: #0891b2 !important; }
+        .password-save-mission { background: #65a30d !important; }
+        .password-save-defense { background: #ea580c !important; }
 
         .attendance-select-row {
             display: grid;
@@ -948,6 +1398,27 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
+        }
+
+        .attendance-group {
+            margin-top: 18px;
+        }
+
+        .attendance-group:first-of-type {
+            margin-top: 0;
+        }
+
+        .attendance-group-title {
+            margin: 0 0 10px;
+            color: #fbbf24;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .attendance-group-subtitle {
+            margin: 12px 0 8px;
+            color: #94a3b8;
+            font-size: 11px;
         }
 
         .attendance-slot {
@@ -1078,6 +1549,164 @@
             display: none;
         }
 
+        #view-dashboard aside {
+            background: #ffffff !important;
+            color: #111827;
+        }
+
+        #view-dashboard main {
+            background: #ffffff;
+        }
+
+        #view-dashboard .tab-content,
+        #view-dashboard .dashboard-card,
+        #view-dashboard .notice-panel,
+        #view-dashboard .notice-content,
+        #view-dashboard .member-panel,
+        #view-dashboard .member-list-panel,
+        #view-dashboard .diamond-input-panel,
+        #view-dashboard .diamond-table-panel,
+        #view-dashboard .participation-search-panel,
+        #view-dashboard .participation-result,
+        #view-dashboard .attendance-card,
+        #view-dashboard .attendance-slot,
+        #view-dashboard .shuffle-record-panel,
+        #view-dashboard .attendance-password-group,
+        #view-dashboard .attendance-setting,
+        #view-dashboard .participation-stat div,
+        #view-dashboard .server-form input,
+        #view-dashboard .member-form input,
+        #view-dashboard .member-form select,
+        #view-dashboard .member-inline-input,
+        #view-dashboard .diamond-form input,
+        #view-dashboard .participation-search input,
+        #view-dashboard .participation-search select,
+        #view-dashboard .attendance-page input,
+        #view-dashboard .attendance-page select,
+        #view-dashboard .shuffle-record-search input,
+        #view-dashboard .shuffle-record-search select,
+        #view-dashboard .shuffle-record-form input,
+        #view-dashboard .shuffle-detail-table {
+            background: #ffffff !important;
+            color: #111827;
+        }
+
+        #view-dashboard .tab-content {
+            color: #1f2937;
+        }
+
+        #view-dashboard .tab-content h2,
+        #view-dashboard .tab-content h3,
+        #view-dashboard .tab-content h4,
+        #view-dashboard .tab-content strong,
+        #view-dashboard .dashboard-card-label,
+        #view-dashboard .season-period,
+        #view-dashboard .notice-content,
+        #view-dashboard .member-table td,
+        #view-dashboard .diamond-table td,
+        #view-dashboard .attendance-table td,
+        #view-dashboard .shuffle-record-table td,
+        #view-dashboard .shuffle-detail-table td {
+            color: #1f2937;
+        }
+
+        #view-dashboard .dashboard-card,
+        #view-dashboard .notice-panel,
+        #view-dashboard .notice-content,
+        #view-dashboard .member-panel,
+        #view-dashboard .member-list-panel,
+        #view-dashboard .diamond-input-panel,
+        #view-dashboard .diamond-table-panel,
+        #view-dashboard .participation-search-panel,
+        #view-dashboard .participation-result,
+        #view-dashboard .attendance-card,
+        #view-dashboard .attendance-slot,
+        #view-dashboard .shuffle-record-panel,
+        #view-dashboard .attendance-password-group,
+        #view-dashboard .attendance-setting,
+        #view-dashboard .shuffle-detail-table {
+            border-color: #d1d5db;
+        }
+
+        #view-dashboard input::placeholder {
+            color: #6b7280;
+        }
+
+        #view-dashboard .diamond-summary-card {
+            background: #202b3b !important;
+            color: #ffffff !important;
+        }
+
+        #view-dashboard .diamond-summary-card strong {
+            color: #fbbf24 !important;
+        }
+
+        #view-dashboard .attendance-page button,
+        #view-dashboard .event-button,
+        #view-dashboard .attendance-slot button {
+            color: #ffffff !important;
+            font-weight: 700;
+        }
+
+        #view-dashboard nav button:not([class*="bg-red-600"]),
+        #view-dashboard #current-user-name,
+        #view-dashboard #current-user-role,
+        #view-dashboard .tab-content h2,
+        #view-dashboard .tab-content h3,
+        #view-dashboard .tab-content h4,
+        #view-dashboard .dashboard-card-label,
+        #view-dashboard .member-help,
+        #view-dashboard .season-note,
+        #view-dashboard .attendance-label,
+        #view-dashboard .shuffle-record-table th,
+        #view-dashboard .shuffle-detail-table th,
+        #view-dashboard .diamond-distribution-table th {
+            color: #111827 !important;
+            font-weight: 700;
+        }
+
+        #view-dashboard .tab-content p,
+        #view-dashboard .tab-content label,
+        #view-dashboard .tab-content td {
+            font-weight: 600;
+        }
+
+        #view-dashboard .member-help,
+        #view-dashboard .diamond-rules,
+        #view-dashboard .season-note,
+        #view-dashboard .attendance-subtitle,
+        #view-dashboard .attendance-label,
+        #view-dashboard .attendance-group-subtitle,
+        #view-dashboard .shuffle-record-table th,
+        #view-dashboard .shuffle-detail-table th,
+        #view-dashboard .diamond-distribution-table th,
+        #view-dashboard .shuffle-record-empty,
+        #view-dashboard .diamond-empty {
+            color: #111827 !important;
+            font-weight: 700;
+        }
+
+        #view-dashboard .server-form input,
+        #view-dashboard .member-form input,
+        #view-dashboard .member-form select,
+        #view-dashboard .member-inline-input,
+        #view-dashboard .diamond-form input,
+        #view-dashboard .participation-search input,
+        #view-dashboard .participation-search select,
+        #view-dashboard .attendance-page input,
+        #view-dashboard .attendance-page select,
+        #view-dashboard .shuffle-record-search input,
+        #view-dashboard .shuffle-record-search select,
+        #view-dashboard .shuffle-record-form input {
+            color: #111827 !important;
+            font-weight: 600;
+        }
+
+        #view-dashboard #tab-admin > div {
+            background: #ffffff !important;
+            border-color: #d1d5db !important;
+        }
+
         @media (max-width: 700px) {
             #view-login > div:last-child {
                 justify-content: center;
@@ -1088,6 +1717,104 @@
 
             #view-login > div:last-child > div {
                 padding: 32px 24px;
+            }
+
+            .shuffle-record-form {
+                grid-template-columns: 1fr;
+            }
+
+            .shuffle-record-search {
+                grid-template-columns: 1fr;
+            }
+
+            .shuffle-record-search #shuffle-search-nickname,
+            .shuffle-record-search button {
+                grid-column: 1;
+            }
+
+            .shuffle-record-form button {
+                width: 100%;
+            }
+
+            .shuffle-record-panel {
+                overflow-x: auto;
+            }
+
+            .shuffle-record-table {
+                min-width: 520px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            html,
+            body {
+                overflow: auto;
+            }
+
+            #view-dashboard {
+                display: block;
+                min-height: 100vh;
+                height: auto;
+            }
+
+            #view-dashboard aside {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 16px;
+            }
+
+            #view-dashboard aside > div:first-child {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            #view-dashboard aside h1 {
+                flex: 0 0 auto;
+                margin: 0;
+            }
+
+            #view-dashboard aside nav {
+                display: flex;
+                flex: 1;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            #view-dashboard aside nav button {
+                width: auto;
+                flex: 1 1 auto;
+                min-width: 110px;
+                padding: 9px 10px;
+            }
+
+            #view-dashboard aside > div:last-child {
+                margin-top: 14px;
+                padding-top: 12px;
+            }
+
+            #view-dashboard main {
+                display: block;
+                width: 100%;
+                height: auto;
+                min-height: 0;
+                box-sizing: border-box;
+                overflow: visible;
+                padding: 20px 16px 32px;
+            }
+
+            .dashboard-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .dashboard-header h2,
+            .notice-page h2,
+            .member-page h2,
+            .diamond-page h2,
+            .participation-page h2 {
+                font-size: 24px;
+                line-height: 1.25;
             }
         }
     </style>
@@ -1167,13 +1894,16 @@
                     <button onclick="switchTab('notice')" id="nav-notice" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
                         <span>📢</span> 공지사항
                     </button>
-                    <button onclick="switchTab('members')" id="nav-members" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                    <button onclick="switchTab('members')" id="nav-members" class="admin-only w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
                         <span>👥</span> 클랜원 명단
                     </button>
                     <button onclick="switchTab('participation')" id="nav-participation" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
                         <span>🔍</span> 참여율 조회
                     </button>
-                    <button onclick="switchTab('diamonds')" id="nav-diamonds" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                    <button onclick="switchTab('shuffle-records')" id="nav-shuffle-records" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                        <span>🗂️</span> 셔플 기록
+                    </button>
+                    <button onclick="switchTab('diamonds')" id="nav-diamonds" class="admin-only w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
                         <span>💎</span> 다이아 분배
                     </button>
                     <button onclick="switchTab('admin')" id="nav-admin" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
@@ -1294,11 +2024,56 @@
                 <h2>🔍 클랜원 상세 참여율 조회</h2>
                 <div class="participation-search-panel">
                     <div class="participation-search">
-                        <input id="participation-search-input" type="text" placeholder="조회할 클랜원 닉네임 입력" aria-label="조회할 클랜원 닉네임">
+                        <select id="participation-search-input" aria-label="조회할 클랜원 닉네임 선택">
+                            <option value="">-- 클랜원 닉네임을 선택하세요 --</option>
+                        </select>
                         <button type="button" onclick="searchParticipation()">검색</button>
                     </div>
                 </div>
                 <div id="participation-result" class="participation-result empty">닉네임을 입력하고 검색 버튼을 눌러주세요.</div>
+            </div>
+
+            <div id="tab-shuffle-records" class="tab-content shuffle-record-page hidden">
+                <h2>🗂️ 셔플 기록</h2>
+                <section class="shuffle-record-panel">
+                    <form class="shuffle-record-form" onsubmit="saveShuffleRecord(event)">
+                        <label>시작일<input id="shuffle-record-start" type="date" required></label>
+                        <label>종료일<input id="shuffle-record-end" type="date" required></label>
+                        <label>셔플 서버<input id="shuffle-record-server" type="text" placeholder="서버명을 입력하세요" required></label>
+                        <button type="submit">기록 저장</button>
+                    </form>
+                </section>
+                <section class="shuffle-record-panel">
+                    <form class="shuffle-record-search" onsubmit="findShuffleRecords(event)">
+                        <select id="shuffle-search-period" aria-label="검색할 셔플 기간">
+                            <option value="">셔플기간 선택하기</option>
+                        </select>
+                        <input id="shuffle-search-server" type="text" placeholder="검색할 셔플 서버" aria-label="검색할 셔플 서버">
+                        <button type="submit">기록 찾기</button>
+                        <input id="shuffle-search-nickname" type="text" placeholder="검색할 닉네임" aria-label="검색할 닉네임">
+                        <button type="submit">기록 찾기</button>
+                    </form>
+                    <table class="shuffle-record-table">
+                        <thead><tr><th>셔플 기간</th><th>셔플 서버</th><th>기록 인원</th><th>상세 보기</th></tr></thead>
+                        <tbody id="shuffle-record-body"><tr><td colspan="4" class="shuffle-record-empty">기록을 불러오는 중입니다.</td></tr></tbody>
+                    </table>
+                    <div id="shuffle-detail-panel" class="shuffle-detail-panel"></div>
+                </section>
+            </div>
+
+            <div id="tab-diamonds" class="tab-content diamond-page hidden">
+                <h2>💎 다이아 분배</h2>
+                <section class="diamond-input-panel">
+                    <label for="diamond-total-input">분배할 전체 다이아</label>
+                    <form class="diamond-form" onsubmit="calculateDiamondDistribution(event)">
+                        <input id="diamond-total-input" type="number" min="0" step="1" placeholder="전체 다이아 수량을 입력하세요" required>
+                        <button type="submit">분배 계산</button>
+                    </form>
+                    <p class="diamond-rules">운영진 10% / 1~3위 20% / 4~7위 15% / 일반 55%</p>
+                </section>
+                <section id="diamond-result" class="diamond-table-panel">
+                    <div class="diamond-empty">전체 다이아 수량을 입력하면 분배 결과가 표시됩니다.</div>
+                </section>
             </div>
 
             <!-- [운영진 관리 탭 내용] -->
@@ -1317,12 +2092,19 @@
                     </div>
                     <div class="attendance-header-actions">
                         <button id="attendance-toggle-button" class="dashboard-edit-button admin-only is-active" onclick="toggleAttendance()">출석체크 비활성화</button>
-                        <button id="attendance-clear-button" class="dashboard-edit-button admin-only" onclick="clearAttendance()">오늘 출석 기록 전체 삭제</button>
+                        <button id="attendance-clear-button" class="dashboard-edit-button admin-only" onclick="clearAttendance()">초기화</button>
+                        <div class="attendance-member-reset admin-only">
+                            <input id="attendance-reset-member" type="text" placeholder="닉네임 입력" aria-label="초기화할 닉네임">
+                            <button class="dashboard-edit-button" type="button" onclick="resetMemberAttendance()">개별 초기화</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="attendance-card admin-only">
-                    <div class="attendance-card-title">🔒 [운영진 전용] 타임별 인증 비밀번호 설정 (각 4자리)</div>
+                    <div class="admin-settings-header">
+                        <div class="attendance-card-title">🔒 [운영진 전용] 타임별 인증 비밀번호 설정 (각 4자리)</div>
+                        <button id="admin-settings-close-button" type="button" class="attendance-action admin-settings-close-button hidden" onclick="closeAdminSettings()">닫기</button>
+                    </div>
                     <div id="admin-lock" class="admin-lock">
                         <input id="admin-password" type="password" maxlength="4" placeholder="운영진 비밀번호">
                         <button type="button" onclick="unlockAdminSettings()">잠금 해제</button>
@@ -1330,15 +2112,72 @@
                     </div>
                     <p id="admin-lock-message" class="admin-lock-message"></p>
                     <div id="admin-settings-content" class="attendance-settings admin-settings-content hidden">
-                        <div class="attendance-setting">
-                            <strong>13시 비밀번호</strong>
-                            <input id="password-13" placeholder="4자리" maxlength="4">
-                            <button onclick="saveAttendancePassword('13')">저장</button>
+                        <div class="attendance-password-group boss-group">
+                            <div class="attendance-password-group-title">게헨나 보스</div>
+                            <div class="attendance-setting">
+                                <strong>13시 비밀번호</strong>
+                                <input id="password-13" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-13" onclick="saveAttendancePassword('13')">저장</button>
+                            </div>
+                            <div class="attendance-setting">
+                                <strong>21시 비밀번호</strong>
+                                <input id="password-21" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-21" onclick="saveAttendancePassword('21')">저장</button>
+                            </div>
                         </div>
-                        <div class="attendance-setting">
-                            <strong>21시 비밀번호</strong>
-                            <input id="password-21" placeholder="4자리" maxlength="4">
-                            <button class="attendance-action red" onclick="saveAttendancePassword('21')">저장</button>
+                        <div class="attendance-password-group saturday-group">
+                            <div class="attendance-password-group-title">토요일 보스</div>
+                            <div class="attendance-setting">
+                                <strong>에노크 비밀번호</strong>
+                                <input id="password-enok" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-enok" onclick="saveEventPassword('에노크')">저장</button>
+                            </div>
+                            <div class="attendance-setting">
+                                <strong>마슈미드 비밀번호</strong>
+                                <input id="password-mashmid" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-mashmid" onclick="saveEventPassword('마슈미드')">저장</button>
+                            </div>
+                        </div>
+                        <div class="attendance-password-group occupation-group">
+                            <div class="attendance-password-group-title">점령전</div>
+                            <div class="attendance-setting">
+                                <strong>점령전 비밀번호</strong>
+                                <input id="password-occupation" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-occupation" onclick="saveEventPassword('점령전')">저장</button>
+                            </div>
+                        </div>
+                        <div class="attendance-password-empty"></div>
+                        <div class="attendance-password-group capture-group">
+                            <div class="attendance-password-group-title">쟁탈전</div>
+                            <div class="attendance-setting">
+                                <strong>쟁탈전 비밀번호</strong>
+                                <input id="password-capture" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-capture" onclick="saveEventPassword('쟁탈전')">저장</button>
+                            </div>
+                        </div>
+                        <div class="attendance-password-group outpost-group">
+                            <div class="attendance-password-group-title">전초전</div>
+                            <div class="attendance-setting">
+                                <strong>전초전 비밀번호</strong>
+                                <input id="password-outpost" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-outpost" onclick="saveEventPassword('전초전')">저장</button>
+                            </div>
+                        </div>
+                        <div class="attendance-password-group mission-group">
+                            <div class="attendance-password-group-title">클랜임무</div>
+                            <div class="attendance-setting">
+                                <strong>클랜임무 비밀번호</strong>
+                                <input id="password-mission" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-mission" onclick="saveEventPassword('클랜임무')">저장</button>
+                            </div>
+                        </div>
+                        <div class="attendance-password-group defense-group">
+                            <div class="attendance-password-group-title">클랜수호</div>
+                            <div class="attendance-setting">
+                                <strong>클랜수호 비밀번호</strong>
+                                <input id="password-defense" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-defense" onclick="saveEventPassword('클랜수호')">저장</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1362,33 +2201,51 @@
                     </div>
                     <p id="attendance-notice" class="attendance-notice"></p>
 
-                    <div class="attendance-grid">
-                        <div class="attendance-slot">
-                            <h4>🟡 13시타임</h4>
-                            <button onclick="checkAttendance('13', '게헨나 사전적 출석', this)">게헨나 사전적 출석</button>
-                            <button onclick="checkAttendance('13', '3층 올라가기전', this)">3층 올라가기전</button>
-                            <button onclick="checkAttendance('13', '게헨나 끝 출석', this)">게헨나 끝 출석</button>
-                        </div>
-                        <div class="attendance-slot night">
-                            <h4>🌙 21시타임</h4>
-                            <button onclick="checkAttendance('21', '게헨나 사전적 출석', this)">게헨나 사전적 출석</button>
-                            <button onclick="checkAttendance('21', '3층 올라가기전', this)">3층 올라가기전</button>
-                            <button onclick="checkAttendance('21', '게헨나 끝 출석', this)">게헨나 끝 출석</button>
+                    <div class="attendance-group">
+                        <h3 class="attendance-group-title">🔥 게헨나 보스</h3>
+                        <div class="attendance-grid">
+                            <div class="attendance-slot">
+                                <h4>🟡 13시타임</h4>
+                                <button type="button" onclick="checkAttendance('13', '게헨나 5분전 출석', this)">게헨나 5분전 출석</button>
+                                <button type="button" onclick="checkAttendance('13', '3층 올라가기전', this)">3층 올라가기전</button>
+                                <button type="button" onclick="checkAttendance('13', '게헨나 끝 출석', this)">게헨나 끝 출석</button>
+                            </div>
+                            <div class="attendance-slot night">
+                                <h4>🌙 21시타임</h4>
+                                <button type="button" onclick="checkAttendance('21', '게헨나 5분전 출석', this)">게헨나 5분전 출석</button>
+                                <button type="button" onclick="checkAttendance('21', '3층 올라가기전', this)">3층 올라가기전</button>
+                                <button type="button" onclick="checkAttendance('21', '게헨나 끝 출석', this)">게헨나 끝 출석</button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="event-row">
-                        <button type="button" class="event-button" onclick="checkEvent('에노크', this)">에노크</button>
-                        <button type="button" class="event-button" onclick="checkEvent('마슈미드', this)">마슈미드</button>
+                    <div class="attendance-group">
+                        <h3 class="attendance-group-title">🟢 토요일 보스</h3>
+                        <div class="event-row">
+                            <button type="button" class="event-button" onclick="checkEvent('에노크', this)">에노크</button>
+                            <button type="button" class="event-button" onclick="checkEvent('마슈미드', this)">마슈미드</button>
+                        </div>
                     </div>
-                    <div class="event-row">
-                        <button type="button" class="event-button purple" onclick="checkEvent('점령전', this)">점령전</button>
-                        <button type="button" class="event-button purple" onclick="checkEvent('전초전', this)">전초전</button>
-                        <button type="button" class="event-button purple" onclick="checkEvent('쟁탈전', this)">쟁탈전</button>
+
+                    <div class="attendance-group">
+                        <h3 class="attendance-group-title">⚔️ PVP</h3>
+                        <p class="attendance-group-subtitle">전초전</p>
+                        <div class="event-row">
+                            <button type="button" class="event-button purple" onclick="checkEvent('전초전', this)">전초전</button>
+                        </div>
+                        <p class="attendance-group-subtitle">점령전 / 쟁탈전</p>
+                        <div class="event-row">
+                            <button type="button" class="event-button purple" onclick="checkEvent('점령전', this)">점령전</button>
+                            <button type="button" class="event-button purple" onclick="checkEvent('쟁탈전', this)">쟁탈전</button>
+                        </div>
                     </div>
-                    <div class="event-row">
-                        <button type="button" class="event-button green" onclick="checkEvent('클랜임무', this)">클랜임무</button>
-                        <button type="button" class="event-button green" onclick="checkEvent('클랜수호', this)">클랜수호</button>
+
+                    <div class="attendance-group">
+                        <h3 class="attendance-group-title">🛡️ 클랜 활동</h3>
+                        <div class="event-row">
+                            <button type="button" class="event-button green" onclick="checkEvent('클랜임무', this)">클랜임무</button>
+                            <button type="button" class="event-button green" onclick="checkEvent('클랜수호', this)">클랜수호</button>
+                        </div>
                     </div>
                 </div>
 
@@ -1417,6 +2274,8 @@
             document.getElementById('current-user-name').textContent = nickname;
             document.getElementById('current-user-role').textContent = role;
             document.getElementById('nav-admin').classList.toggle('hidden', role !== 'admin');
+            const participationInput = document.getElementById('participation-search-input');
+            if (participationInput) participationInput.value = nickname;
             document.querySelectorAll('.admin-only').forEach((element) => {
                 element.classList.toggle('hidden', role !== 'admin');
             });
@@ -1465,6 +2324,105 @@
 
             localStorage.setItem('dokdoServerName', serverName);
             input.value = serverName;
+            updateCurrentShuffleRecord(serverName);
+        }
+
+        async function calculateDiamondDistribution(event) {
+            event.preventDefault();
+            const totalDiamonds = Number(document.getElementById('diamond-total-input').value);
+            const result = document.getElementById('diamond-result');
+            if (!Number.isInteger(totalDiamonds) || totalDiamonds < 0) return;
+
+            const topPowerFirstNicknames = new Set(['DOKDO라닷지', 'DOKDO한국', 'DOKDO제비']);
+            const topPowerSecondNicknames = new Set(['DOKDO피카츄', 'DOKDO마자용', 'DOKDO늑대', 'DOKDO로이']);
+            const allMembers = [...memberLists.admin, ...memberLists.normal];
+            const topPowerFirstMembers = allMembers.filter((member) => topPowerFirstNicknames.has(member.nickname));
+            const topPowerSecondMembers = allMembers.filter((member) => topPowerSecondNicknames.has(member.nickname));
+            const topPowerNicknames = new Set([...topPowerFirstNicknames, ...topPowerSecondNicknames]);
+            const otherMembers = allMembers.filter((member) =>
+                !topPowerNicknames.has(member.nickname));
+            const groups = [
+                { label: '운영진', rate: 10, members: memberLists.admin },
+                { label: '상위투력 1~3위', rate: 20, members: topPowerFirstMembers },
+                { label: '상위투력 4~7위', rate: 15, members: topPowerSecondMembers },
+                { label: '일반', rate: 55, members: otherMembers }
+            ];
+
+            let attendanceRecords = {};
+            try {
+                const attendanceSnapshot = await Promise.race([
+                    database.ref('attendance').once('value'),
+                    new Promise((resolve) => setTimeout(() => resolve({ val: () => ({}) }), 1500))
+                ]);
+                attendanceRecords = attendanceSnapshot.val() || {};
+            } catch (error) {
+                attendanceRecords = {};
+            }
+            const memberScores = new Map(allMembers.map((member) => {
+                const record = attendanceRecords[attendanceUserKey(member.nickname)];
+                const score = record?.shuffleId === currentShuffleId() ? Number(record.score) || 0 : 0;
+                return [member.nickname, Math.max(0, Math.min(35, score))];
+            }));
+
+            result.replaceChildren();
+            const summary = document.createElement('div');
+            summary.className = 'diamond-summary';
+            groups.forEach((group) => {
+                const card = document.createElement('div');
+                card.className = 'diamond-summary-card';
+                card.textContent = `${group.label} (${group.rate}%)`;
+                const amount = document.createElement('strong');
+                amount.textContent = `${Math.floor(totalDiamonds * group.rate / 100).toLocaleString()}개`;
+                card.appendChild(amount);
+                summary.appendChild(card);
+            });
+            result.appendChild(summary);
+
+            const table = document.createElement('table');
+            table.className = 'diamond-distribution-table';
+            table.innerHTML = '<thead><tr><th>구분</th><th>닉네임</th><th>참여율</th><th>개인 분배량</th></tr></thead>';
+            const body = document.createElement('tbody');
+            const memberDistribution = new Map();
+            groups.forEach((group) => {
+                const groupTotal = Math.floor(totalDiamonds * group.rate / 100);
+                const totalGroupScore = group.members.reduce((sum, member) =>
+                    sum + (memberScores.get(member.nickname) || 0), 0);
+                group.members.forEach((member) => {
+                    const score = memberScores.get(member.nickname) || 0;
+                    const participationRate = Math.round((score / 35) * 100);
+                    const individualAmount = totalGroupScore
+                        ? Math.floor(groupTotal * score / totalGroupScore)
+                        : 0;
+                    const current = memberDistribution.get(member.nickname) || {
+                        member,
+                        labels: [],
+                        amount: 0
+                    };
+                    current.labels.push(group.label);
+                    current.amount += individualAmount;
+                    memberDistribution.set(member.nickname, current);
+                });
+            });
+            const groupOrder = new Map(groups.map((group, index) => [group.label, index]));
+            [...memberDistribution.values()]
+                .sort((first, second) => {
+                    const firstGroupOrder = Math.min(...first.labels.map((label) => groupOrder.get(label)));
+                    const secondGroupOrder = Math.min(...second.labels.map((label) => groupOrder.get(label)));
+                    return firstGroupOrder - secondGroupOrder ||
+                        compareMemberOrder(first.member, second.member);
+                })
+                .forEach(({ member, labels, amount }) => {
+                    const row = document.createElement('tr');
+                    const label = labels.length > 1 ? labels.join(' + ') : labels[0];
+                    const participationRate = Math.round(((memberScores.get(member.nickname) || 0) / 35) * 100);
+                    row.innerHTML = `<td>${label}</td><td>${member.nickname}</td><td>${participationRate}%</td><td>${amount.toLocaleString()}개</td>`;
+                    body.appendChild(row);
+                });
+            if (!body.children.length) {
+                body.innerHTML = '<tr><td colspan="4" class="diamond-empty">분배할 클랜원이 없습니다.</td></tr>';
+            }
+            table.appendChild(body);
+            result.appendChild(table);
         }
 
         const defaultMembers = {
@@ -1563,6 +2521,16 @@
             localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
         }
 
+        const uniqueMemberNicknames = new Set();
+        Object.keys(memberLists).forEach((listName) => {
+            memberLists[listName] = memberLists[listName].filter((member) => {
+                if (uniqueMemberNicknames.has(member.nickname)) return false;
+                uniqueMemberNicknames.add(member.nickname);
+                return true;
+            });
+        });
+        localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
+
         if (!savedMemberLists) {
             localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
         }
@@ -1652,11 +2620,28 @@
                     body.appendChild(row);
                 });
             });
+            populateParticipationMembers();
+        }
+
+        function populateParticipationMembers() {
+            const select = document.getElementById('participation-search-input');
+            if (!select) return;
+            const selectedNickname = select.value;
+            select.replaceChildren(new Option('-- 클랜원 닉네임을 선택하세요 --', ''));
+            [...memberLists.admin, ...memberLists.normal].sort(compareMemberOrder).forEach((member) => {
+                select.add(new Option(member.nickname, member.nickname));
+            });
+            const currentUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
+            const nicknameToSelect = selectedNickname || currentUser?.nickname || '';
+            select.value = [...select.options].some((option) => option.value === nicknameToSelect)
+                ? nicknameToSelect
+                : '';
         }
 
         function renderAttendanceMembers() {
             const body = document.getElementById('attendance-body');
-            const selectedMember = document.getElementById('attendance-member').value;
+            const currentUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
+            const selectedMember = currentUser?.nickname || document.getElementById('attendance-member').value;
             const allMembers = [...memberLists.admin, ...memberLists.normal]
                 .sort(compareMemberOrder);
             body.replaceChildren();
@@ -1850,12 +2835,297 @@
                 `🗓️ 셔플 기간: ${formatShuffleDate(currentStart)} ~ ${formatShuffleDate(currentEnd)}`;
         }
 
+        function dateInputValue(date) {
+            return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
+        }
+
+        function setCurrentShuffleRecordInputs() {
+            const start = new Date(Number(currentShuffleId()));
+            const end = new Date(start.getTime() + 13 * 86400000);
+            document.getElementById('shuffle-record-start').value = dateInputValue(start);
+            document.getElementById('shuffle-record-end').value = dateInputValue(end);
+            document.getElementById('shuffle-record-server').value = document.getElementById('server-name').value;
+        }
+
+        let shuffleRecordsCache = {};
+        let shuffleRecordNicknameFilter = '';
+
+        function renderShuffleRecords(records) {
+            shuffleRecordsCache = records;
+            const body = document.getElementById('shuffle-record-body');
+            const periodSelect = document.getElementById('shuffle-search-period');
+            const selectedPeriod = periodSelect.value;
+            periodSelect.replaceChildren(new Option('셔플기간 선택하기', ''));
+            Object.entries(records)
+                .sort(([, first], [, second]) => second.startDate.localeCompare(first.startDate))
+                .forEach(([recordId, record]) => {
+                    periodSelect.add(new Option(`${record.startDate} ~ ${record.endDate}`, recordId));
+                });
+            periodSelect.value = records[selectedPeriod] ? selectedPeriod : '';
+            body.replaceChildren();
+            const entries = Object.entries(records).sort(([, first], [, second]) => second.startDate.localeCompare(first.startDate));
+
+            if (!entries.length) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="4" class="shuffle-record-empty">저장된 셔플 기록이 없습니다.</td>';
+                body.appendChild(row);
+                return;
+            }
+
+            entries.forEach(([recordId, record]) => {
+                const row = document.createElement('tr');
+                const periodCell = document.createElement('td');
+                const periodButton = document.createElement('button');
+                periodButton.className = 'shuffle-period-button';
+                periodButton.type = 'button';
+                periodButton.textContent = `${record.startDate} ~ ${record.endDate}`;
+                periodButton.onclick = () => showShuffleDetails(recordId);
+                periodCell.appendChild(periodButton);
+                const serverCell = document.createElement('td');
+                serverCell.textContent = record.serverName;
+                const countCell = document.createElement('td');
+                countCell.textContent = `${Object.keys(record.participants || {}).length}명`;
+                const actionCell = document.createElement('td');
+                const actionButtons = document.createElement('span');
+                actionButtons.className = 'shuffle-record-actions';
+                const openButton = document.createElement('button');
+                openButton.className = 'shuffle-record-open-button';
+                openButton.type = 'button';
+                openButton.textContent = '기록 열기';
+                openButton.onclick = () => showShuffleDetails(recordId);
+                const closeButton = document.createElement('button');
+                closeButton.className = 'shuffle-detail-close-button';
+                closeButton.type = 'button';
+                closeButton.textContent = '기록닫기';
+                closeButton.onclick = closeShuffleDetails;
+                actionButtons.append(openButton, closeButton);
+                actionCell.appendChild(actionButtons);
+                row.append(periodCell, serverCell, countCell, actionCell);
+                body.appendChild(row);
+            });
+        }
+
+        function sortShuffleParticipants(first, second) {
+            const getMember = (participant) => Object.values(memberLists).flat()
+                .find((member) => member.nickname === participant.nickname);
+            const firstMember = getMember(first);
+            const secondMember = getMember(second);
+            const firstBlind = firstMember?.power === '블라인드';
+            const secondBlind = secondMember?.power === '블라인드';
+            if (firstBlind !== secondBlind) return firstBlind ? -1 : 1;
+            if (!firstBlind) {
+                const powerDifference = memberPowerValue(secondMember?.power) - memberPowerValue(firstMember?.power);
+                if (powerDifference) return powerDifference;
+            }
+            return first.nickname.localeCompare(second.nickname);
+        }
+
+        function showShuffleDetails(recordId) {
+            const panel = document.getElementById('shuffle-detail-panel');
+            const record = shuffleRecordsCache[recordId] || {};
+            database.ref(`shuffleRecords/${recordId}/daily`).once('value')
+                .then((dailySnapshot) => [record, dailySnapshot.val() || {}])
+                .catch(() => [record, {}])
+                .then(([record, dailyRecords]) => {
+                panel.replaceChildren();
+                panel.classList.add('visible');
+
+                const title = document.createElement('h3');
+                title.className = 'shuffle-detail-title';
+                title.textContent = '날짜별 참여 기록';
+                panel.appendChild(title);
+
+                const startDate = new Date(`${record.startDate}T00:00:00Z`);
+                const endDate = new Date(`${record.endDate}T00:00:00Z`);
+                const days = [];
+                for (const day = new Date(startDate); day <= endDate; day.setUTCDate(day.getUTCDate() + 1)) {
+                    const dayKey = dateInputValue(day);
+                    days.push([dayKey, dailyRecords[dayKey] || {}]);
+                }
+
+                days.forEach(([day, participants]) => {
+                    const dayTitle = document.createElement('h4');
+                    dayTitle.className = 'shuffle-detail-day';
+                    const dayLabel = document.createElement('span');
+                    dayLabel.textContent = day.replace(/-/g, '.');
+                    const dayButton = document.createElement('button');
+                    dayButton.className = 'shuffle-day-open-button';
+                    dayButton.type = 'button';
+                    dayButton.textContent = '기록 열기';
+                    dayTitle.append(dayLabel, dayButton);
+                    panel.appendChild(dayTitle);
+
+                    const table = document.createElement('table');
+                    table.className = 'shuffle-detail-table';
+                    table.innerHTML = '<thead><tr><th>닉네임</th><th>참여 내용</th><th>당일 점수</th><th>셔플 총점</th><th>퍼센트</th></tr></thead>';
+                    const body = document.createElement('tbody');
+                    const content = document.createElement('div');
+                    content.className = 'shuffle-day-content hidden';
+                    const participantMap = new Map(Object.values(participants)
+                        .map((participant) => [participant.nickname, participant]));
+                    const participantEntries = [...memberLists.admin, ...memberLists.normal]
+                        .map((member) => participantMap.get(member.nickname) || {
+                            nickname: member.nickname,
+                            activities: '',
+                            score: 0,
+                            totalScore: 0,
+                            rate: 0
+                        })
+                        .filter((participant) => !shuffleRecordNicknameFilter ||
+                            participant.nickname.toUpperCase().includes(shuffleRecordNicknameFilter))
+                        .sort((first, second) => compareMemberOrder(first, second));
+                    participantEntries.forEach((participant) => {
+                        const row = document.createElement('tr');
+                        const nicknameCell = document.createElement('td');
+                        nicknameCell.textContent = participant.nickname;
+                        const activitiesCell = document.createElement('td');
+                        activitiesCell.textContent = participant.activities
+                            ? participant.activities.replace(/,\s*/g, '/')
+                            : '참여 없음';
+                        const scoreCell = document.createElement('td');
+                        scoreCell.textContent = `${Number(participant.score) || 0}점`;
+                        const totalScoreCell = document.createElement('td');
+                        totalScoreCell.textContent = `${Number(participant.totalScore) || 0}점`;
+                        const rateCell = document.createElement('td');
+                        rateCell.textContent = `${Number(participant.rate) || 0}%`;
+                        row.append(nicknameCell, activitiesCell, scoreCell, totalScoreCell, rateCell);
+                        body.appendChild(row);
+                    });
+                    table.appendChild(body);
+                    content.appendChild(table);
+                    panel.appendChild(content);
+                    dayButton.onclick = () => {
+                        const isHidden = content.classList.toggle('hidden');
+                        dayButton.textContent = isHidden ? '기록 열기' : '기록 닫기';
+                    };
+                });
+
+                const participantTitle = document.createElement('h3');
+                participantTitle.className = 'shuffle-detail-title';
+                participantTitle.textContent = '닉네임별 참여 기록';
+                panel.appendChild(participantTitle);
+
+                const participants = Object.values(record.participants || {});
+                const dailyTotals = new Map();
+                Object.values(dailyRecords).forEach((dayParticipants) => {
+                    Object.values(dayParticipants).forEach((participant) => {
+                        dailyTotals.set(participant.nickname,
+                            (dailyTotals.get(participant.nickname) || 0) + (Number(participant.score) || 0));
+                    });
+                });
+                const hasDailyRecords = dailyTotals.size > 0;
+                ['admin', 'normal'].forEach((listName) => {
+                    const groupTitle = document.createElement('h4');
+                    groupTitle.className = 'shuffle-detail-day';
+                    groupTitle.textContent = listName === 'admin' ? '운영진' : '일반 클랜원';
+                    panel.appendChild(groupTitle);
+
+                    const participantTable = document.createElement('table');
+                    participantTable.className = 'shuffle-detail-table';
+                    participantTable.innerHTML = '<thead><tr><th>닉네임</th><th>셔플 총점</th><th>퍼센트</th></tr></thead>';
+                    const participantBody = document.createElement('tbody');
+                    const participantMap = new Map(participants.map((participant) => [participant.nickname, participant]));
+                    const groupParticipants = memberLists[listName].map((member) => participantMap.get(member.nickname) || {
+                        nickname: member.nickname,
+                        score: 0,
+                        rate: 0
+                    })
+                        .map((participant) => {
+                            const totalScore = hasDailyRecords
+                                ? dailyTotals.get(participant.nickname) || 0
+                                : Number(participant.score) || 0;
+                            return {
+                                ...participant,
+                                score: totalScore,
+                                rate: Math.round((totalScore / 35) * 100)
+                            };
+                        })
+                        .filter((participant) => !shuffleRecordNicknameFilter ||
+                            participant.nickname.toUpperCase().includes(shuffleRecordNicknameFilter))
+                        .sort((first, second) => compareMemberOrder(first, second));
+                    groupParticipants.forEach((participant) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${participant.nickname}</td><td>${Number(participant.score) || 0}점</td><td>${Number(participant.rate) || 0}%</td>`;
+                        participantBody.appendChild(row);
+                    });
+                    participantTable.appendChild(participantBody);
+                    panel.appendChild(participantTable);
+                });
+                });
+        }
+
+        function closeShuffleDetails() {
+            const panel = document.getElementById('shuffle-detail-panel');
+            panel.classList.remove('visible');
+            panel.replaceChildren();
+        }
+
+        function loadShuffleRecords() {
+            database.ref('shuffleRecords').once('value').then((snapshot) => {
+                const records = snapshot.val() || {};
+                renderShuffleRecords(records);
+            }).catch(() => {
+                renderShuffleRecords({});
+            });
+        }
+
+        function findShuffleRecords(event) {
+            event.preventDefault();
+            const recordId = document.getElementById('shuffle-search-period').value;
+            const serverName = document.getElementById('shuffle-search-server').value.trim().toUpperCase();
+            shuffleRecordNicknameFilter = document.getElementById('shuffle-search-nickname').value.trim().toUpperCase();
+
+            database.ref('shuffleRecords').once('value').then((snapshot) => {
+                const records = snapshot.val() || {};
+                const filteredRecords = Object.fromEntries(Object.entries(records).filter(([key, record]) => {
+                    const matchesPeriod = !recordId || key === recordId;
+                    const matchesServer = !serverName || String(record.serverName).toUpperCase().includes(serverName);
+                    return matchesPeriod && matchesServer;
+                }));
+                renderShuffleRecords(filteredRecords);
+            }).catch(() => renderShuffleRecords({}));
+        }
+
+        function updateCurrentShuffleRecord(serverName) {
+            if (!serverName) return;
+            const startDate = dateInputValue(new Date(Number(currentShuffleId())));
+            const endDate = dateInputValue(new Date(Number(currentShuffleId()) + 13 * 86400000));
+            database.ref(`shuffleRecords/${currentShuffleId()}`).update({ startDate, endDate, serverName }).catch(() => {});
+        }
+
+        function saveShuffleRecord(event) {
+            event.preventDefault();
+            const startDate = document.getElementById('shuffle-record-start').value;
+            const endDate = document.getElementById('shuffle-record-end').value;
+            const serverName = document.getElementById('shuffle-record-server').value.trim();
+
+            if (endDate < startDate) {
+                alert('종료일은 시작일 이후로 입력하세요.');
+                return;
+            }
+
+            database.ref(`shuffleRecords/${startDate}`).set({ startDate, endDate, serverName })
+                .then(() => {
+                    document.getElementById('server-name').value = serverName;
+                    if (startDate === dateInputValue(new Date(Number(currentShuffleId())))) {
+                        localStorage.setItem('dokdoServerName', serverName);
+                    }
+                    loadShuffleRecords();
+                    alert('셔플 기록이 저장되었습니다.');
+                })
+                .catch(() => alert('셔플 기록을 저장하지 못했습니다.'));
+        }
+
         const savedServerName = localStorage.getItem('dokdoServerName');
         if (savedServerName) {
             document.getElementById('server-name').value = savedServerName;
         }
         updateDashboardDate();
         updateShufflePeriod();
+        scheduleMidnightReset();
+        setCurrentShuffleRecordInputs();
+        updateCurrentShuffleRecord(document.getElementById('server-name').value);
+        loadShuffleRecords();
 
         if (localStorage.getItem('dokdoLoggedIn') === 'true') {
             const savedUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
@@ -1867,24 +3137,32 @@
         }
 
         function switchTab(tabName) {
+            if (['members', 'diamonds', 'admin'].includes(tabName) && !isAdmin()) {
+                return;
+            }
+
             const dashboardTab = document.getElementById('tab-dashboard');
             const noticeTab = document.getElementById('tab-notice');
             const membersTab = document.getElementById('tab-members');
             const participationTab = document.getElementById('tab-participation');
+            const diamondsTab = document.getElementById('tab-diamonds');
+            const shuffleRecordsTab = document.getElementById('tab-shuffle-records');
             const adminTab = document.getElementById('tab-admin');
             const attendanceTab = document.getElementById('tab-attendance');
             const navDashboard = document.getElementById('nav-dashboard');
             const navNotice = document.getElementById('nav-notice');
             const navMembers = document.getElementById('nav-members');
             const navParticipation = document.getElementById('nav-participation');
+            const navDiamonds = document.getElementById('nav-diamonds');
+            const navShuffleRecords = document.getElementById('nav-shuffle-records');
             const navAdmin = document.getElementById('nav-admin');
             const navAttendance = document.getElementById('nav-attendance');
 
             const activeNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer";
             const inactiveNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer";
 
-            [dashboardTab, noticeTab, membersTab, participationTab, adminTab, attendanceTab].forEach((tab) => tab.classList.add('hidden'));
-            [navDashboard, navNotice, navMembers, navParticipation, navAdmin, navAttendance].forEach((nav) => nav.className = inactiveNavClass);
+            [dashboardTab, noticeTab, membersTab, participationTab, diamondsTab, shuffleRecordsTab, adminTab, attendanceTab].forEach((tab) => tab.classList.add('hidden'));
+            [navDashboard, navNotice, navMembers, navParticipation, navDiamonds, navShuffleRecords, navAdmin, navAttendance].forEach((nav) => nav.className = inactiveNavClass);
 
             if (tabName === 'dashboard') {
                 dashboardTab.classList.remove('hidden');
@@ -1898,6 +3176,14 @@
             } else if (tabName === 'participation') {
                 participationTab.classList.remove('hidden');
                 navParticipation.className = activeNavClass;
+            } else if (tabName === 'diamonds') {
+                diamondsTab.classList.remove('hidden');
+                navDiamonds.className = activeNavClass;
+            } else if (tabName === 'shuffle-records') {
+                shuffleRecordsTab.classList.remove('hidden');
+                navShuffleRecords.className = activeNavClass;
+                setCurrentShuffleRecordInputs();
+                loadShuffleRecords();
             } else if (tabName === 'admin') {
                 adminTab.classList.remove('hidden');
                 navAdmin.className = activeNavClass;
@@ -1918,7 +3204,40 @@
                 alert('비밀번호는 4자리로 입력하세요.');
                 return;
             }
+
+            localStorage.setItem(`dokdoAttendancePassword${time}`, password);
             alert(`${time}시 비밀번호가 저장되었습니다.`);
+            database.ref(`settings/attendancePasswords/${time}`).set(password).catch(() => {});
+        }
+
+        function eventPasswordKey(activity) {
+            return {
+                에노크: 'enok',
+                마슈미드: 'mashmid',
+                점령전: 'occupation',
+                쟁탈전: 'capture',
+                전초전: 'outpost',
+                클랜임무: 'mission',
+                클랜수호: 'defense'
+            }[activity];
+        }
+
+        function saveEventPassword(activity) {
+            if (!isAdmin()) {
+                alert('운영진만 변경할 수 있습니다.');
+                return;
+            }
+
+            const key = eventPasswordKey(activity);
+            const password = document.getElementById(`password-${key}`).value;
+            if (password.length !== 4) {
+                alert('비밀번호는 4자리로 입력하세요.');
+                return;
+            }
+
+            localStorage.setItem(`dokdoEventPassword${key}`, password);
+            alert(`${activity} 비밀번호가 저장되었습니다.`);
+            database.ref(`settings/eventPasswords/${key}`).set(password).catch(() => {});
         }
 
         function unlockAdminSettings() {
@@ -1937,8 +3256,22 @@
 
             document.getElementById('admin-settings-content').classList.remove('hidden');
             document.getElementById('admin-lock').classList.add('hidden');
+            document.getElementById('admin-settings-close-button').classList.remove('hidden');
             message.textContent = '관리자 설정이 잠금 해제되었습니다.';
             message.style.color = '#34d399';
+        }
+
+        function closeAdminSettings() {
+            if (!isAdmin()) {
+                alert('운영진만 변경할 수 있습니다.');
+                return;
+            }
+
+            document.getElementById('admin-settings-content').classList.add('hidden');
+            document.getElementById('admin-lock').classList.remove('hidden');
+            document.getElementById('admin-settings-close-button').classList.add('hidden');
+            document.getElementById('admin-password').value = '';
+            document.getElementById('admin-lock-message').textContent = '';
         }
 
         function toggleAttendance() {
@@ -1960,57 +3293,126 @@
             const member = document.getElementById('attendance-member').value;
             const password = document.getElementById('attendance-password').value;
 
+            if (!attendanceEnabled) {
+                showAttendanceNotice('현재 출석 체크가 비활성화되어 있습니다.');
+                return;
+            }
             if (!member) {
-                alert('먼저 닉네임을 선택하세요.');
+                showAttendanceNotice('먼저 닉네임을 선택하세요.');
                 return;
             }
             if (password.length !== 4) {
-                alert('타임별 4자리 비밀번호를 입력하세요.');
+                showAttendanceNotice('타임별 4자리 비밀번호를 입력하세요.');
                 return;
             }
 
-            const row = [...document.querySelectorAll('#attendance-body tr')]
-                .find((candidate) => candidate.cells[0].textContent === member);
+            const localPassword = localStorage.getItem(`dokdoAttendancePassword${time}`);
+            const verifyAttendance = (savedPassword) => {
+                if (!savedPassword) {
+                    showAttendanceNotice(`${time}시 비밀번호가 아직 설정되지 않았습니다.`);
+                    return;
+                }
+                if (password !== savedPassword) {
+                    showAttendanceNotice(`${time}시 비밀번호가 일치하지 않습니다.`);
+                    return;
+                }
 
-            if (!row) return;
+                const row = [...document.querySelectorAll('#attendance-body tr')]
+                    .find((candidate) => candidate.cells[0].textContent === member);
 
-            const completedKey = `time${time}Activities`;
-            const completedActivities = row.dataset[completedKey]
-                ? row.dataset[completedKey].split('|')
-                : [];
+                if (!row) {
+                    showAttendanceNotice(`${member}님의 출석 행을 찾을 수 없습니다.`);
+                    return;
+                }
 
-            if (completedActivities.includes(activity)) return;
+                const completedKey = `time${time}Activities`;
+                const completedActivities = row.dataset[completedKey]
+                    ? row.dataset[completedKey].split('|')
+                    : [];
 
-            completedActivities.push(activity);
-            row.dataset[completedKey] = completedActivities.join('|');
+                if (completedActivities.includes(activity)) {
+                    const message = `${member}님은 이미 ${time}시 ${activity}에 참여했습니다.`;
+                    showAttendanceNotice(message);
+                    return;
+                }
 
-            updateAttendanceRow(row);
-            showAttendanceNotice(`${member}님 ${time}시 ${activity} 출석이 완료되었습니다.`);
+                completedActivities.push(activity);
+                row.dataset[completedKey] = completedActivities.join('|');
+
+                updateAttendanceRow(row);
+                document.getElementById('attendance-password').value = '';
+                showAttendanceNotice(`${member}님 ${time}시 ${activity} 출석이 완료되었습니다.`);
+            };
+
+            if (localPassword) {
+                verifyAttendance(localPassword);
+                return;
+            }
+
+            database.ref(`settings/attendancePasswords/${time}`).once('value')
+                .then((snapshot) => verifyAttendance(snapshot.val()))
+                .catch(() => showAttendanceNotice('비밀번호를 확인하지 못했습니다.'));
 
         }
 
         function checkEvent(activity, button) {
             const member = document.getElementById('attendance-member').value;
+            const password = document.getElementById('attendance-password').value;
             if (!member) {
                 alert('먼저 닉네임을 선택하세요.');
                 return;
             }
+            if (password.length !== 4) {
+                showAttendanceNotice(`${activity} 출석용 4자리 비밀번호를 입력하세요.`);
+                return;
+            }
 
-            const row = [...document.querySelectorAll('#attendance-body tr')]
-                .find((candidate) => candidate.cells[0].textContent === member);
-            if (!row) return;
+            const key = eventPasswordKey(activity);
+            const localPassword = localStorage.getItem(`dokdoEventPassword${key}`);
+            const verifyEvent = (savedPassword) => {
+                if (!savedPassword) {
+                    showAttendanceNotice(`${activity} 비밀번호가 아직 설정되지 않았습니다.`);
+                    return;
+                }
+                if (password !== savedPassword) {
+                    showAttendanceNotice(`${activity} 비밀번호가 일치하지 않습니다.`);
+                    return;
+                }
 
-            const activities = row.dataset.events ? row.dataset.events.split('|') : [];
-            if (activities.includes(activity)) return;
+                const row = [...document.querySelectorAll('#attendance-body tr')]
+                    .find((candidate) => candidate.cells[0].textContent === member);
+                if (!row) {
+                    showAttendanceNotice(`${member}님의 출석 행을 찾을 수 없습니다.`);
+                    return;
+                }
 
-            activities.push(activity);
-            row.dataset.events = activities.join('|');
-            updateAttendanceRow(row);
-            showAttendanceNotice(`${member}님 ${activity} 출석이 완료되었습니다.`);
+                const activities = row.dataset.events ? row.dataset.events.split('|') : [];
+                if (activities.includes(activity)) {
+                    const message = `${member}님은 이미 ${activity}에 참여했습니다.`;
+                    showAttendanceNotice(message);
+                    return;
+                }
+
+                activities.push(activity);
+                row.dataset.events = activities.join('|');
+                updateAttendanceRow(row);
+                document.getElementById('attendance-password').value = '';
+                showAttendanceNotice(`${member}님 ${activity} 출석이 완료되었습니다.`);
+            };
+
+            if (localPassword) {
+                verifyEvent(localPassword);
+                return;
+            }
+
+            database.ref(`settings/eventPasswords/${key}`).once('value')
+                .then((snapshot) => verifyEvent(snapshot.val()))
+                .catch(() => showAttendanceNotice('비밀번호를 확인하지 못했습니다.'));
         }
 
         function showAttendanceNotice(message) {
             document.getElementById('attendance-notice').textContent = `✅ ${message}`;
+            alert(message);
         }
 
         function searchParticipation() {
@@ -2077,11 +3479,13 @@
             const occupationScore = events.filter((event) => event === '점령전').length;
             const siegeScore = events.includes('전초전') && events.includes('쟁탈전') ? 1 : 0;
             const missionScore = events.includes('클랜임무') && events.includes('클랜수호') ? 1 : 0;
-            const totalScore = time13Score + time21Score + enokScore + occupationScore + siegeScore + missionScore;
+            const dailyScore = time13Score + time21Score + enokScore + occupationScore + siegeScore + missionScore;
+            const totalScore = Number(row.dataset.baseScore || 0) + dailyScore;
+            const participationRate = Math.round((totalScore / 35) * 100);
             const timeProgress = `${time13Score + time21Score}점 (${time13.length}/3, ${time21.length}/3)`;
             const eventDetails = `${enokScore ? '1점' : `${events.includes('에노크') ? '에노크 ' : ''}${events.includes('마슈미드') ? '마슈미드' : '-'}`} `;
 
-            row.cells[1].textContent = `${totalScore}점`;
+            row.cells[1].textContent = `${totalScore}점 (${participationRate}%)`;
             row.cells[2].textContent = totalScore > 0 ? '출석 진행 중' : '미출석';
             row.cells[3].textContent = timeProgress;
             row.cells[4].textContent = eventDetails.trim();
@@ -2093,6 +3497,40 @@
 
         function attendanceUserKey(nickname) {
             return encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
+        }
+
+        function currentShuffleId() {
+            const shuffleStart = Date.UTC(2026, 7, 19);
+            const today = new Date();
+            const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+            const shuffleNumber = Math.floor((todayUtc - shuffleStart) / (14 * 86400000));
+            return `${shuffleStart + shuffleNumber * 14 * 86400000}`;
+        }
+
+        function currentAttendanceDay() {
+            const today = new Date();
+            return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        }
+
+        function resetDailyAttendance() {
+            document.querySelectorAll('#attendance-body tr').forEach((row) => {
+                row.dataset.baseScore = Number(row.cells[1].textContent.match(/^\d+/)?.[0]) || 0;
+                row.dataset.time13Activities = '';
+                row.dataset.time21Activities = '';
+                row.dataset.events = '';
+                updateAttendanceRow(row);
+            });
+            document.getElementById('attendance-notice').textContent = '';
+        }
+
+        function scheduleMidnightReset() {
+            const now = new Date();
+            const nextMidnight = new Date(now);
+            nextMidnight.setHours(24, 0, 0, 0);
+            window.setTimeout(() => {
+                resetDailyAttendance();
+                scheduleMidnightReset();
+            }, nextMidnight.getTime() - now.getTime());
         }
 
         function renameAttendanceRecord(previousNickname, newNickname) {
@@ -2115,13 +3553,38 @@
 
         function saveAttendanceRecord(row) {
             const nickname = row.cells[0].textContent;
+            const score = Number(row.cells[1].textContent.match(/^\d+/)?.[0]) || 0;
+            const time13 = row.dataset.time13Activities ? row.dataset.time13Activities.split('|').filter(Boolean) : [];
+            const time21 = row.dataset.time21Activities ? row.dataset.time21Activities.split('|').filter(Boolean) : [];
+            const events = row.dataset.events ? row.dataset.events.split('|').filter(Boolean) : [];
+            const dailyScore = [time13.length === 3, time21.length === 3,
+                events.includes('에노크') && events.includes('마슈미드'),
+                events.includes('점령전'),
+                events.includes('전초전') && events.includes('쟁탈전'),
+                events.includes('클랜임무') && events.includes('클랜수호')]
+                .filter(Boolean).length;
             database.ref(`attendance/${attendanceUserKey(nickname)}`).set({
                 nickname,
-                score: Number(row.cells[1].textContent.replace('점', '')) || 0,
+                score,
+                shuffleId: currentShuffleId(),
+                baseScore: Number(row.dataset.baseScore) || 0,
+                attendanceDay: currentAttendanceDay(),
                 time13Activities: row.dataset.time13Activities || '',
                 time21Activities: row.dataset.time21Activities || '',
                 events: row.dataset.events || '',
                 updatedAt: firebase.database.ServerValue.TIMESTAMP
+            }).catch(() => {});
+            database.ref(`shuffleRecords/${currentShuffleId()}/participants/${attendanceUserKey(nickname)}`).update({
+                nickname,
+                score,
+                rate: Math.round((score / 35) * 100)
+            }).catch(() => {});
+            database.ref(`shuffleRecords/${currentShuffleId()}/daily/${currentAttendanceDay()}/${attendanceUserKey(nickname)}`).set({
+                nickname,
+                activities: [...time13, ...time21, ...events].join('/') || '',
+                score: dailyScore,
+                totalScore,
+                rate: Math.round((totalScore / 35) * 100)
             }).catch(() => {});
         }
 
@@ -2134,7 +3597,7 @@
                 const staleRecordUpdates = {};
 
                 Object.entries(records).forEach(([key, record]) => {
-                    if (!record.nickname || !validNames.has(record.nickname)) {
+                    if (!record.nickname || !validNames.has(record.nickname) || record.shuffleId !== currentShuffleId()) {
                         staleRecordUpdates[key] = null;
                     }
                 });
@@ -2145,11 +3608,22 @@
 
                 document.querySelectorAll('#attendance-body tr').forEach((row) => {
                     const record = records[attendanceUserKey(row.cells[0].textContent)];
-                    if (!record) return;
+                    if (!record || record.shuffleId !== currentShuffleId()) {
+                        row.dataset.time13Activities = '';
+                        row.dataset.time21Activities = '';
+                        row.dataset.events = '';
+                        row.dataset.baseScore = 0;
+                        updateAttendanceRow(row);
+                        return;
+                    }
 
-                    row.dataset.time13Activities = record.time13Activities || '';
-                    row.dataset.time21Activities = record.time21Activities || '';
-                    row.dataset.events = record.events || '';
+                    const isToday = record.attendanceDay === currentAttendanceDay();
+                    row.dataset.time13Activities = isToday ? record.time13Activities || '' : '';
+                    row.dataset.time21Activities = isToday ? record.time21Activities || '' : '';
+                    row.dataset.events = isToday ? record.events || '' : '';
+                    row.dataset.baseScore = isToday
+                        ? Number(record.baseScore) || 0
+                        : Number(record.score) || 0;
                     updateAttendanceRow(row);
                 });
             }).catch(() => {});
@@ -2182,16 +3656,17 @@
             if (!confirm('오늘 출석 기록을 모두 삭제하시겠습니까?')) return;
             document.getElementById('attendance-notice').textContent = '';
             document.querySelectorAll('#attendance-body tr').forEach((row) => {
-                row.cells[1].textContent = '0점';
+                row.dataset.baseScore = 0;
                 row.cells[2].textContent = '미출석';
                 row.cells[3].textContent = '-';
-                row.dataset.score = '0';
-                row.dataset.time13Score = '0';
-                row.dataset.time21Score = '0';
+                row.cells[4].textContent = '-';
+                row.cells[5].textContent = '-';
+                row.cells[6].textContent = '-';
+                row.cells[7].textContent = '없음';
                 row.dataset.time13Activities = '';
                 row.dataset.time21Activities = '';
                 row.dataset.events = '';
-                database.ref(`attendance/${attendanceUserKey(row.cells[0].textContent)}`).remove().catch(() => {});
+                updateAttendanceRow(row);
             });
             document.querySelectorAll('.attendance-slot button').forEach((button) => {
                 button.disabled = false;
@@ -2201,6 +3676,36 @@
                 button.disabled = false;
                 button.style.opacity = '1';
             });
+        }
+
+        function resetMemberAttendance() {
+            if (!isAdmin()) {
+                alert('운영진만 변경할 수 있습니다.');
+                return;
+            }
+
+            const input = document.getElementById('attendance-reset-member');
+            const nickname = input.value.trim().toUpperCase();
+            if (!nickname) {
+                alert('초기화할 닉네임을 입력하세요.');
+                return;
+            }
+
+            const row = [...document.querySelectorAll('#attendance-body tr')]
+                .find((candidate) => candidate.cells[0].textContent.toUpperCase() === nickname);
+            if (!row) {
+                alert('등록된 클랜원을 찾을 수 없습니다.');
+                return;
+            }
+            if (!confirm(`${nickname}님의 점수와 출석 기록을 초기화하시겠습니까?`)) return;
+
+            row.dataset.baseScore = 0;
+            row.dataset.time13Activities = '';
+            row.dataset.time21Activities = '';
+            row.dataset.events = '';
+            updateAttendanceRow(row);
+            input.value = '';
+            showAttendanceNotice(`${nickname}님의 점수와 출석 기록이 초기화되었습니다.`);
         }
 
         function togglePassword() {
