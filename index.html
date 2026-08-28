@@ -2206,6 +2206,63 @@
             .boss-alert-toolbar > div button { flex: 1 1 calc(50% - 8px); padding: 0 10px; }
             .boss-timer-remaining { font-size: 18px; }
         }
+
+        .member-class-board-panel {
+            margin-bottom: 26px;
+            padding: 26px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            background: #ffffff;
+            overflow-x: auto;
+        }
+
+        .member-class-board {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(180px, 1fr));
+            gap: 12px;
+            min-width: 960px;
+        }
+
+        .member-class-column {
+            min-height: 220px;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+        }
+
+        .member-class-column-title {
+            padding: 13px 10px;
+            border-bottom: 1px solid #cbd5e1;
+            color: #111827;
+            font-size: 16px;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .member-class-column:nth-child(1) .member-class-column-title { background: #ddd6fe; }
+        .member-class-column:nth-child(2) .member-class-column-title { background: #bfdbfe; }
+        .member-class-column:nth-child(3) .member-class-column-title { background: #fed7aa; }
+        .member-class-column:nth-child(4) .member-class-column-title { background: #fecaca; }
+        .member-class-column:nth-child(5) .member-class-column-title { background: #fde68a; }
+
+        .member-class-entry {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #111827;
+            font-size: 13px;
+        }
+
+        .member-class-entry:last-child { border-bottom: 0; }
+        .member-class-entry strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .member-class-entry span { color: #111827; font-weight: 700; white-space: nowrap; }
+        .member-class-empty { padding: 18px 10px; color: #64748b; font-size: 12px; text-align: center; }
+
+        @media (max-width: 600px) {
+            .member-class-board-panel { padding: 16px; }
+        }
     </style>
 </head>
 <body class="bg-[#030712] text-gray-100 flex h-screen overflow-hidden m-0 p-0">
@@ -2393,6 +2450,11 @@
                         </select>
                         <button type="submit">클랜원 등록</button>
                     </form>
+                </section>
+
+                <section class="member-class-board-panel">
+                    <h3 class="member-panel-title">📋 클래스별 전투력 순위</h3>
+                    <div id="member-class-board" class="member-class-board"></div>
                 </section>
 
                 <section class="member-list-panel">
@@ -3139,6 +3201,7 @@
         }
 
         function renderMemberLists() {
+            renderClassPowerBoard();
             ['admin', 'normal'].forEach((listName) => {
                 const body = document.getElementById(`${listName}-member-body`);
                 body.replaceChildren();
@@ -3194,6 +3257,45 @@
             populateParticipationMembers();
         }
 
+        function renderClassPowerBoard() {
+            const board = document.getElementById('member-class-board');
+            if (!board) return;
+            const classOrder = ['바이퍼', '카니지', '그림리퍼', '블러드스테인', '아카샤'];
+            const membersByClass = new Map(classOrder.map((className) => [className, []]));
+            [...memberLists.admin, ...memberLists.normal].forEach((member) => {
+                if (!membersByClass.has(member.className)) membersByClass.set(member.className, []);
+                membersByClass.get(member.className).push(member);
+            });
+            board.replaceChildren();
+            [...membersByClass.entries()].forEach(([className, members]) => {
+                const column = document.createElement('div');
+                column.className = 'member-class-column';
+                const title = document.createElement('div');
+                title.className = 'member-class-column-title';
+                title.textContent = `${className} 순위`;
+                column.appendChild(title);
+                members.sort((first, second) => memberPowerValue(second.power) - memberPowerValue(first.power) ||
+                    compareMemberOrder(first, second));
+                if (!members.length) {
+                    const empty = document.createElement('div');
+                    empty.className = 'member-class-empty';
+                    empty.textContent = '등록된 클랜원 없음';
+                    column.appendChild(empty);
+                }
+                members.forEach((member) => {
+                    const entry = document.createElement('div');
+                    entry.className = 'member-class-entry';
+                    const nickname = document.createElement('strong');
+                    nickname.textContent = member.nickname;
+                    const power = document.createElement('span');
+                    power.textContent = member.power;
+                    entry.append(nickname, power);
+                    column.appendChild(entry);
+                });
+                board.appendChild(column);
+            });
+        }
+
         function populateParticipationMembers() {
             const select = document.getElementById('participation-search-input');
             if (!select) return;
@@ -3242,6 +3344,18 @@
         function memberPowerValue(power) {
             const numericPower = Number(String(power).replace(/[^0-9]/g, ''));
             return Number.isFinite(numericPower) && numericPower > 0 ? numericPower : -1;
+        }
+
+        function compareClassPower(firstMember, secondMember) {
+            const classOrder = ['아카샤', '카니지', '바이퍼', '블러드스테인', '그림리퍼'];
+            const firstClassIndex = classOrder.indexOf(firstMember.className);
+            const secondClassIndex = classOrder.indexOf(secondMember.className);
+            const classDifference = (firstClassIndex < 0 ? classOrder.length : firstClassIndex) -
+                (secondClassIndex < 0 ? classOrder.length : secondClassIndex);
+            if (classDifference) return classDifference;
+
+            const powerDifference = memberPowerValue(secondMember.power) - memberPowerValue(firstMember.power);
+            return powerDifference || compareMemberOrder(firstMember, secondMember);
         }
 
         function addMember(event) {
