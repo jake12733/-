@@ -2096,7 +2096,30 @@
             gap: 10px;
         }
         .boss-timer-card h3 { margin: 0; color: #111827; font-size: 17px; }
-        .boss-timer-delete { color: #64748b; background: none; border: 0; cursor: pointer; }
+        .boss-timer-card-actions { display: flex; align-items: center; gap: 8px; }
+        .boss-timer-edit,
+        .boss-timer-delete {
+            min-height: 32px;
+            min-width: 38px;
+            padding: 5px 10px;
+            border: 1px solid #bfdbfe;
+            border-radius: 5px;
+            background: #eff6ff;
+            color: #2563eb;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .boss-timer-edit:hover { background: #dbeafe; }
+        .boss-timer-delete {
+            border-color: #fecaca;
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        .boss-timer-delete:hover { background: #fee2e2; }
         .boss-timer-meta { margin: 10px 0 14px; color: #fbbf24; font-size: 12px; line-height: 1.8; }
         .boss-timer-meta .note { color: #64748b; }
         .boss-timer-remaining {
@@ -3106,7 +3129,7 @@
         ];
         blindPowerMembers.forEach(([className, nickname, power]) => {
             const member = Object.values(memberLists).flat().find((candidate) => candidate.nickname === nickname);
-            if (member) {
+            if (member && member.power === '블라인드') {
                 member.className = className;
                 member.power = power;
             }
@@ -3380,7 +3403,7 @@
             const member = {
                 nickname,
                 className: document.getElementById('member-class').value,
-                power: document.getElementById('member-power').value.trim() || '블라인드',
+                power: document.getElementById('member-power').value.replace(/만/g, '').trim() || '블라인드',
                 role
             };
             memberLists[role === '일반' ? 'normal' : 'admin'].push(member);
@@ -3411,7 +3434,7 @@
             memberLists[role === '일반' ? 'normal' : 'admin'].push({
                 nickname,
                 className: document.getElementById('admin-member-class').value,
-                power: document.getElementById('admin-member-power').value.trim() || '블라인드',
+                power: document.getElementById('admin-member-power').value.replace(/만/g, '').trim() || '블라인드',
                 role
             });
             if (!memberOrder.includes(nickname)) memberOrder.push(nickname);
@@ -3507,7 +3530,7 @@
             const updatedMember = {
                 nickname,
                 className: row.cells[2].querySelector('select').value,
-                power: row.cells[3].querySelector('input').value.trim() || '블라인드',
+                power: row.cells[3].querySelector('input').value.replace(/만/g, '').trim() || '블라인드',
                 role: row.cells[4].querySelector('select').value
             };
             const previousNickname = currentMember.nickname;
@@ -3982,7 +4005,7 @@
             }
             list.innerHTML = bossTimers.map((timer) => `
                 <article class="boss-timer-card" data-timer-id="${timer.id}">
-                    <div class="boss-timer-card-header"><h3>${escapeHtml(timer.name)}</h3><button type="button" class="boss-timer-delete" onclick="deleteBossTimer('${timer.id}')">삭제</button></div>
+                    <div class="boss-timer-card-header"><h3>${escapeHtml(timer.name)}</h3><div class="boss-timer-card-actions"><button type="button" class="boss-timer-edit" onclick="editBossTimer('${timer.id}')">수정</button><button type="button" class="boss-timer-delete" onclick="deleteBossTimer('${timer.id}')">삭제</button></div></div>
                     <div class="boss-timer-meta">⏰ 출몰 시간: ${timer.time}<br><span class="note">📌 메모: ${escapeHtml(timer.note || '-')}</span></div>
                     <div class="boss-timer-remaining">남은 시간<br><span data-remaining></span></div>
                     <div class="boss-timer-card-footer"><span>개인 알림</span><button type="button" class="boss-personal-toggle ${timer.alertEnabled ? '' : 'off'}" onclick="toggleBossTimerAlert('${timer.id}')">${timer.alertEnabled ? '켜짐' : '꺼짐'}</button></div>
@@ -4018,6 +4041,32 @@
                 return;
             }
             bossTimers = bossTimers.filter((timer) => timer.id !== id);
+            saveBossTimers();
+            renderBossTimers();
+        }
+
+        function editBossTimer(id) {
+            if (!isAdmin()) {
+                alert('운영진만 보스를 수정할 수 있습니다.');
+                return;
+            }
+            const timer = bossTimers.find((item) => item.id === id);
+            if (!timer) return;
+
+            const name = prompt('보스 이름을 입력하세요.', timer.name);
+            if (name === null) return;
+            const time = prompt('출몰 시간을 입력하세요. (예: 19:55)', timer.time);
+            if (time === null) return;
+            const note = prompt('위치 또는 메모를 입력하세요.', timer.note || '');
+            if (note === null) return;
+            if (!name.trim() || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time.trim())) {
+                alert('보스 이름과 올바른 출몰 시간(HH:MM)을 입력하세요.');
+                return;
+            }
+
+            timer.name = name.trim();
+            timer.time = time.trim();
+            timer.note = note.trim();
             saveBossTimers();
             renderBossTimers();
         }
