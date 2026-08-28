@@ -91,7 +91,7 @@
             border-radius: 16px;
             background: #ffffff;
             box-shadow: 0 0 100px rgba(0, 0, 0, .95);
-        }
+            }
 
         #view-login h1 {
             margin: 0 0 8px;
@@ -1629,6 +1629,15 @@
             font-weight: normal;
         }
 
+        .attendance-table .attendance-group-row th {
+            padding: 16px 6px 10px;
+            border-bottom: 2px solid #334155;
+            color: #fbbf24;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: left;
+        }
+
         .attendance-table td:first-child {
             color: #e2e8f0;
             font-weight: bold;
@@ -1689,8 +1698,8 @@
 
         #view-login .auth-tab {
             width: 33.333%;
-            padding: 0 4px 12px;
-            border: 0;
+                    background: #ffffff;
+                    color: #2563eb;
             border-radius: 0;
             background: transparent;
             color: #6b7280;
@@ -1976,6 +1985,227 @@
                 line-height: 1.25;
             }
         }
+        .boss-timer-page h2 {
+            margin-bottom: 24px;
+        }
+
+        .boss-timer-register,
+        .boss-alert-toolbar,
+        .boss-timer-card {
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, .06);
+        }
+
+        .boss-timer-register {
+            border-left: 3px solid #ef4444;
+            padding: 22px 24px;
+            margin-bottom: 24px;
+        }
+
+        .boss-timer-register h3 {
+            margin: 0 0 16px;
+            color: #4338ca;
+            font-size: 15px;
+        }
+
+        .boss-timer-form {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1.2fr .9fr;
+            gap: 12px;
+        }
+
+        .boss-timer-form input,
+        .boss-timer-form label input {
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 48px;
+            padding: 0 14px;
+            border: 1px solid #334155;
+            border-radius: 5px;
+            background: #ffffff;
+            color: #111827;
+        }
+
+        .boss-timer-form input::placeholder { color: #64748b; }
+
+        .boss-timer-form label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            color: #475569;
+            font-size: 12px;
+        }
+
+        .boss-timer-form label input {
+            flex: 1;
+        }
+
+        .boss-timer-form button,
+        .boss-alert-toolbar button {
+            min-height: 36px;
+            padding: 0 18px;
+            border: 0;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .boss-timer-form button { background: #dc2626; }
+        .boss-alert-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 22px 24px;
+            margin-bottom: 24px;
+        }
+
+        .boss-alert-toolbar strong { color: #dc2626; }
+        .boss-alert-toolbar strong span {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: #16a34a;
+            color: #fff;
+            font-size: 11px;
+        }
+
+        .boss-sound-button { background: #d97706; }
+        .boss-voice-button { background: #2563eb; }
+        .boss-alert-on { background: #dc2626; }
+        .boss-alert-off { background: #374151; }
+        .boss-alert-toolbar > div { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        .boss-timer-list {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .boss-timer-card { padding: 18px 20px; }
+        .boss-timer-card-header,
+        .boss-timer-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .boss-timer-card h3 { margin: 0; color: #111827; font-size: 17px; }
+        .boss-timer-delete { color: #64748b; background: none; border: 0; cursor: pointer; }
+        .boss-timer-meta { margin: 10px 0 14px; color: #fbbf24; font-size: 12px; line-height: 1.8; }
+        .boss-timer-meta .note { color: #64748b; }
+        .boss-timer-remaining {
+            padding: 14px 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #2563eb;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .boss-timer-card-footer { margin-top: 14px; color: #475569; font-size: 12px; }
+        .boss-personal-toggle { padding: 5px 10px; border: 0; border-radius: 4px; background: #166534; color: #bbf7d0; cursor: pointer; }
+        .boss-personal-toggle.off { background: #374151; color: #cbd5e1; }
+        .boss-timer-empty { padding: 40px; border: 1px dashed #cbd5e1; color: #64748b; text-align: center; }
+
+        @media (max-width: 1100px) {
+            .boss-timer-form { grid-template-columns: 1fr 1fr; }
+            .boss-timer-list { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+        }
+
+        @media (max-width: 640px) {
+            .boss-timer-form,
+            .boss-timer-list { grid-template-columns: 1fr; }
+            .boss-alert-toolbar { align-items: flex-start; flex-direction: column; }
+        }
+
+        @media (max-width: 600px) {
+            html, body { overflow-x: hidden; }
+
+            #view-dashboard aside { padding: 12px; }
+            #view-dashboard aside > div:first-child {
+                display: block;
+            }
+            #view-dashboard aside h1 {
+                margin-bottom: 12px;
+                padding-left: 4px;
+            }
+            #view-dashboard aside nav {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 6px;
+            }
+            #view-dashboard aside nav button {
+                min-width: 0;
+                width: 100%;
+                padding: 10px 8px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+            #view-dashboard aside > div:last-child {
+                margin-top: 12px;
+            }
+            #view-dashboard main { padding: 18px 12px 28px; }
+            .dashboard-header { gap: 12px; }
+            .dashboard-header h2,
+            .notice-page h2,
+            .member-page h2,
+            .diamond-page h2,
+            .participation-page h2,
+            .boss-timer-page h2 {
+                font-size: 21px;
+            }
+            .dashboard-card,
+            .notice-panel,
+            .notice-content,
+            .member-panel,
+            .member-list-panel,
+            .diamond-input-panel,
+            .diamond-table-panel,
+            .participation-search-panel,
+            .participation-result,
+            .attendance-card,
+            .shuffle-record-panel,
+            .boss-timer-register,
+            .boss-alert-toolbar {
+                padding: 16px;
+            }
+            .member-form,
+            .server-form,
+            .diamond-form,
+            .participation-search {
+                grid-template-columns: 1fr;
+            }
+            .member-form button,
+            .server-form button,
+            .diamond-form button,
+            .participation-search button { width: 100%; }
+            .member-list-panel,
+            .attendance-card:has(.attendance-table),
+            .shuffle-record-panel:has(table) {
+                overflow-x: auto;
+            }
+            .member-table,
+            .attendance-table,
+            .shuffle-record-table,
+            .shuffle-detail-table {
+                min-width: 620px;
+            }
+            .attendance-select-row { grid-template-columns: 1fr; }
+            .attendance-grid { grid-template-columns: 1fr; }
+            .boss-timer-register h3 { line-height: 1.5; }
+            .boss-timer-form label { align-items: stretch; flex-direction: column; gap: 6px; }
+            .boss-timer-form label input { flex: none; }
+            .boss-alert-toolbar > div { width: 100%; gap: 8px; }
+            .boss-alert-toolbar > div button { flex: 1 1 calc(50% - 8px); padding: 0 10px; }
+            .boss-timer-remaining { font-size: 18px; }
+        }
     </style>
 </head>
 <body class="bg-[#030712] text-gray-100 flex h-screen overflow-hidden m-0 p-0">
@@ -2071,6 +2301,9 @@
                     <button onclick="switchTab('attendance')" id="nav-attendance" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
                         <span>✅</span> 출석 체크
                     </button>
+                    <button onclick="switchTab('boss-timer')" id="nav-boss-timer" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                        <span>⏰</span> 보탐 타이머
+                    </button>
                 </nav>
             </div>
 
@@ -2092,7 +2325,7 @@
 
                 <div class="dashboard-summary">
                     <section class="dashboard-card">
-                        <span class="dashboard-card-label">현재 서버명</span>
+                            <span class="dashboard-card-label">셔플 서버명</span>
                         <div class="server-form">
                             <input id="server-name" type="text" value="모아르테2" aria-label="현재 서버명">
                             <button type="button" onclick="saveServerName()">저장</button>
@@ -2465,12 +2698,34 @@
                     <h3>출석 클랜원별 현황</h3>
                     <table class="attendance-table">
                         <thead>
-                            <tr><th>닉네임</th><th>총 점수</th><th>오늘 현황</th><th>13시/21시</th><th>에노크/마슈</th><th>쟁탈/점령/전초</th><th>임무/수호</th><th>상세 내역</th></tr>
+                            <tr><th>닉네임</th><th>총 점수</th><th>오늘 현황</th><th>13시/21시</th><th>에노크/마슈</th><th>점령전</th><th>전초전/쟁탈전</th><th>임무/수호</th><th>상세 내역</th></tr>
                         </thead>
                         <tbody id="attendance-body">
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <div id="tab-boss-timer" class="tab-content hidden boss-timer-page">
+                <h2>⏰ 보탐 및 월드보스 타이머</h2>
+                <section class="boss-timer-register admin-only">
+                    <h3>＋ [운영진 설정] 보스 추가하기 (시간 설정)</h3>
+                    <form onsubmit="addBossTimer(event)" class="boss-timer-form">
+                        <input id="boss-timer-name" type="text" placeholder="보스 이름 (예: 12시 월드보스)" required>
+                        <label>출몰 시간<input id="boss-timer-time" type="time" required></label>
+                        <input id="boss-timer-note" type="text" placeholder="위치 또는 메모 (예: 3채널)">
+                        <button type="submit">보스 등록</button>
+                    </form>
+                </section>
+                <section class="boss-alert-toolbar">
+                    <strong>🚨 5분 전 음성 알람 시스템 <span id="boss-alert-status">전체 알람 켜짐</span></strong>
+                    <div>
+                        <button type="button" class="boss-sound-button" onclick="testBossVoice()">🔊 테스트</button>
+                        <button type="button" class="boss-alert-on" onclick="setBossAlerts(true)">전체 켜기</button>
+                        <button type="button" class="boss-alert-off" onclick="setBossAlerts(false)">전체 끄기</button>
+                    </div>
+                </section>
+                <section id="boss-timer-list" class="boss-timer-list"></section>
             </div>
         </main>
     </div>
@@ -2479,6 +2734,24 @@
     <script>
         let attendanceEnabled = true;
         const adminNicknames = ['DOKDO패왕', 'DOKDO망나뇽', 'DOKDO수호', 'DOKDO피카츄'];
+        let bossAlertsEnabled = localStorage.getItem('dokdoBossAlertsEnabled') !== 'false';
+        let bossTimers = JSON.parse(localStorage.getItem('dokdoBossTimers') || '[]');
+        const bossAlertedTimers = new Set();
+        if (!bossTimers.length) {
+            bossTimers = [
+                { id: 'default-world-12', name: '12시 월드보스 5분전', time: '11:55', note: '', alertEnabled: true },
+                { id: 'default-gehenna-13', name: '13시 월드보스 5분전', time: '12:55', note: '', alertEnabled: true },
+                { id: 'default-world-20', name: '20시 월드보스 5분전', time: '19:55', note: '', alertEnabled: true },
+                { id: 'default-gehenna-21', name: '21시 게헨나보스 5분전', time: '20:55', note: '', alertEnabled: true },
+                { id: 'default-barodun', name: '바르둔 5분전', time: '19:45', note: '', alertEnabled: true }
+            ];
+            localStorage.setItem('dokdoBossTimers', JSON.stringify(bossTimers));
+        }
+        const defaultThirteenBoss = bossTimers.find((timer) => timer.id === 'default-gehenna-13');
+        if (defaultThirteenBoss && defaultThirteenBoss.name === '13시 게헨나보스 5분전') {
+            defaultThirteenBoss.name = '13시 월드보스 5분전';
+            localStorage.setItem('dokdoBossTimers', JSON.stringify(bossTimers));
+        }
 
         function setCurrentUser(nickname) {
             const role = adminNicknames.includes(nickname) ? 'admin' : 'member';
@@ -2931,12 +3204,20 @@
                 .sort(compareMemberOrder);
             body.replaceChildren();
 
-            allMembers.forEach((member) => {
+            ['admin', 'normal'].forEach((listName) => {
+                const groupRow = document.createElement('tr');
+                groupRow.className = 'attendance-group-row';
+                groupRow.innerHTML = `<th colspan="9">${listName === 'admin' ? '운영진' : '일반 클랜원'}</th>`;
+                body.appendChild(groupRow);
+
+                memberLists[listName].slice().sort(compareMemberOrder).forEach((member) => {
                 const row = document.createElement('tr');
-                row.innerHTML = '<td></td><td class="present">0점</td><td>미출석</td><td>-</td><td>-</td><td>-</td><td>-</td><td>없음</td>';
+                    row.className = 'attendance-member-row';
+                row.innerHTML = '<td></td><td class="present">0점 (0%)</td><td>미출석</td><td>0점 (0/3, 0/3)</td><td>0점 (0/2)</td><td>0점 (0/1)</td><td>0점 (0/1)</td><td>0점 (0/2)</td><td>없음</td>';
                 row.cells[0].textContent = member.nickname;
                 if (member.power === '블라인드') row.dataset.blindPower = 'true';
                 body.appendChild(row);
+                });
             });
 
             const memberSelect = document.getElementById('attendance-member');
@@ -3437,6 +3718,9 @@
         scheduleMidnightReset();
         updatePasswordExpiryDisplays();
         window.setInterval(updatePasswordExpiryDisplays, 1000);
+        setBossAlerts(bossAlertsEnabled);
+        renderBossTimers();
+        window.setInterval(updateBossTimerDisplays, 1000);
         setCurrentShuffleRecordInputs();
         updateCurrentShuffleRecord(document.getElementById('server-name').value);
         loadShuffleRecords();
@@ -3471,12 +3755,14 @@
             const navShuffleRecords = document.getElementById('nav-shuffle-records');
             const navAdmin = document.getElementById('nav-admin');
             const navAttendance = document.getElementById('nav-attendance');
+            const bossTimerTab = document.getElementById('tab-boss-timer');
+            const navBossTimer = document.getElementById('nav-boss-timer');
 
             const activeNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer";
             const inactiveNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer";
 
-            [dashboardTab, noticeTab, membersTab, participationTab, diamondsTab, shuffleRecordsTab, adminTab, attendanceTab].forEach((tab) => tab.classList.add('hidden'));
-            [navDashboard, navNotice, navMembers, navParticipation, navDiamonds, navShuffleRecords, navAdmin, navAttendance].forEach((nav) => nav.className = inactiveNavClass);
+            [dashboardTab, noticeTab, membersTab, participationTab, diamondsTab, shuffleRecordsTab, adminTab, attendanceTab, bossTimerTab].forEach((tab) => tab.classList.add('hidden'));
+            [navDashboard, navNotice, navMembers, navParticipation, navDiamonds, navShuffleRecords, navAdmin, navAttendance, navBossTimer].forEach((nav) => nav.className = inactiveNavClass);
 
             if (tabName === 'dashboard') {
                 dashboardTab.classList.remove('hidden');
@@ -3504,7 +3790,149 @@
             } else if (tabName === 'attendance') {
                 attendanceTab.classList.remove('hidden');
                 navAttendance.className = activeNavClass;
+            } else if (tabName === 'boss-timer') {
+                bossTimerTab.classList.remove('hidden');
+                navBossTimer.className = activeNavClass;
+                renderBossTimers();
             }
+        }
+
+        function saveBossTimers() {
+            localStorage.setItem('dokdoBossTimers', JSON.stringify(bossTimers));
+        }
+
+        function nextBossTime(time) {
+            const [hours, minutes] = time.split(':').map(Number);
+            const next = new Date();
+            next.setHours(hours, minutes, 0, 0);
+            if (next <= new Date()) next.setDate(next.getDate() + 1);
+            return next;
+        }
+
+        function formatBossRemaining(milliseconds) {
+            if (milliseconds <= 0) return '출몰 시간입니다';
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${days ? `${days}일 ` : ''}${hours}시간 ${minutes}분 ${seconds}초 전`;
+        }
+
+        function renderBossTimers() {
+            const list = document.getElementById('boss-timer-list');
+            if (!list) return;
+            if (!bossTimers.length) {
+                list.innerHTML = '<div class="boss-timer-empty">등록된 보스 타이머가 없습니다.</div>';
+                return;
+            }
+            list.innerHTML = bossTimers.map((timer) => `
+                <article class="boss-timer-card" data-timer-id="${timer.id}">
+                    <div class="boss-timer-card-header"><h3>${escapeHtml(timer.name)}</h3><button type="button" class="boss-timer-delete" onclick="deleteBossTimer('${timer.id}')">삭제</button></div>
+                    <div class="boss-timer-meta">⏰ 출몰 시간: ${timer.time}<br><span class="note">📌 메모: ${escapeHtml(timer.note || '-')}</span></div>
+                    <div class="boss-timer-remaining">남은 시간<br><span data-remaining></span></div>
+                    <div class="boss-timer-card-footer"><span>개인 알림</span><button type="button" class="boss-personal-toggle ${timer.alertEnabled ? '' : 'off'}" onclick="toggleBossTimerAlert('${timer.id}')">${timer.alertEnabled ? '켜짐' : '꺼짐'}</button></div>
+                </article>`).join('');
+            updateBossTimerDisplays();
+        }
+
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
+        }
+
+        function addBossTimer(event) {
+            event.preventDefault();
+            if (!isAdmin()) {
+                alert('운영진만 보스를 등록할 수 있습니다.');
+                return;
+            }
+            bossTimers.push({
+                id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+                name: document.getElementById('boss-timer-name').value.trim(),
+                time: document.getElementById('boss-timer-time').value,
+                note: document.getElementById('boss-timer-note').value.trim(),
+                alertEnabled: true
+            });
+            saveBossTimers();
+            event.target.reset();
+            renderBossTimers();
+        }
+
+        function deleteBossTimer(id) {
+            if (!isAdmin()) {
+                alert('운영진만 보스를 삭제할 수 있습니다.');
+                return;
+            }
+            bossTimers = bossTimers.filter((timer) => timer.id !== id);
+            saveBossTimers();
+            renderBossTimers();
+        }
+
+        function toggleBossTimerAlert(id) {
+            const timer = bossTimers.find((item) => item.id === id);
+            if (!timer) return;
+            timer.alertEnabled = !timer.alertEnabled;
+            saveBossTimers();
+            renderBossTimers();
+        }
+
+        function setBossAlerts(enabled) {
+            bossAlertsEnabled = enabled;
+            localStorage.setItem('dokdoBossAlertsEnabled', String(enabled));
+            document.getElementById('boss-alert-status').textContent = enabled ? '전체 알람 켜짐' : '전체 알람 꺼짐';
+        }
+
+        function playBossBeep() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            oscillator.connect(gain); gain.connect(audioContext.destination);
+            oscillator.frequency.value = 880; gain.gain.value = .12;
+            oscillator.start(); oscillator.stop(audioContext.currentTime + .25);
+        }
+
+        function getSoftMaleKoreanVoice() {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = window.speechSynthesis.getVoices();
+            const koreanVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith('ko'));
+            return koreanVoices.find((voice) => /male|남성|man|david|james|jun|injoon|hyun/i.test(voice.name))
+                || koreanVoices[0]
+                || voices.find((voice) => /male|남성|man|david|james|jun|injoon|hyun/i.test(voice.name))
+                || null;
+        }
+
+        function testBossVoice(timer = bossTimers[0]) {
+            if (!timer) {
+                alert('먼저 보스 타이머를 등록하세요.');
+                return;
+            }
+            playBossBeep();
+            if ('speechSynthesis' in window) {
+                const message = `${timer.name}입니다`;
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(message);
+                utterance.lang = 'ko-KR';
+                utterance.rate = .9;
+                utterance.volume = .95;
+                const voice = getSoftMaleKoreanVoice();
+                utterance.pitch = voice && /heami/i.test(voice.name) ? .55 : .78;
+                if (voice) utterance.voice = voice;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function updateBossTimerDisplays() {
+            document.querySelectorAll('[data-timer-id]').forEach((card) => {
+                const timer = bossTimers.find((item) => item.id === card.dataset.timerId);
+                if (!timer) return;
+                const remaining = nextBossTime(timer.time).getTime() - Date.now();
+                card.querySelector('[data-remaining]').textContent = formatBossRemaining(remaining);
+                const alertKey = `${timer.id}-${new Date().toDateString()}`;
+                if (bossAlertsEnabled && timer.alertEnabled && remaining <= 300000 && remaining > 0 && !bossAlertedTimers.has(alertKey)) {
+                    bossAlertedTimers.add(alertKey);
+                    testBossVoice(timer);
+                }
+            });
         }
 
         function saveAttendancePassword(key) {
@@ -3758,7 +4186,7 @@
                     return;
                 }
 
-                const row = [...document.querySelectorAll('#attendance-body tr')]
+                const row = [...document.querySelectorAll('#attendance-body tr.attendance-member-row')]
                     .find((candidate) => candidate.cells[0].textContent === member);
 
                 if (!row) {
@@ -3827,7 +4255,7 @@
                     return;
                 }
 
-                const row = [...document.querySelectorAll('#attendance-body tr')]
+                const row = [...document.querySelectorAll('#attendance-body tr.attendance-member-row')]
                     .find((candidate) => candidate.cells[0].textContent === member);
                 if (!row) {
                     showAttendanceNotice(`${member}님의 출석 행을 찾을 수 없습니다.`);
@@ -3930,15 +4358,22 @@
             const totalScore = Number(row.dataset.baseScore || 0) + dailyScore;
             const participationRate = Math.round((totalScore / 35) * 100);
             const timeProgress = `${time13Score + time21Score}점 (${time13.length}/3, ${time21.length}/3)`;
-            const eventDetails = `${enokScore ? '2점' : `${events.includes('에노크') ? '에노크 ' : ''}${events.includes('마슈미드') ? '마슈미드' : '-'}`} `;
+            const enokProgress = (events.includes('에노크') ? 1 : 0) + (events.includes('마슈미드') ? 1 : 0);
+            const siegeProgress = events.includes('전초전') || events.includes('쟁탈전') ? 1 : 0;
+            const eventDetails = enokScore
+                ? '2점 (2/2)'
+                : events.includes('에노크') || events.includes('마슈미드')
+                    ? `${events.includes('에노크') ? '에노크' : ''}${events.includes('에노크') && events.includes('마슈미드') ? '/' : ''}${events.includes('마슈미드') ? '마슈미드' : ''} (${enokProgress}/2)`
+                    : '0점 (0/2)';
 
             row.cells[1].textContent = `${totalScore}점 (${participationRate}%)`;
             row.cells[2].textContent = totalScore > 0 ? '출석 진행 중' : '미출석';
             row.cells[3].textContent = timeProgress;
             row.cells[4].textContent = eventDetails.trim();
-            row.cells[5].textContent = `${occupationScore}점 / ${siegeScore}점`;
-            row.cells[6].textContent = `${missionScore}점`;
-            row.cells[7].textContent = events.length || time13.length || time21.length ? '기록 있음' : '없음';
+            row.cells[5].textContent = `${occupationScore}점 (${events.includes('점령전') ? '1' : '0'}/1)`;
+            row.cells[6].textContent = `${siegeScore}점 (${siegeProgress}/1)`;
+            row.cells[7].textContent = `${missionScore}점 (${missionScore === 2 ? '2' : '0'}/2)`;
+            row.cells[8].textContent = events.length || time13.length || time21.length ? '기록 있음' : '없음';
             saveAttendanceRecord(row);
         }
 
@@ -3960,7 +4395,7 @@
         }
 
         function resetDailyAttendance() {
-            document.querySelectorAll('#attendance-body tr').forEach((row) => {
+            document.querySelectorAll('#attendance-body tr.attendance-member-row').forEach((row) => {
                 row.dataset.baseScore = Number(row.cells[1].textContent.match(/^\d+/)?.[0]) || 0;
                 row.dataset.time13Activities = '';
                 row.dataset.time21Activities = '';
@@ -4074,7 +4509,7 @@
                     database.ref('attendance').update(staleRecordUpdates).catch(() => {});
                 }
 
-                document.querySelectorAll('#attendance-body tr').forEach((row) => {
+                document.querySelectorAll('#attendance-body tr.attendance-member-row').forEach((row) => {
                     const record = records[attendanceUserKey(row.cells[0].textContent)];
                     if (!record || record.shuffleId !== currentShuffleId()) {
                         row.dataset.time13Activities = '';
@@ -4123,15 +4558,16 @@
 
             if (!confirm('오늘 출석 기록을 모두 삭제하시겠습니까?')) return;
             document.getElementById('attendance-notice').textContent = '';
-            document.querySelectorAll('#attendance-body tr').forEach((row) => {
+            document.querySelectorAll('#attendance-body tr.attendance-member-row').forEach((row) => {
                 row.dataset.baseScore = 0;
                 row.cells[1].textContent = '0점 (0%)';
                 row.cells[2].textContent = '미출석';
                 row.cells[3].textContent = '-';
-                row.cells[4].textContent = '-';
-                row.cells[5].textContent = '-';
-                row.cells[6].textContent = '-';
-                row.cells[7].textContent = '없음';
+                row.cells[4].textContent = '0점 (0/2)';
+                row.cells[5].textContent = '0점 (0/1)';
+                row.cells[6].textContent = '0점 (0/1)';
+                row.cells[7].textContent = '0점 (0/2)';
+                row.cells[8].textContent = '없음';
                 row.dataset.time13Activities = '';
                 row.dataset.time21Activities = '';
                 row.dataset.events = '';
@@ -4162,7 +4598,7 @@
                 return;
             }
 
-            const row = [...document.querySelectorAll('#attendance-body tr')]
+            const row = [...document.querySelectorAll('#attendance-body tr.attendance-member-row')]
                 .find((candidate) => candidate.cells[0].textContent.toUpperCase() === nickname);
             if (!row) {
                 alert('등록된 클랜원을 찾을 수 없습니다.');
