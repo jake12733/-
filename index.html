@@ -1875,6 +1875,117 @@
             border-color: #d1d5db !important;
         }
 
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #f8fafc;
+            color: #1e293b;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .theme-toggle:hover { background: #e2e8f0; }
+
+        body.theme-dark { background: #030712; }
+        body.theme-dark #view-dashboard aside,
+        body.theme-dark #view-dashboard main { background: #030712 !important; }
+        body.theme-dark #view-dashboard .tab-content,
+        body.theme-dark #view-dashboard .dashboard-card,
+        body.theme-dark #view-dashboard .notice-panel,
+        body.theme-dark #view-dashboard .notice-content,
+        body.theme-dark #view-dashboard .member-panel,
+        body.theme-dark #view-dashboard .member-list-panel,
+        body.theme-dark #view-dashboard .diamond-input-panel,
+        body.theme-dark #view-dashboard .diamond-table-panel,
+        body.theme-dark #view-dashboard .participation-search-panel,
+        body.theme-dark #view-dashboard .participation-result,
+        body.theme-dark #view-dashboard .attendance-card,
+        body.theme-dark #view-dashboard .attendance-slot,
+        body.theme-dark #view-dashboard .shuffle-record-panel,
+        body.theme-dark #view-dashboard .attendance-password-group,
+        body.theme-dark #view-dashboard .attendance-setting,
+        body.theme-dark #view-dashboard .participation-stat div,
+        body.theme-dark #view-dashboard .server-form input,
+        body.theme-dark #view-dashboard .member-form input,
+        body.theme-dark #view-dashboard .member-form select,
+        body.theme-dark #view-dashboard .member-inline-input,
+        body.theme-dark #view-dashboard .diamond-form input,
+        body.theme-dark #view-dashboard .participation-search input,
+        body.theme-dark #view-dashboard .participation-search select,
+        body.theme-dark #view-dashboard .attendance-page input,
+        body.theme-dark #view-dashboard .attendance-page select,
+        body.theme-dark #view-dashboard .shuffle-record-search input,
+        body.theme-dark #view-dashboard .shuffle-record-search select,
+        body.theme-dark #view-dashboard .shuffle-record-form input,
+        body.theme-dark #view-dashboard .shuffle-detail-table,
+        body.theme-dark #view-dashboard #tab-admin > div,
+        body.theme-dark .boss-timer-register,
+        body.theme-dark .boss-alert-toolbar,
+        body.theme-dark .boss-timer-card,
+        body.theme-dark .boss-timer-remaining,
+        body.theme-dark .boss-edit-dialog { background: #111827 !important; }
+        body.theme-dark #view-dashboard .dashboard-card,
+        body.theme-dark #view-dashboard .notice-panel,
+        body.theme-dark #view-dashboard .notice-content,
+        body.theme-dark #view-dashboard .member-panel,
+        body.theme-dark #view-dashboard .member-list-panel,
+        body.theme-dark #view-dashboard .diamond-input-panel,
+        body.theme-dark #view-dashboard .diamond-table-panel,
+        body.theme-dark #view-dashboard .participation-search-panel,
+        body.theme-dark #view-dashboard .participation-result,
+        body.theme-dark #view-dashboard .attendance-card,
+        body.theme-dark #view-dashboard .attendance-slot,
+        body.theme-dark #view-dashboard .shuffle-record-panel,
+        body.theme-dark #view-dashboard .attendance-password-group,
+        body.theme-dark #view-dashboard .shuffle-detail-table,
+        body.theme-dark .boss-timer-register,
+        body.theme-dark .boss-alert-toolbar,
+        body.theme-dark .boss-timer-card,
+        body.theme-dark .boss-timer-remaining,
+        body.theme-dark .boss-edit-dialog { border-color: #334155 !important; }
+        body.theme-dark #view-dashboard .tab-content,
+        body.theme-dark #view-dashboard .tab-content h2,
+        body.theme-dark #view-dashboard .tab-content h3,
+        body.theme-dark #view-dashboard .tab-content h4,
+        body.theme-dark #view-dashboard .tab-content strong,
+        body.theme-dark #view-dashboard .dashboard-card-label,
+        body.theme-dark #view-dashboard .season-period,
+        body.theme-dark #view-dashboard .notice-content,
+        body.theme-dark #view-dashboard .member-table td,
+        body.theme-dark #view-dashboard .diamond-table td,
+        body.theme-dark #view-dashboard .attendance-table td,
+        body.theme-dark #view-dashboard .shuffle-record-table td,
+        body.theme-dark #view-dashboard .shuffle-detail-table td,
+        body.theme-dark #view-dashboard nav button:not([class*="bg-red-600"]),
+        body.theme-dark #view-dashboard #current-user-name,
+        body.theme-dark #view-dashboard #current-user-role,
+        body.theme-dark #view-dashboard .member-help,
+        body.theme-dark #view-dashboard .season-note,
+        body.theme-dark #view-dashboard .attendance-label,
+        body.theme-dark #view-dashboard .shuffle-record-table th,
+        body.theme-dark #view-dashboard .shuffle-detail-table th,
+        body.theme-dark #view-dashboard .diamond-distribution-table th,
+        body.theme-dark #view-dashboard .diamond-rules,
+        body.theme-dark #view-dashboard .attendance-subtitle,
+        body.theme-dark #view-dashboard .attendance-group-subtitle,
+        body.theme-dark #view-dashboard .shuffle-record-empty,
+        body.theme-dark #view-dashboard .diamond-empty,
+        body.theme-dark .boss-timer-card h3,
+        body.theme-dark .boss-edit-dialog h3,
+        body.theme-dark .boss-edit-dialog label { color: #e5e7eb !important; }
+        body.theme-dark #view-dashboard input,
+        body.theme-dark #view-dashboard select,
+        body.theme-dark .boss-timer-form input,
+        body.theme-dark .boss-edit-dialog input { background: #1f2937 !important; color: #f8fafc !important; border-color: #475569 !important; }
+        body.theme-dark .theme-toggle { border-color: #475569; background: #1f2937; color: #f8fafc; }
+        body.theme-dark .theme-toggle:hover { background: #334155; }
+
         @media (max-width: 700px) {
             #view-login > div:last-child {
                 justify-content: center;
@@ -2482,6 +2593,7 @@
                 <div class="text-xs text-gray-400 mb-3 px-2">
                     <span id="current-user-name" class="text-gray-200 font-semibold">DOKDO패왕</span> (<span id="current-user-role">admin</span>)
                 </div>
+                <button id="theme-toggle" type="button" class="theme-toggle" onclick="toggleTheme()" aria-label="블랙 모드로 전환" title="블랙 모드로 전환">🌙</button>
                 <button onclick="handleLogout()" class="w-full py-2 bg-[#0d121f] hover:bg-red-600/20 hover:text-red-400 text-gray-300 text-xs font-semibold rounded-lg border border-gray-800 transition cursor-pointer">
                     로그아웃
                 </button>
@@ -2939,6 +3051,25 @@
         const bossAlertedTimers = new Set();
         let bossAudioContext = null;
         let bossAudioUnlocked = false;
+
+        function applyTheme(theme) {
+            const isDark = theme === 'dark';
+            document.body.classList.toggle('theme-dark', isDark);
+            const toggle = document.getElementById('theme-toggle');
+            if (toggle) {
+                toggle.textContent = isDark ? '☀️' : '🌙';
+                toggle.setAttribute('aria-label', isDark ? '화이트 모드로 전환' : '블랙 모드로 전환');
+                toggle.title = isDark ? '화이트 모드로 전환' : '블랙 모드로 전환';
+            }
+        }
+
+        function toggleTheme() {
+            const nextTheme = document.body.classList.contains('theme-dark') ? 'light' : 'dark';
+            localStorage.setItem('dokdoTheme', nextTheme);
+            applyTheme(nextTheme);
+        }
+
+        applyTheme(localStorage.getItem('dokdoTheme') || 'light');
 
         function unlockBossAudio() {
             if (bossAudioUnlocked) return;
@@ -3848,7 +3979,8 @@
                 const days = [];
                 for (const day = new Date(startDate); day <= endDate; day.setUTCDate(day.getUTCDate() + 1)) {
                     const dayKey = dateInputValue(day);
-                    days.push([dayKey, dailyRecords[dayKey] || {}]);
+                    const legacyDayKey = `${day.getUTCFullYear()}-${day.getUTCMonth() + 1}-${day.getUTCDate()}`;
+                    days.push([dayKey, dailyRecords[dayKey] || dailyRecords[legacyDayKey] || {}]);
                 }
 
                 days.forEach(([day, participants]) => {
