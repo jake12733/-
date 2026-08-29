@@ -2133,9 +2133,100 @@
             font-weight: 700;
         }
         .boss-timer-card-footer { margin-top: 14px; color: #475569; font-size: 12px; }
+        .boss-timer-test {
+            padding: 5px 10px;
+            border: 0;
+            border-radius: 4px;
+            background: #f59e0b;
+            color: #fff7ed;
+            font-weight: 700;
+            cursor: pointer;
+        }
         .boss-personal-toggle { padding: 5px 10px; border: 0; border-radius: 4px; background: #166534; color: #bbf7d0; cursor: pointer; }
         .boss-personal-toggle.off { background: #374151; color: #cbd5e1; }
         .boss-timer-empty { padding: 40px; border: 1px dashed #cbd5e1; color: #64748b; text-align: center; }
+
+        .boss-edit-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, .52);
+            padding: 20px;
+        }
+
+        .boss-edit-modal.hidden {
+            display: none;
+        }
+
+        .boss-edit-dialog {
+            width: min(420px, 100%);
+            box-sizing: border-box;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, .18);
+        }
+
+        .boss-edit-dialog h3 {
+            margin: 0 0 18px;
+            color: #111827;
+            font-size: 22px;
+        }
+
+        #boss-edit-form {
+            display: grid;
+            gap: 14px;
+        }
+
+        #boss-edit-form label {
+            display: grid;
+            gap: 8px;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        #boss-edit-form input {
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 42px;
+            padding: 0 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #f8fafc;
+            color: #111827;
+            font-size: 14px;
+        }
+
+        .boss-edit-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .boss-edit-actions button {
+            min-height: 38px;
+            padding: 0 14px;
+            border: 0;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .boss-edit-cancel {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .boss-edit-save {
+            background: #dc2626;
+            color: #fff;
+        }
 
         @media (max-width: 1100px) {
             .boss-timer-form { grid-template-columns: 1fr 1fr; }
@@ -2815,6 +2906,30 @@
         </main>
     </div>
 
+    <div id="boss-edit-modal" class="boss-edit-modal hidden">
+        <div class="boss-edit-dialog">
+            <h3>보스 타이머 수정</h3>
+            <form id="boss-edit-form">
+                <label>
+                    보스 이름
+                    <input id="boss-edit-name" type="text" required>
+                </label>
+                <label>
+                    출몰 시간
+                    <input id="boss-edit-time" type="time" required>
+                </label>
+                <label>
+                    메모
+                    <input id="boss-edit-note" type="text" placeholder="위치 또는 메모">
+                </label>
+                <div class="boss-edit-actions">
+                    <button type="button" class="boss-edit-cancel">취소</button>
+                    <button type="submit" class="boss-edit-save">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- 스크립트 제어 -->
     <script>
         let attendanceEnabled = true;
@@ -2822,6 +2937,32 @@
         let bossAlertsEnabled = localStorage.getItem('dokdoBossAlertsEnabled') !== 'false';
         let bossTimers = JSON.parse(localStorage.getItem('dokdoBossTimers') || '[]');
         const bossAlertedTimers = new Set();
+        let bossAudioContext = null;
+        let bossAudioUnlocked = false;
+
+        function unlockBossAudio() {
+            if (bossAudioUnlocked) return;
+            try {
+                const AudioCtor = window.AudioContext || window.webkitAudioContext;
+                if (AudioCtor) {
+                    bossAudioContext = bossAudioContext || new AudioCtor();
+                    if (bossAudioContext.state === 'suspended') {
+                        bossAudioContext.resume().catch(() => {});
+                    }
+                }
+                if ('speechSynthesis' in window && typeof window.speechSynthesis.resume === 'function') {
+                    window.speechSynthesis.resume();
+                }
+                bossAudioUnlocked = true;
+            } catch (error) {
+                bossAudioUnlocked = false;
+            }
+        }
+
+        ['pointerdown', 'touchstart', 'keydown', 'click'].forEach((eventName) => {
+            document.addEventListener(eventName, unlockBossAudio, { once: true });
+        });
+
         if (!bossTimers.length) {
             bossTimers = [
                 { id: 'default-world-12', name: '12시 월드보스 5분전', time: '11:55', note: '', alertEnabled: true },
@@ -4005,11 +4146,25 @@
             }
             list.innerHTML = bossTimers.map((timer) => `
                 <article class="boss-timer-card" data-timer-id="${timer.id}">
-                    <div class="boss-timer-card-header"><h3>${escapeHtml(timer.name)}</h3><div class="boss-timer-card-actions"><button type="button" class="boss-timer-edit" onclick="editBossTimer('${timer.id}')">수정</button><button type="button" class="boss-timer-delete" onclick="deleteBossTimer('${timer.id}')">삭제</button></div></div>
+                    <div class="boss-timer-card-header"><h3>${escapeHtml(timer.name)}</h3><div class="boss-timer-card-actions"><button type="button" class="boss-timer-edit" data-timer-id="${timer.id}" data-action="edit">수정</button><button type="button" class="boss-timer-delete" data-timer-id="${timer.id}" data-action="delete">삭제</button></div></div>
                     <div class="boss-timer-meta">⏰ 출몰 시간: ${timer.time}<br><span class="note">📌 메모: ${escapeHtml(timer.note || '-')}</span></div>
                     <div class="boss-timer-remaining">남은 시간<br><span data-remaining></span></div>
-                    <div class="boss-timer-card-footer"><span>개인 알림</span><button type="button" class="boss-personal-toggle ${timer.alertEnabled ? '' : 'off'}" onclick="toggleBossTimerAlert('${timer.id}')">${timer.alertEnabled ? '켜짐' : '꺼짐'}</button></div>
+                    <div class="boss-timer-card-footer">
+                        <button type="button" class="boss-timer-test" data-timer-id="${timer.id}" data-action="test">🔊 테스트</button>
+                        <span>개인 알림</span>
+                        <button type="button" class="boss-personal-toggle ${timer.alertEnabled ? '' : 'off'}" data-timer-id="${timer.id}" data-action="toggle">${timer.alertEnabled ? '켜짐' : '꺼짐'}</button>
+                    </div>
                 </article>`).join('');
+
+            list.querySelectorAll('[data-action]').forEach((button) => {
+                const { action, timerId } = button.dataset;
+                button.onclick = () => {
+                    if (action === 'edit') return editBossTimer(timerId);
+                    if (action === 'delete') return deleteBossTimer(timerId);
+                    if (action === 'test') return testBossVoiceById(timerId);
+                    if (action === 'toggle') return toggleBossTimerAlert(timerId);
+                };
+            });
             updateBossTimerDisplays();
         }
 
@@ -4045,7 +4200,9 @@
             renderBossTimers();
         }
 
-        function editBossTimer(id) {
+        let editingBossTimerId = null;
+
+        function openBossTimerEditor(id) {
             if (!isAdmin()) {
                 alert('운영진만 보스를 수정할 수 있습니다.');
                 return;
@@ -4053,23 +4210,47 @@
             const timer = bossTimers.find((item) => item.id === id);
             if (!timer) return;
 
-            const name = prompt('보스 이름을 입력하세요.', timer.name);
-            if (name === null) return;
-            const time = prompt('출몰 시간을 입력하세요. (예: 19:55)', timer.time);
-            if (time === null) return;
-            const note = prompt('위치 또는 메모를 입력하세요.', timer.note || '');
-            if (note === null) return;
-            if (!name.trim() || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time.trim())) {
+            editingBossTimerId = id;
+            document.getElementById('boss-edit-name').value = timer.name;
+            document.getElementById('boss-edit-time').value = timer.time;
+            document.getElementById('boss-edit-note').value = timer.note || '';
+            document.getElementById('boss-edit-modal').classList.remove('hidden');
+        }
+
+        function closeBossTimerEditor() {
+            editingBossTimerId = null;
+            document.getElementById('boss-edit-form').reset();
+            document.getElementById('boss-edit-modal').classList.add('hidden');
+        }
+
+        function editBossTimer(id) {
+            openBossTimerEditor(id);
+        }
+
+        document.getElementById('boss-edit-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            if (!editingBossTimerId) return;
+
+            const name = document.getElementById('boss-edit-name').value.trim();
+            const time = document.getElementById('boss-edit-time').value.trim();
+            const note = document.getElementById('boss-edit-note').value.trim();
+
+            if (!name || !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) {
                 alert('보스 이름과 올바른 출몰 시간(HH:MM)을 입력하세요.');
                 return;
             }
 
-            timer.name = name.trim();
-            timer.time = time.trim();
-            timer.note = note.trim();
+            const timer = bossTimers.find((item) => item.id === editingBossTimerId);
+            if (!timer) return;
+            timer.name = name;
+            timer.time = time;
+            timer.note = note;
             saveBossTimers();
             renderBossTimers();
-        }
+            closeBossTimerEditor();
+        });
+
+        document.querySelector('.boss-edit-cancel').addEventListener('click', closeBossTimerEditor);
 
         function toggleBossTimerAlert(id) {
             const timer = bossTimers.find((item) => item.id === id);
@@ -4086,7 +4267,12 @@
         }
 
         function playBossBeep() {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            unlockBossAudio();
+            const audioContext = bossAudioContext || new (window.AudioContext || window.webkitAudioContext)();
+            bossAudioContext = audioContext;
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().catch(() => {});
+            }
             const oscillator = audioContext.createOscillator();
             const gain = audioContext.createGain();
             oscillator.connect(gain); gain.connect(audioContext.destination);
@@ -4109,6 +4295,7 @@
                 alert('먼저 보스 타이머를 등록하세요.');
                 return;
             }
+            unlockBossAudio();
             playBossBeep();
             if ('speechSynthesis' in window) {
                 const message = `${timer.name}입니다`;
@@ -4124,8 +4311,14 @@
             }
         }
 
+        function testBossVoiceById(timerId) {
+            const timer = bossTimers.find((item) => item.id === timerId);
+            if (!timer) return;
+            testBossVoice(timer);
+        }
+
         function updateBossTimerDisplays() {
-            document.querySelectorAll('[data-timer-id]').forEach((card) => {
+            document.querySelectorAll('.boss-timer-card[data-timer-id]').forEach((card) => {
                 const timer = bossTimers.find((item) => item.id === card.dataset.timerId);
                 if (!timer) return;
                 const remaining = nextBossTime(timer.time).getTime() - Date.now();
