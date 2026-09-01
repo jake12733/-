@@ -1879,15 +1879,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 36px;
+            min-width: 104px;
             height: 36px;
-            padding: 0;
+            padding: 0 10px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             background: #f8fafc;
             color: #1e293b;
-            font-size: 17px;
+            font-size: 12px;
+            font-weight: 700;
             cursor: pointer;
+            background: #ffffff;
+            color: #000000;
         }
 
         .theme-toggle:hover { background: #e2e8f0; }
@@ -1983,8 +1986,144 @@
         body.theme-dark #view-dashboard select,
         body.theme-dark .boss-timer-form input,
         body.theme-dark .boss-edit-dialog input { background: #1f2937 !important; color: #f8fafc !important; border-color: #475569 !important; }
-        body.theme-dark .theme-toggle { border-color: #475569; background: #1f2937; color: #f8fafc; }
-        body.theme-dark .theme-toggle:hover { background: #334155; }
+        body.theme-dark .theme-toggle { border-color: #475569; background: #000000; color: #ffffff; }
+        body.theme-dark .theme-toggle:hover { background: #1f2937; }
+        .login-theme-toggle {
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+            z-index: 3;
+            width: 100px !important;
+            height: 32px;
+            min-height: 32px !important;
+            padding: 0 8px !important;
+            border-radius: 6px !important;
+            font-size: 11px !important;
+            box-shadow: none !important;
+            border-color: #cbd5e1 !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+        }
+        body.theme-dark #view-login .login-theme-toggle { border-color: #475569 !important; background: #000000 !important; color: #ffffff !important; }
+        body.theme-dark #view-login .login-theme-toggle:hover { background: #1f2937 !important; }
+        body.theme-dark #view-login { background: #030712; }
+        body.theme-dark #view-login .login-overlay { background: rgba(3, 7, 18, .78); }
+        body.theme-dark #view-login > div:last-child > div { border-color: #334155; background: #111827; }
+        body.theme-dark #view-login .text-gray-400,
+        body.theme-dark #view-login label,
+        body.theme-dark #view-login span { color: #d1d5db; }
+        body.theme-dark #view-login input { border-color: #475569; background: #1f2937; color: #f8fafc; }
+        body.theme-dark #view-login input::placeholder { color: #94a3b8; }
+        body.theme-dark #view-login .auth-tabs { border-bottom-color: #475569; }
+        body.theme-dark #view-login .auth-tab { color: #cbd5e1; }
+        body.theme-dark .member-class-board-panel,
+        body.theme-dark .member-class-column { border-color: #334155; background: #111827; }
+        body.theme-dark .member-class-column-title { border-bottom-color: #475569; color: #f8fafc; }
+        body.theme-dark .member-class-column:nth-child(1) .member-class-column-title { background: #4c3a75; }
+        body.theme-dark .member-class-column:nth-child(2) .member-class-column-title { background: #245580; }
+        body.theme-dark .member-class-column:nth-child(3) .member-class-column-title { background: #855321; }
+        body.theme-dark .member-class-column:nth-child(4) .member-class-column-title { background: #7f3035; }
+        body.theme-dark .member-class-column:nth-child(5) .member-class-column-title { background: #79651d; }
+        body.theme-dark .member-class-entry { border-bottom-color: #334155; color: #e5e7eb; }
+        body.theme-dark .member-class-entry span { color: #f8fafc; }
+        body.theme-dark .member-class-empty { color: #94a3b8; }
+        body.theme-dark #view-dashboard .member-table .member-power-blind { color: #c084fc !important; }
+
+        .mount-race-page { color: #172033; }
+        .mount-race-header { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+        .mount-race-header h2 { margin: 0; font-size: 28px; }
+        .mount-race-header p { margin: 7px 0 0; color: #64748b; font-size: 13px; }
+        .mount-race-status { min-width: 132px; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #475569; font-size: 12px; font-weight: 800; text-align: center; }
+        .mount-race-layout { display: grid; grid-template-columns: minmax(260px, .78fr) minmax(0, 1.65fr); gap: 20px; }
+        .mount-selector, .mount-race-track, .mount-race-results { border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; box-shadow: 0 8px 24px rgba(15, 23, 42, .08); }
+        .mount-selector { padding: 18px; }
+        .mount-panel-title { margin: 0 0 14px; color: #334155; font-size: 12px; font-weight: 800; }
+        .mount-choice-list { display: grid; gap: 10px; }
+        .mount-choice { display: grid; grid-template-columns: 54px 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 7px; border: 1px solid #d7dee9; border-radius: 6px; background: #fff; color: #172033; text-align: left; cursor: pointer; }
+        .mount-choice:hover { border-color: #d14b4b; }
+        .mount-choice.selected { border-color: #b91c1c; background: #fff5f5; box-shadow: inset 3px 0 #b91c1c; }
+        .mount-choice img { width: 54px; height: 54px; border-radius: 4px; object-fit: cover; }
+        .mount-choice strong { display: block; font-size: 14px; }
+        .mount-choice span { display: block; margin-top: 4px; color: #64748b; font-size: 11px; }
+        .mount-choice em { color: #b91c1c; font-size: 11px; font-style: normal; font-weight: 800; }
+        .mount-start-button { width: 100%; min-height: 46px; margin-top: 16px; border: 0; border-radius: 5px; background: #b91c1c; color: #fff; font-size: 14px; font-weight: 800; cursor: pointer; }
+        .mount-start-button:hover:not(:disabled) { background: #dc2626; }
+        .mount-start-button:disabled { cursor: wait; opacity: .65; }
+        .mount-race-track { position: relative; min-height: 440px; overflow: hidden; padding: 18px; background-color: #172033; background-image: linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px), linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px); background-size: 28px 28px; }
+        .mount-race-track::after { content: 'FINISH'; position: absolute; top: 20px; right: 24px; bottom: 20px; display: flex; align-items: center; padding-left: 8px; border-left: 3px solid #f8fafc; color: rgba(248,250,252,.7); font-size: 10px; font-weight: 900; letter-spacing: 2px; writing-mode: vertical-rl; }
+        .race-lane { position: relative; height: 126px; margin-bottom: 12px; overflow: hidden; border: 1px solid rgba(226,232,240,.25); border-radius: 6px; background: rgba(2, 6, 23, .42); }
+        .race-lane:last-child { margin-bottom: 0; }
+        .race-lane::before { content: attr(data-lane); position: absolute; top: 10px; left: 12px; z-index: 2; color: rgba(255,255,255,.68); font-size: 10px; font-weight: 900; letter-spacing: 1px; }
+        .race-runner { position: absolute; left: 16px; bottom: 0; display: flex; align-items: end; gap: 8px; width: 156px; transform: translateX(calc(var(--progress, 0) * 1%)); transition: transform .11s linear; }
+        .race-runner img { width: 122px; height: 96px; object-fit: cover; object-position: center; clip-path: polygon(0 18%, 82% 0, 100% 68%, 78% 100%, 4% 88%); filter: drop-shadow(0 8px 6px rgba(0,0,0,.45)); }
+        .race-runner span { padding-bottom: 13px; color: #f8fafc; font-size: 11px; font-weight: 800; white-space: nowrap; }
+        .race-progress-label { position: absolute; right: 32px; bottom: 10px; color: rgba(255,255,255,.62); font-size: 11px; font-weight: 700; }
+        .mount-race-results { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1.4fr; gap: 18px; padding: 18px; }
+        .mount-result-current { display: flex; align-items: center; gap: 12px; min-height: 54px; color: #475569; font-size: 13px; }
+        .mount-result-current strong { color: #b91c1c; font-size: 18px; }
+        .mount-race-history { display: flex; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
+        .mount-race-history span { color: #64748b; font-size: 11px; white-space: nowrap; }
+        .mount-history-items { display: flex; justify-content: flex-end; gap: 6px; overflow: hidden; }
+        .mount-history-item { padding: 6px 8px; border-radius: 4px; background: #f1f5f9; color: #334155; font-size: 11px; font-weight: 700; white-space: nowrap; }
+        body.theme-dark .mount-race-page { color: #e5e7eb; }
+        body.theme-dark .mount-race-header p, body.theme-dark .mount-panel-title, body.theme-dark .mount-choice span, body.theme-dark .mount-result-current, body.theme-dark .mount-race-history span { color: #aab7ca; }
+        body.theme-dark .mount-race-status, body.theme-dark .mount-selector, body.theme-dark .mount-race-results { border-color: #334155; background: #111827; color: #e5e7eb; }
+        body.theme-dark .mount-choice { border-color: #334155; background: #172033; color: #f8fafc; }
+        body.theme-dark .mount-choice.selected { border-color: #ef4444; background: #351521; }
+        body.theme-dark .mount-history-item { background: #1f2937; color: #dbeafe; }
+        .ladder-game-page { color: #172033; }
+        .ladder-game-header { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 22px; }
+        .ladder-game-header h2 { margin: 0; font-size: 28px; }
+        .ladder-game-header p { margin: 7px 0 0; color: #64748b; font-size: 13px; }
+        .ladder-game-layout { display: grid; grid-template-columns: minmax(270px, .72fr) minmax(0, 1.75fr); gap: 20px; }
+        .ladder-controls, .ladder-board { border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; box-shadow: 0 8px 24px rgba(15, 23, 42, .08); }
+        .ladder-controls { padding: 18px; }
+        .ladder-controls h3 { margin: 0 0 12px; color: #334155; font-size: 13px; }
+        .ladder-add-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 10px; }
+        .ladder-add-row select, .ladder-add-row input, .ladder-participant input, .ladder-reward-row input { min-width: 0; box-sizing: border-box; height: 38px; padding: 0 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; color: #172033; font: inherit; font-size: 12px; }
+        .ladder-add-row button, .ladder-generate { min-height: 38px; padding: 0 12px; border: 0; border-radius: 4px; background: #2563eb; color: #fff; font-size: 12px; font-weight: 800; cursor: pointer; }
+        .ladder-reward-list { display: grid; gap: 7px; margin: 0 0 16px; }
+        .ladder-reward-row { display: grid; grid-template-columns: 40px 1fr; gap: 8px; align-items: center; }
+        .ladder-reward-row span { color: #64748b; font-size: 11px; font-weight: 800; }
+        .ladder-participants { display: grid; gap: 7px; margin: 16px 0; }
+        .ladder-participant { display: grid; grid-template-columns: 28px 1fr 30px; gap: 7px; align-items: center; }
+        .ladder-participant > span { color: #64748b; font-size: 11px; font-weight: 800; text-align: center; }
+        .ladder-remove { width: 30px; height: 30px; padding: 0; border: 0; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-size: 18px; line-height: 1; cursor: pointer; }
+        .ladder-generate { width: 100%; min-height: 46px; background: #b91c1c; font-size: 14px; }
+        .ladder-generate:hover { background: #dc2626; }
+        .ladder-reveal { min-height: 38px; padding: 0 14px; border: 0; border-radius: 4px; background: #f59e0b; color: #1f2937; font-size: 12px; font-weight: 800; cursor: pointer; }
+        .ladder-board { min-height: 490px; overflow: auto; padding: 18px; }
+        .ladder-board-empty { display: flex; align-items: center; justify-content: center; min-height: 450px; color: #94a3b8; font-size: 14px; }
+        .ladder-svg { display: block; min-width: 100%; height: 450px; }
+        .ladder-name { fill: #172033; font-size: 13px; font-weight: 800; }
+        .ladder-result { fill: #475569; font-size: 12px; font-weight: 700; }
+        .ladder-line { stroke: #94a3b8; stroke-width: 2; }
+        .ladder-rung { stroke: #b91c1c; stroke-width: 3; }
+        .ladder-path { fill: none; stroke: #f59e0b; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 900; stroke-dashoffset: 900; filter: drop-shadow(0 0 4px rgba(245,158,11,.55)); animation: ladder-path-draw 1.7s ease-out forwards; }
+        .ladder-runner-dot { fill: #fef3c7; stroke: #f59e0b; stroke-width: 4; filter: drop-shadow(0 0 7px rgba(245,158,11,.95)); }
+        @keyframes ladder-path-draw { to { stroke-dashoffset: 0; } }
+        .ladder-select-note { margin: 12px 0 0; color: #64748b; font-size: 12px; text-align: center; }
+        .ladder-rank-results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 12px; border-top: 1px solid #cbd5e1; }
+        .ladder-rank-result { min-width: 0; padding: 12px 8px 4px; color: #334155; font-size: 12px; text-align: center; }
+        .ladder-rank-result + .ladder-rank-result { border-left: 1px solid #cbd5e1; }
+        .ladder-rank-result strong, .ladder-rank-result span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ladder-rank-result strong { color: #b91c1c; font-size: 13px; }
+        .ladder-rank-result span { margin-top: 4px; color: #64748b; font-size: 11px; }
+        body.theme-dark .ladder-game-page { color: #e5e7eb; }
+        body.theme-dark .ladder-game-header p, body.theme-dark .ladder-select-note, body.theme-dark .ladder-participant > span { color: #aab7ca; }
+        body.theme-dark .ladder-controls, body.theme-dark .ladder-board { border-color: #334155; background: #111827; }
+        body.theme-dark .ladder-controls h3 { color: #e5e7eb; }
+        body.theme-dark .ladder-add-row select, body.theme-dark .ladder-add-row input, body.theme-dark .ladder-participant input, body.theme-dark .ladder-reward-row input { border-color: #475569; background: #1f2937; color: #f8fafc; }
+        body.theme-dark .ladder-reward-row span { color: #aab7ca; }
+        body.theme-dark .ladder-remove { background: #4c1d28; color: #fecdd3; }
+        body.theme-dark .ladder-reveal { background: #d97706; color: #fff7ed; }
+        body.theme-dark .ladder-name { fill: #f8fafc; }
+        body.theme-dark .ladder-result { fill: #cbd5e1; }
+        body.theme-dark .ladder-line { stroke: #64748b; }
+        body.theme-dark .ladder-rank-results, body.theme-dark .ladder-rank-result + .ladder-rank-result { border-color: #334155; }
+        body.theme-dark .ladder-rank-result { color: #e5e7eb; }
+        body.theme-dark .ladder-rank-result strong { color: #fca5a5; }
+        body.theme-dark .ladder-rank-result span { color: #aab7ca; }
 
         @media (max-width: 700px) {
             #view-login > div:last-child {
@@ -2014,6 +2153,13 @@
             .shuffle-record-form button {
                 width: 100%;
             }
+
+            .mount-race-header { align-items: flex-start; flex-direction: column; }
+            .mount-race-layout, .mount-race-results { grid-template-columns: 1fr; }
+            .mount-race-track { min-height: 390px; }
+            .race-runner { width: 126px; }
+            .race-runner img { width: 96px; height: 82px; }
+            .mount-race-history { justify-content: flex-start; }
 
             .shuffle-record-panel {
                 overflow-x: auto;
@@ -2496,6 +2642,7 @@
     <div id="view-login" class="fixed inset-0 w-screen h-screen z-50 bg-[#030712] overflow-hidden">
         <img class="login-background" src="./bg_2.jpg" alt="로그인 배경">
         <div class="login-overlay"></div>
+        <button id="login-theme-toggle" type="button" class="theme-toggle login-theme-toggle" onclick="toggleTheme()" aria-label="블랙 모드로 전환" title="블랙 모드로 전환">Dark Mode</button>
 
         <div class="relative z-10 w-full h-full flex items-center justify-center px-4 sm:justify-end sm:pr-8 lg:pr-32">
             <div class="bg-[#090d16]/95 backdrop-blur-md border border-red-950/60 rounded-2xl p-8 sm:p-12 w-full max-w-[560px] shadow-[0_0_100px_rgba(0,0,0,0.95)]">
@@ -2522,7 +2669,7 @@
                             <span class="text-xs font-semibold text-gray-400">비밀번호</span>
                         </div>
                         <div class="relative password-field">
-                            <input id="loginPassword" type="password" placeholder="비밀번호를 입력하세요" oninput="this.value = this.value.toLowerCase()" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner placeholder-gray-600">
+                            <input id="loginPassword" type="password" placeholder="비밀번호를 입력하세요" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner placeholder-gray-600">
                             <button type="button" class="password-toggle" onclick="togglePassword()" aria-label="비밀번호 보기">👁</button>
                         </div>
                     </div>
@@ -2543,10 +2690,18 @@
 
                 <div id="auth-reset" class="auth-panel hidden">
                     <div>
-                        <div class="text-left mb-2 pl-1"><span class="text-xs font-semibold text-gray-400">닉네임 또는 이메일</span></div>
-                        <input type="text" placeholder="닉네임 또는 이메일을 입력하세요" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 focus:outline-none focus:border-red-600 placeholder-gray-600">
+                        <div class="text-left mb-2 pl-1"><span class="text-xs font-semibold text-gray-400">닉네임</span></div>
+                        <input id="resetNickname" type="text" placeholder="닉네임을 입력하세요" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 focus:outline-none focus:border-red-600 placeholder-gray-600">
                     </div>
-                    <button type="button" onclick="handleReset()" class="w-full py-4 bg-gradient-to-r from-red-700 to-red-600 text-white text-lg font-bold tracking-wider rounded-xl cursor-pointer shadow-[0_4px_30px_rgba(220,38,38,0.6)]">재설정 링크 받기</button>
+                    <div>
+                        <div class="text-left mb-2 pl-1"><span class="text-xs font-semibold text-gray-400">새 비밀번호</span></div>
+                        <input id="resetPassword" type="password" placeholder="새 비밀번호를 입력하세요" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 focus:outline-none focus:border-red-600 placeholder-gray-600">
+                    </div>
+                    <div>
+                        <div class="text-left mb-2 pl-1"><span class="text-xs font-semibold text-gray-400">새 비밀번호 확인</span></div>
+                        <input id="resetPasswordConfirm" type="password" placeholder="새 비밀번호를 다시 입력하세요" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 focus:outline-none focus:border-red-600 placeholder-gray-600">
+                    </div>
+                    <button type="button" onclick="handleReset()" class="w-full py-4 bg-gradient-to-r from-red-700 to-red-600 text-white text-lg font-bold tracking-wider rounded-xl cursor-pointer shadow-[0_4px_30px_rgba(220,38,38,0.6)]">비밀번호 재설정</button>
                 </div>
             </div>
         </div>
@@ -2586,14 +2741,17 @@
                     <button onclick="switchTab('boss-timer')" id="nav-boss-timer" class="member-restricted w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
                         <span>⏰</span> 보탐 타이머
                     </button>
+                    <button onclick="switchTab('mount-race')" id="nav-mount-race" class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer">
+                        <span>🏇</span> 미니게임
+                    </button>
                 </nav>
             </div>
 
             <div class="border-t border-gray-800/60 pt-4">
                 <div class="text-xs text-gray-400 mb-3 px-2">
-                    <span id="current-user-name" class="text-gray-200 font-semibold">DOKDO패왕</span> (<span id="current-user-role">admin</span>)
+                    <span id="current-user-name" class="text-gray-200 font-semibold">DOKDO한빠</span> (<span id="current-user-role">admin</span>)
                 </div>
-                <button id="theme-toggle" type="button" class="theme-toggle" onclick="toggleTheme()" aria-label="블랙 모드로 전환" title="블랙 모드로 전환">🌙</button>
+                <button id="theme-toggle" type="button" class="theme-toggle" onclick="toggleTheme()" aria-label="블랙 모드로 전환" title="블랙 모드로 전환">Dark Mode</button>
                 <button onclick="handleLogout()" class="w-full py-2 bg-[#0d121f] hover:bg-red-600/20 hover:text-red-400 text-gray-300 text-xs font-semibold rounded-lg border border-gray-800 transition cursor-pointer">
                     로그아웃
                 </button>
@@ -2646,8 +2804,9 @@
                             <p>클랜임무 / 클랜수호: 목요일마다 있음 (2점)</p>
                             <p>에노크 / 마슈미드: 토요일마다 있음 (2점)</p>
                             <p>점령전: 토요일마다 있음 (2점)</p>
-                            <p>쟁탈전, 전초전: 셔플 첫주마다 있음 (1점)</p>
-                            <p>도합: 총점 35점</p>
+                            <p>쟁탈전 / 전초전: 셔플 첫주마다 있음 (1점)</p>
+                            <p>VCC: 셔플 첫주마다 있음 (1점)</p>
+                            <p>도합: 총점 36점</p>
                         </div>
                     </div>
                 </div>
@@ -2686,7 +2845,7 @@
                 <section class="member-list-panel">
                     <h3 class="member-panel-title text-amber-400">👑 클마 및 운영진 리스트</h3>
                     <table class="member-table">
-                        <thead><tr><th>순서</th><th>닉네임</th><th>클래스</th><th>전투력</th><th>역할</th><th>관리</th></tr></thead>
+                        <thead><tr><th>순서</th><th>닉네임</th><th>클래스</th><th>전투력</th><th>역할</th><th>사다리 결과</th><th>관리</th></tr></thead>
                         <tbody id="admin-member-body"></tbody>
                     </table>
                 </section>
@@ -2694,7 +2853,7 @@
                 <section class="member-list-panel">
                     <h3 class="member-panel-title">🛡️ 일반 클랜원 리스트</h3>
                     <table class="member-table">
-                        <thead><tr><th>순서</th><th>닉네임</th><th>클래스</th><th>전투력</th><th>역할</th><th>관리</th></tr></thead>
+                        <thead><tr><th>순서</th><th>닉네임</th><th>클래스</th><th>전투력</th><th>역할</th><th>사다리 결과</th><th>관리</th></tr></thead>
                         <tbody id="normal-member-body"></tbody>
                     </table>
                 </section>
@@ -2883,11 +3042,16 @@
                             </div>
                         </div>
                         <div class="attendance-password-group outpost-group">
-                            <div class="attendance-password-group-title">전초전</div>
+                            <div class="attendance-password-group-title">전초전 / VCC</div>
                             <div class="attendance-setting">
                                 <strong>전초전 비밀번호</strong>
                                 <input id="password-outpost" placeholder="4자리" maxlength="4">
                                 <button type="button" class="password-save-outpost" onclick="saveEventPassword('전초전')">저장</button>
+                            </div>
+                            <div class="attendance-setting">
+                                <strong>VCC 비밀번호</strong>
+                                <input id="password-vcc" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-outpost" onclick="saveEventPassword('VCC')">저장</button>
                             </div>
                         </div>
                         <div class="attendance-password-group mission-group">
@@ -2924,7 +3088,7 @@
                                 <option>DOKDO망나뇽</option>
                                 <option>DOKDO피카츄</option>
                                 <option>DOKDO수호</option>
-                                <option>DOKDO패왕</option>
+                                <option>DOKDO한빠</option>
                             </select>
                         </div>
                         <div>
@@ -2962,9 +3126,10 @@
 
                     <div class="attendance-group">
                         <h3 class="attendance-group-title">⚔️ PVP</h3>
-                        <p class="attendance-group-subtitle">전초전</p>
+                        <p class="attendance-group-subtitle">전초전 / VCC</p>
                         <div class="event-row">
                             <button type="button" data-password-key="outpost" class="event-button purple" onclick="checkEvent('전초전', this)">전초전</button>
+                            <button type="button" data-password-key="vcc" class="event-button purple" onclick="checkEvent('VCC', this)">VCC</button>
                         </div>
                         <p class="attendance-group-subtitle">점령전 / 쟁탈전</p>
                         <div class="event-row">
@@ -2986,7 +3151,7 @@
                     <h3>출석 클랜원별 현황</h3>
                     <table class="attendance-table">
                         <thead>
-                            <tr><th>닉네임</th><th>총 점수</th><th>오늘 현황</th><th>13시/21시</th><th>에노크/마슈</th><th>점령전</th><th>전초전/쟁탈전</th><th>임무/수호</th><th>상세 내역</th></tr>
+                            <tr><th>닉네임</th><th>총 점수</th><th>오늘 현황</th><th>13시/21시</th><th>에노크/마슈</th><th>점령전</th><th>전초전/VCC/쟁탈전</th><th>임무/수호</th><th>상세 내역</th></tr>
                         </thead>
                         <tbody id="attendance-body">
                         </tbody>
@@ -3014,6 +3179,41 @@
                     </div>
                 </section>
                 <section id="boss-timer-list" class="boss-timer-list"></section>
+            </div>
+
+            <div id="tab-mount-race" class="tab-content hidden ladder-game-page">
+                <div class="ladder-game-header">
+                    <div>
+                        <h2>🪜 사다리타기</h2>
+                        <p>클랜원 선택 또는 직접 입력으로 참가자를 구성하세요.</p>
+                    </div>
+                </div>
+                <div class="ladder-game-layout">
+                    <section id="ladder-controls" class="ladder-controls">
+                        <h3>클랜원에서 추가</h3>
+                        <div class="ladder-add-row">
+                            <select id="ladder-member-select" aria-label="추가할 클랜원"></select>
+                            <button type="button" onclick="addSelectedLadderMember()">추가</button>
+                        </div>
+                        <h3>직접 입력</h3>
+                        <div class="ladder-add-row">
+                            <input id="ladder-name-input" type="text" placeholder="참가자 닉네임" aria-label="직접 입력할 참가자 닉네임">
+                            <button type="button" onclick="addLadderParticipant()">추가</button>
+                        </div>
+                        <h3>1~3등 보상</h3>
+                        <div class="ladder-reward-list">
+                            <label class="ladder-reward-row"><span>1등</span><input id="ladder-reward-first" type="text" placeholder="1등 보상"></label>
+                            <label class="ladder-reward-row"><span>2등</span><input id="ladder-reward-second" type="text" placeholder="2등 보상"></label>
+                            <label class="ladder-reward-row"><span>3등</span><input id="ladder-reward-third" type="text" placeholder="3등 보상"></label>
+                        </div>
+                        <button type="button" class="ladder-generate" onclick="saveLadderRewards()">보상 저장</button>
+                        <div id="ladder-participants" class="ladder-participants"></div>
+                        <button type="button" class="ladder-generate" onclick="generateLadderGame()">사다리 만들기</button>
+                    </section>
+                    <section id="ladder-board" class="ladder-board" aria-label="사다리 게임판">
+                        <div class="ladder-board-empty">참가자를 2명 이상 추가하세요.</div>
+                    </section>
+                </div>
             </div>
         </main>
     </div>
@@ -3045,22 +3245,36 @@
     <!-- 스크립트 제어 -->
     <script>
         let attendanceEnabled = true;
-        const adminNicknames = ['DOKDO패왕', 'DOKDO망나뇽', 'DOKDO수호', 'DOKDO피카츄'];
+        const adminNicknames = ['DOKDO한빠', 'DOKDO망나뇽', 'DOKDO수호', 'DOKDO피카츄'];
         let bossAlertsEnabled = localStorage.getItem('dokdoBossAlertsEnabled') !== 'false';
         let bossTimers = JSON.parse(localStorage.getItem('dokdoBossTimers') || '[]');
         const bossAlertedTimers = new Set();
+        const bossAlertLeadTime = 5 * 60 * 1000;
+        const maxShuffleScore = 36;
+        let attendancePasswordSyncStarted = false;
         let bossAudioContext = null;
         let bossAudioUnlocked = false;
+        let ladderParticipants;
+        try {
+            ladderParticipants = JSON.parse(localStorage.getItem('dokdoLadderParticipants') || '[]');
+        } catch (error) {
+            ladderParticipants = [];
+        }
+        let ladderConnections = [];
+        let ladderLevels = 0;
+        let selectedLadderParticipant = null;
+        let ladderAnimationFrame = null;
+        let ladderGameSyncStarted = false;
+        let ladderRewards = { first: '', second: '', third: '' };
 
         function applyTheme(theme) {
             const isDark = theme === 'dark';
             document.body.classList.toggle('theme-dark', isDark);
-            const toggle = document.getElementById('theme-toggle');
-            if (toggle) {
-                toggle.textContent = isDark ? '☀️' : '🌙';
+            document.querySelectorAll('.theme-toggle').forEach((toggle) => {
+                toggle.textContent = isDark ? 'White Mode' : 'Dark Mode';
                 toggle.setAttribute('aria-label', isDark ? '화이트 모드로 전환' : '블랙 모드로 전환');
                 toggle.title = isDark ? '화이트 모드로 전환' : '블랙 모드로 전환';
-            }
+            });
         }
 
         function toggleTheme() {
@@ -3096,22 +3310,33 @@
 
         if (!bossTimers.length) {
             bossTimers = [
-                { id: 'default-world-12', name: '12시 월드보스 5분전', time: '11:55', note: '', alertEnabled: true },
-                { id: 'default-gehenna-13', name: '13시 월드보스 5분전', time: '12:55', note: '', alertEnabled: true },
-                { id: 'default-world-20', name: '20시 월드보스 5분전', time: '19:55', note: '', alertEnabled: true },
-                { id: 'default-gehenna-21', name: '21시 게헨나보스 5분전', time: '20:55', note: '', alertEnabled: true },
-                { id: 'default-barodun', name: '바르둔 5분전', time: '19:45', note: '', alertEnabled: true }
+                { id: 'default-world-12', name: '12시 월드보스', time: '12:00', note: '', alertEnabled: true },
+                { id: 'default-gehenna-13', name: '13시 월드보스', time: '13:00', note: '', alertEnabled: true },
+                { id: 'default-world-20', name: '20시 월드보스', time: '20:00', note: '', alertEnabled: true },
+                { id: 'default-gehenna-21', name: '21시 게헨나보스', time: '21:00', note: '', alertEnabled: true },
+                { id: 'default-barodun', name: '바르둔', time: '19:50', note: '', alertEnabled: true }
             ];
             localStorage.setItem('dokdoBossTimers', JSON.stringify(bossTimers));
         }
-        const defaultThirteenBoss = bossTimers.find((timer) => timer.id === 'default-gehenna-13');
-        if (defaultThirteenBoss && defaultThirteenBoss.name === '13시 게헨나보스 5분전') {
-            defaultThirteenBoss.name = '13시 월드보스 5분전';
+        const legacyDefaultBossTimers = {
+            'default-world-12': { name: '12시 월드보스', time: '12:00', legacyTime: '11:55' },
+            'default-gehenna-13': { name: '13시 월드보스', time: '13:00', legacyTime: '12:55' },
+            'default-world-20': { name: '20시 월드보스', time: '20:00', legacyTime: '19:55' },
+            'default-gehenna-21': { name: '21시 게헨나보스', time: '21:00', legacyTime: '20:55' },
+            'default-barodun': { name: '바르둔', time: '19:50', legacyTime: '19:45' }
+        };
+        const correctedDefaultBossTimers = bossTimers.some((timer) => {
+            const correction = legacyDefaultBossTimers[timer.id];
+            if (!correction || timer.time !== correction.legacyTime) return false;
+            timer.name = correction.name;
+            timer.time = correction.time;
+            return true;
+        });
+        if (correctedDefaultBossTimers) {
             localStorage.setItem('dokdoBossTimers', JSON.stringify(bossTimers));
         }
 
-        function setCurrentUser(nickname) {
-            const role = adminNicknames.includes(nickname) ? 'admin' : 'member';
+        function setCurrentUser(nickname, role = adminNicknames.includes(nickname) ? 'admin' : 'member') {
             localStorage.setItem('dokdoCurrentUser', JSON.stringify({ nickname, role }));
             document.getElementById('current-user-name').textContent = nickname;
             document.getElementById('current-user-role').textContent = role;
@@ -3127,6 +3352,7 @@
             if (role !== 'admin') {
                 window.setTimeout(() => switchTab('participation'), 0);
             }
+            renderLadderGame();
         }
 
         function isAdmin() {
@@ -3134,20 +3360,78 @@
             return currentUser && currentUser.role === 'admin';
         }
 
+        function isClanMember(nickname) {
+            return Object.values(memberLists)
+                .flat()
+                .some((member) => member.nickname === nickname);
+        }
+
+        function openDashboardForUser(user) {
+            setCurrentUser(user.nickname, user.role);
+            localStorage.setItem('dokdoLoggedIn', 'true');
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('view-login').classList.add('hidden');
+            const dashboard = document.getElementById('view-dashboard');
+            dashboard.classList.remove('hidden');
+            dashboard.classList.add('flex');
+            loadAttendanceRecords();
+        }
+
+        function restoreLoginSession() {
+            if (localStorage.getItem('dokdoLoggedIn') !== 'true') return;
+
+            const savedUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
+            const nickname = nicknameCorrections[savedUser?.nickname] || savedUser?.nickname;
+            if (!nickname || !isClanMember(nickname)) {
+                localStorage.removeItem('dokdoLoggedIn');
+                localStorage.removeItem('dokdoCurrentUser');
+                return;
+            }
+            if (nickname !== savedUser.nickname) {
+                localStorage.setItem('dokdoCurrentUser', JSON.stringify({ ...savedUser, nickname }));
+            }
+
+            const userKey = encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
+            database.ref(`users/${userKey}`).once('value')
+                .then((snapshot) => {
+                    const user = snapshot.val();
+                    if (!user || !isClanMember(user.nickname)) {
+                        throw new Error('Login session is no longer valid.');
+                    }
+                    openDashboardForUser(user);
+                })
+                .catch(() => {
+                    localStorage.removeItem('dokdoLoggedIn');
+                    localStorage.removeItem('dokdoCurrentUser');
+                });
+        }
+
         function handleLogin() {
             const nickname = document.getElementById('loginId').value.trim().toUpperCase();
-            if (!nickname) {
-                alert('닉네임을 입력하세요.');
+            const password = document.getElementById('loginPassword').value;
+            if (!nickname || !password) {
+                alert('닉네임과 비밀번호를 입력하세요.');
+                return;
+            }
+            if (!isClanMember(nickname)) {
+                alert('클랜원 명단에 등록된 닉네임만 로그인할 수 있습니다.');
                 return;
             }
 
-            setCurrentUser(nickname);
-            localStorage.setItem('dokdoLoggedIn', 'true');
-            document.getElementById('view-login').classList.add('hidden');
-            const dash = document.getElementById('view-dashboard');
-            dash.classList.remove('hidden');
-            dash.classList.add('flex');
-            loadAttendanceRecords();
+            const userKey = encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
+            database.ref(`users/${userKey}`).once('value')
+                .then((snapshot) => {
+                    const user = snapshot.val();
+                    if (!user) {
+                        throw new Error('등록된 닉네임이 아닙니다. 회원가입 후 로그인하세요.');
+                    }
+                    if (user.password !== password) {
+                        throw new Error('비밀번호가 일치하지 않습니다.');
+                    }
+
+                    openDashboardForUser(user);
+                })
+                .catch((error) => alert(error.message || '로그인 정보를 확인하지 못했습니다.'));
         }
 
         function handleLogout() {
@@ -3210,7 +3494,7 @@
             const memberScores = new Map(allMembers.map((member) => {
                 const record = attendanceRecords[attendanceUserKey(member.nickname)];
                 const score = record?.shuffleId === currentShuffleId() ? Number(record.score) || 0 : 0;
-                return [member.nickname, Math.max(0, Math.min(35, score))];
+                return [member.nickname, Math.max(0, Math.min(maxShuffleScore, score))];
             }));
 
             result.replaceChildren();
@@ -3238,7 +3522,7 @@
                     sum + (memberScores.get(member.nickname) || 0), 0);
                 group.members.forEach((member) => {
                     const score = memberScores.get(member.nickname) || 0;
-                    const participationRate = Math.round((score / 35) * 100);
+                    const participationRate = Math.round((score / maxShuffleScore) * 100);
                     const individualAmount = totalGroupScore
                         ? Math.floor(groupTotal * score / totalGroupScore)
                         : 0;
@@ -3263,7 +3547,7 @@
                 .forEach(({ member, labels, amount }) => {
                     const row = document.createElement('tr');
                     const label = labels.length > 1 ? labels.join(' + ') : labels[0];
-                    const participationRate = Math.round(((memberScores.get(member.nickname) || 0) / 35) * 100);
+                    const participationRate = Math.round(((memberScores.get(member.nickname) || 0) / maxShuffleScore) * 100);
                     row.innerHTML = `<td>${label}</td><td>${member.nickname}</td><td>${participationRate}%</td><td>${amount.toLocaleString()}개</td>`;
                     body.appendChild(row);
                 });
@@ -3279,7 +3563,7 @@
                 { nickname: 'DOKDO망나뇽', className: '아카샤', power: '1,420,944만', role: '클마' },
                 { nickname: 'DOKDO피카츄', className: '카니지', power: '블라인드', role: '운영진' },
                 { nickname: 'DOKDO수호', className: '바이퍼', power: '1,324,246만', role: '운영진' },
-                { nickname: 'DOKDO패왕', className: '바이퍼', power: '1,181,133만', role: '운영진' }
+                { nickname: 'DOKDO한빠', className: '카니지', power: '1,331,459만', role: '운영진' }
             ],
             normal: [
                 { nickname: 'DOKDO라닷지', className: '바이퍼', power: '블라인드', role: '일반' },
@@ -3359,7 +3643,8 @@
             'DOKDO첨갑방': 'DOKDO철가방',
             'DOKDO미쯔': 'DOKDO미쓰',
             'DOKDO우리랑': 'DOKDO우리땅',
-            'DOKDO야하핫': 'DOKDO와하핫'
+            'DOKDO야하핫': 'DOKDO와하핫',
+            'DOKDO패왕': 'DOKDO한빠'
         };
 
         const correctedAttendanceNames = [];
@@ -3376,6 +3661,31 @@
         if (correctedAttendanceNames.length) {
             localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
         }
+
+        const memberRosterUpdates = new Map([
+            ['DOKDO결마로', ['바이퍼', '1,532,729']], ['DOKDO우주', ['바이퍼', '1,504,975']],
+            ['DOKDO사장', ['아카샤', '1,502,347']], ['DOKDO기모찌', ['블러드스테인', '1,483,677']],
+            ['DOKDO1SG', ['블러드스테인', '1,462,179']], ['DOKDO꼬부기', ['바이퍼', '1,451,594']],
+            ['DOKDO망나뇽', ['아카샤', '1,443,531']], ['DOKDO2', ['카니지', '1,434,931']],
+            ['DOKDO캬하핫', ['카니지', '1,429,195']], ['DOKDO유령', ['바이퍼', '1,420,640']],
+            ['DOKDO맥주', ['바이퍼', '1,400,393']], ['DOKDO흑표', ['카니지', '1,394,270']],
+            ['DOKDO나옹이', ['카니지', '1,385,179']], ['DOKDO와하핫', ['아카샤', '1,385,793']],
+            ['DOKDO빙바', ['블러드스테인', '1,345,948']], ['DOKDO수호', ['바이퍼', '1,345,802']],
+            ['DOKDO한빠', ['카니지', '1,331,459']], ['DOKDO9', ['블러드스테인', '1,322,203']],
+            ['DOKDO아하핫', ['바이퍼', '1,321,805']], ['DOKDO모션', ['카니지', '1,308,759']],
+            ['DOKDO호미', ['그림리퍼', '1,306,079']], ['DOKDO찔꺽이', ['아카샤', '1,286,939']],
+            ['DOKDO냐짱', ['바이퍼', '1,285,320']], ['DOKDO풀악셀', ['블러드스테인', '1,275,046']],
+            ['DOKDO미로', ['바이퍼', '1,269,447']], ['DOKDO라팍', ['그림리퍼', '1,265,970']],
+            ['DOKDO코코', ['아카샤', '1,229,737']], ['DOKDO푸하핫', ['그림리퍼', '1,225,563']],
+            ['DOKDO해적', ['바이퍼', '1,210,337']], ['DOKDO양아치', ['블러드스테인', '1,199,458']],
+            ['DOKDO가츠', ['블러드스테인', '1,190,793']], ['DOKDO철가방', ['블러드스테인', '1,177,957']],
+            ['DOKDO미쓰', ['아카샤', '1,173,649']], ['DOKDO푸린', ['그림리퍼', '1,157,216']],
+            ['DOKDO우리땅', ['카니지', '1,093,741']], ['DOKDO두리안', ['카니지', '997,106']]
+        ]);
+        Object.values(memberLists).flat().forEach((member) => {
+            const update = memberRosterUpdates.get(member.nickname);
+            if (update) [member.className, member.power] = update;
+        });
 
         const uniqueMemberNicknames = new Set();
         Object.keys(memberLists).forEach((listName) => {
@@ -3399,6 +3709,7 @@
             ['카니지', 'DOKDO갓바다', '1,555,120'],
             ['카니지', 'DOKDO크하핫', '1,525,432']
         ];
+        const blindPowerNicknames = new Set(blindPowerMembers.map(([, nickname]) => nickname));
         blindPowerMembers.forEach(([className, nickname, power]) => {
             const member = Object.values(memberLists).flat().find((candidate) => candidate.nickname === nickname);
             if (member && member.power === '블라인드') {
@@ -3475,7 +3786,7 @@
             'DOKDO와하핫', 'DOKDO나옹이', 'DOKDO흑표', 'DOKDO맥주', 'DOKDO수호',
             'DOKDO빙바', 'DOKDO아하핫', 'DOKDO9', 'DOKDO호미', 'DOKDO모션',
             'DOKDO찔꺽이', 'DOKDO냐짱', 'DOKDO풀악셀', 'DOKDO라팍', 'DOKDO미로',
-            'DOKDO코코', 'DOKDO푸하핫', 'DOKDO해적', 'DOKDO패왕', 'DOKDO양아치',
+            'DOKDO코코', 'DOKDO푸하핫', 'DOKDO해적', 'DOKDO한빠', 'DOKDO양아치',
             'DOKDO가츠', 'DOKDO철가방', 'DOKDO미쓰', 'DOKDO푸린', '독도수비대금',
             'DOKDO우리땅', 'DOKDO두리안'
         ];
@@ -3523,13 +3834,16 @@
                     const classCell = document.createElement('td');
                     classCell.textContent = member.className;
                     const powerCell = document.createElement('td');
-                    powerCell.textContent = member.power;
-                    if (member.power === '블라인드') powerCell.className = 'member-power-blind';
+                    const isBlindPower = blindPowerNicknames.has(member.nickname);
+                    powerCell.textContent = isBlindPower ? 'Blind' : member.power;
+                    if (isBlindPower) powerCell.className = 'member-power-blind';
                     const roleCell = document.createElement('td');
                     const roleBadge = document.createElement('span');
                     roleBadge.className = `member-role ${member.role === '클마' ? 'leader' : member.role === '일반' ? 'normal' : ''}`;
                     roleBadge.textContent = member.role;
                     roleCell.appendChild(roleBadge);
+                    const ladderResultCell = document.createElement('td');
+                    ladderResultCell.textContent = getLadderMemberResult(member.nickname);
 
                     const actionCell = document.createElement('td');
                     const editButton = document.createElement('button');
@@ -3545,7 +3859,7 @@
                     deleteButton.onclick = () => deleteMember(listName, index);
                     actionCell.append(editButton, deleteButton);
 
-                    row.append(orderCell, nicknameCell, classCell, powerCell, roleCell, actionCell);
+                    row.append(orderCell, nicknameCell, classCell, powerCell, roleCell, ladderResultCell, actionCell);
                     body.appendChild(row);
                 });
             });
@@ -3819,7 +4133,14 @@
             saveMemberLists();
             localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
             renderMemberLists();
-            renameAttendanceRecord(previousNickname, updatedMember.nickname).then(() => {
+            Promise.all([
+                renameUserAccount(previousNickname, updatedMember.nickname, updatedMember.role),
+                renameAttendanceRecord(previousNickname, updatedMember.nickname)
+            ]).then(() => {
+                const currentUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
+                if (currentUser?.nickname === previousNickname) {
+                    setCurrentUser(updatedMember.nickname, updatedMember.role === '일반' ? 'member' : 'admin');
+                }
                 renderAttendanceMembers();
                 loadAttendanceRecords();
             });
@@ -3844,8 +4165,13 @@
         renderMemberLists();
         renderBlindPowerMembers();
 
-        correctedAttendanceNames.forEach(([previousNickname, newNickname]) => {
+        const nicknameMigrations = new Map(correctedAttendanceNames);
+        nicknameMigrations.set('DOKDO패왕', 'DOKDO한빠');
+        const accountMigrationPromises = [...nicknameMigrations.entries()].map(([previousNickname, newNickname]) => {
             renameAttendanceRecord(previousNickname, newNickname);
+            const member = Object.values(memberLists).flat()
+                .find((candidate) => candidate.nickname === newNickname);
+            return renameUserAccount(previousNickname, newNickname, member?.role || '일반');
         });
 
         function updateDashboardDate() {
@@ -3888,6 +4214,8 @@
 
         let shuffleRecordsCache = {};
         let shuffleRecordNicknameFilter = '';
+        let shuffleRecordsSyncStarted = false;
+        let openShuffleRecordId = null;
 
         function renderShuffleRecords(records) {
             shuffleRecordsCache = records;
@@ -3960,6 +4288,7 @@
         }
 
         function showShuffleDetails(recordId) {
+            openShuffleRecordId = recordId;
             const panel = document.getElementById('shuffle-detail-panel');
             const record = shuffleRecordsCache[recordId] || {};
             database.ref(`shuffleRecords/${recordId}/daily`).once('value')
@@ -4077,7 +4406,7 @@
                             return {
                                 ...participant,
                                 score: totalScore,
-                                rate: Math.round((totalScore / 35) * 100)
+                                rate: Math.round((totalScore / maxShuffleScore) * 100)
                             };
                         })
                         .filter((participant) => !shuffleRecordNicknameFilter ||
@@ -4095,18 +4424,22 @@
         }
 
         function closeShuffleDetails() {
+            openShuffleRecordId = null;
             const panel = document.getElementById('shuffle-detail-panel');
             panel.classList.remove('visible');
             panel.replaceChildren();
         }
 
         function loadShuffleRecords() {
-            database.ref('shuffleRecords').once('value').then((snapshot) => {
+            if (shuffleRecordsSyncStarted) return;
+            shuffleRecordsSyncStarted = true;
+            database.ref('shuffleRecords').on('value', (snapshot) => {
                 const records = snapshot.val() || {};
                 renderShuffleRecords(records);
-            }).catch(() => {
-                renderShuffleRecords({});
-            });
+                if (openShuffleRecordId && records[openShuffleRecordId]) {
+                    showShuffleDetails(openShuffleRecordId);
+                }
+            }, () => {});
         }
 
         function findShuffleRecords(event) {
@@ -4164,6 +4497,7 @@
         updateShufflePeriod();
         scheduleMidnightReset();
         updatePasswordExpiryDisplays();
+        loadAttendancePasswords();
         window.setInterval(updatePasswordExpiryDisplays, 1000);
         setBossAlerts(bossAlertsEnabled);
         renderBossTimers();
@@ -4171,15 +4505,9 @@
         setCurrentShuffleRecordInputs();
         updateCurrentShuffleRecord(document.getElementById('server-name').value);
         loadShuffleRecords();
-
-        if (localStorage.getItem('dokdoLoggedIn') === 'true') {
-            const savedUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
-            if (savedUser) setCurrentUser(savedUser.nickname);
-            document.getElementById('view-login').classList.add('hidden');
-            document.getElementById('view-dashboard').classList.remove('hidden');
-            document.getElementById('view-dashboard').classList.add('flex');
-            loadAttendanceRecords();
-        }
+        renderLadderGame();
+        startLadderGameSync();
+        Promise.all(accountMigrationPromises).finally(restoreLoginSession);
 
         function switchTab(tabName) {
             if (['members', 'admin', 'dashboard', 'notice', 'shuffle-records', 'boss-timer'].includes(tabName) && !isAdmin()) {
@@ -4204,12 +4532,14 @@
             const navAttendance = document.getElementById('nav-attendance');
             const bossTimerTab = document.getElementById('tab-boss-timer');
             const navBossTimer = document.getElementById('nav-boss-timer');
+            const mountRaceTab = document.getElementById('tab-mount-race');
+            const navMountRace = document.getElementById('nav-mount-race');
 
             const activeNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer";
             const inactiveNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer";
 
-            [dashboardTab, noticeTab, membersTab, participationTab, diamondsTab, shuffleRecordsTab, adminTab, attendanceTab, bossTimerTab].forEach((tab) => tab.classList.add('hidden'));
-            [navDashboard, navNotice, navMembers, navParticipation, navDiamonds, navShuffleRecords, navAdmin, navAttendance, navBossTimer].forEach((nav) => nav.className = inactiveNavClass);
+            [dashboardTab, noticeTab, membersTab, participationTab, diamondsTab, shuffleRecordsTab, adminTab, attendanceTab, bossTimerTab, mountRaceTab].forEach((tab) => tab.classList.add('hidden'));
+            [navDashboard, navNotice, navMembers, navParticipation, navDiamonds, navShuffleRecords, navAdmin, navAttendance, navBossTimer, navMountRace].forEach((nav) => nav.className = inactiveNavClass);
             if (!isAdmin()) {
                 [navDashboard, navNotice, navMembers, navShuffleRecords, navAdmin, navBossTimer].forEach((nav) => nav.classList.add('hidden'));
             }
@@ -4244,7 +4574,269 @@
                 bossTimerTab.classList.remove('hidden');
                 navBossTimer.className = activeNavClass;
                 renderBossTimers();
+            } else if (tabName === 'mount-race') {
+                mountRaceTab.classList.remove('hidden');
+                navMountRace.className = activeNavClass;
+                renderLadderGame();
             }
+        }
+
+        function saveLadderParticipants() {
+            localStorage.setItem('dokdoLadderParticipants', JSON.stringify(ladderParticipants));
+            database.ref('miniGames/ladder').set({
+                participants: ladderParticipants,
+                connections: ladderConnections,
+                levels: ladderLevels,
+                rewards: ladderRewards
+            }).catch(() => {});
+        }
+
+        function startLadderGameSync() {
+            if (ladderGameSyncStarted) return;
+            ladderGameSyncStarted = true;
+            database.ref('miniGames/ladder').on('value', (snapshot) => {
+                const game = snapshot.val();
+                if (game && Array.isArray(game.participants)) {
+                    ladderParticipants = game.participants;
+                    ladderConnections = Array.isArray(game.connections) ? game.connections : [];
+                    ladderLevels = Number(game.levels) || 0;
+                    ladderRewards = { ...ladderRewards, ...(game.rewards || {}) };
+                    selectedLadderParticipant = null;
+                    localStorage.setItem('dokdoLadderParticipants', JSON.stringify(ladderParticipants));
+                } else {
+                    ladderParticipants = [];
+                    ladderConnections = [];
+                    ladderLevels = 0;
+                    selectedLadderParticipant = null;
+                    localStorage.setItem('dokdoLadderParticipants', '[]');
+                }
+                renderMemberLists();
+                renderLadderGame();
+                const currentUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
+                const personalIndex = ladderParticipants.indexOf(currentUser?.nickname);
+                if (personalIndex >= 0 && ladderConnections.length) {
+                    selectedLadderParticipant = personalIndex;
+                    renderLadderGame();
+                    window.setTimeout(animateLadderPath, 80);
+                }
+            }, () => {});
+        }
+
+        function saveLadderRewards() {
+            if (!isAdmin()) return;
+            ladderRewards = {
+                first: document.getElementById('ladder-reward-first').value.trim(),
+                second: document.getElementById('ladder-reward-second').value.trim(),
+                third: document.getElementById('ladder-reward-third').value.trim()
+            };
+            saveLadderParticipants();
+            renderLadderGame();
+        }
+
+        function ladderRewardAt(resultIndex) {
+            const rank = resultIndex + 1;
+            const reward = [ladderRewards.first, ladderRewards.second, ladderRewards.third][resultIndex];
+            return rank <= 3 ? `${rank}등 · ${reward || '보상 미정'}` : '참가상';
+        }
+
+        function getLadderMemberResult(nickname) {
+            const participantIndex = ladderParticipants.indexOf(nickname);
+            if (!ladderConnections.length) return '-';
+            if (participantIndex < 0) return '미참가';
+            return ladderRewardAt(ladderPath(participantIndex).result);
+        }
+
+        function ladderWinnerAt(resultIndex) {
+            const winnerIndex = ladderParticipants.findIndex((nickname, participantIndex) =>
+                ladderPath(participantIndex).result === resultIndex);
+            return winnerIndex >= 0 ? ladderParticipants[winnerIndex] : '미정';
+        }
+
+        function addLadderParticipant(name = document.getElementById('ladder-name-input').value) {
+            if (!isAdmin()) return;
+            const nickname = name.trim();
+            if (!nickname || ladderParticipants.includes(nickname) || ladderParticipants.length >= 8) return;
+            ladderParticipants.push(nickname);
+            document.getElementById('ladder-name-input').value = '';
+            ladderConnections = [];
+            selectedLadderParticipant = null;
+            saveLadderParticipants();
+            renderLadderGame();
+        }
+
+        function addSelectedLadderMember() {
+            if (!isAdmin()) return;
+            const select = document.getElementById('ladder-member-select');
+            if (select.value) addLadderParticipant(select.value);
+        }
+
+        function updateLadderParticipant(index, value) {
+            if (!isAdmin()) return;
+            const nickname = value.trim();
+            if (!nickname || ladderParticipants.some((item, itemIndex) => itemIndex !== index && item === nickname)) {
+                renderLadderGame();
+                return;
+            }
+            ladderParticipants[index] = nickname;
+            ladderConnections = [];
+            selectedLadderParticipant = null;
+            saveLadderParticipants();
+            renderLadderGame();
+        }
+
+        function removeLadderParticipant(index) {
+            if (!isAdmin()) return;
+            ladderParticipants.splice(index, 1);
+            ladderConnections = [];
+            selectedLadderParticipant = null;
+            saveLadderParticipants();
+            renderLadderGame();
+        }
+
+        function ladderPath(startIndex) {
+            let position = startIndex;
+            const points = [];
+            for (let level = 0; level < ladderLevels; level += 1) {
+                const connection = ladderConnections.find((item) => item.level === level &&
+                    (item.left === position || item.left + 1 === position));
+                points.push({ level, position });
+                if (connection) position = connection.left === position ? position + 1 : position - 1;
+            }
+            return { points, result: position };
+        }
+
+        function generateLadderGame() {
+            if (!isAdmin()) return;
+            if (ladderParticipants.length < 2) return;
+            ladderLevels = Math.max(6, ladderParticipants.length * 2);
+            ladderConnections = [];
+            for (let level = 0; level < ladderLevels; level += 1) {
+                for (let left = 0; left < ladderParticipants.length - 1; left += 1) {
+                    if (Math.random() < .42) {
+                        ladderConnections.push({ level, left });
+                        left += 1;
+                    }
+                }
+            }
+            selectedLadderParticipant = null;
+            saveLadderParticipants();
+            renderLadderGame();
+            revealMyLadder();
+        }
+
+        function selectLadderParticipant(index) {
+            if (!ladderConnections.length) return;
+            const currentUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
+            if (!isAdmin() && ladderParticipants[index] !== currentUser?.nickname) return;
+            selectedLadderParticipant = index;
+            renderLadderGame();
+            animateLadderPath();
+        }
+
+        function revealMyLadder() {
+            const currentUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
+            const index = ladderParticipants.indexOf(currentUser?.nickname);
+            if (index >= 0) selectLadderParticipant(index);
+        }
+
+        function animateLadderPath() {
+            if (ladderAnimationFrame) window.cancelAnimationFrame(ladderAnimationFrame);
+            const path = document.getElementById('ladder-selected-path');
+            const runner = document.getElementById('ladder-runner-dot');
+            if (!path || !runner) return;
+
+            const pathLength = path.getTotalLength();
+            const startedAt = performance.now();
+            const duration = 1700;
+            const moveRunner = (now) => {
+                const progress = Math.min(1, (now - startedAt) / duration);
+                const easedProgress = 1 - Math.pow(1 - progress, 3);
+                const point = path.getPointAtLength(pathLength * easedProgress);
+                runner.setAttribute('cx', point.x);
+                runner.setAttribute('cy', point.y);
+                runner.style.opacity = '1';
+                if (progress < 1) ladderAnimationFrame = window.requestAnimationFrame(moveRunner);
+            };
+            ladderAnimationFrame = window.requestAnimationFrame(moveRunner);
+        }
+
+        function renderLadderGame() {
+            const participants = document.getElementById('ladder-participants');
+            const select = document.getElementById('ladder-member-select');
+            const board = document.getElementById('ladder-board');
+            const controls = document.getElementById('ladder-controls');
+            const currentUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
+            if (!participants || !select || !board) return;
+
+            controls.classList.toggle('hidden', !isAdmin());
+            if (currentUser?.nickname && selectedLadderParticipant === null) {
+                const personalIndex = ladderParticipants.indexOf(currentUser.nickname);
+                if (personalIndex >= 0) selectedLadderParticipant = personalIndex;
+            }
+            document.getElementById('ladder-reward-first').value = ladderRewards.first;
+            document.getElementById('ladder-reward-second').value = ladderRewards.second;
+            document.getElementById('ladder-reward-third').value = ladderRewards.third;
+
+            const availableMembers = [...memberLists.admin, ...memberLists.normal]
+                .map((member) => member.nickname)
+                .filter((nickname) => !ladderParticipants.includes(nickname));
+            select.innerHTML = `<option value="">클랜원 선택</option>${availableMembers.map((nickname) =>
+                `<option value="${escapeHtml(nickname)}">${escapeHtml(nickname)}</option>`).join('')}`;
+            participants.innerHTML = ladderParticipants.map((nickname, index) => `
+                <div class="ladder-participant">
+                    <span>${index + 1}</span>
+                    <input value="${escapeHtml(nickname)}" aria-label="${index + 1}번 참가자 닉네임" onchange="updateLadderParticipant(${index}, this.value)">
+                    <button type="button" class="ladder-remove" onclick="removeLadderParticipant(${index})" title="참가자 제거" aria-label="${nickname} 제거">×</button>
+                </div>`).join('');
+
+            if (ladderParticipants.length < 2 || !ladderConnections.length) {
+                board.innerHTML = '<div class="ladder-board-empty">참가자를 2명 이상 추가한 뒤 사다리를 만드세요.</div>';
+                return;
+            }
+
+            const columnWidth = 150;
+            const width = Math.max(560, ladderParticipants.length * columnWidth);
+            const startY = 62;
+            const endY = 420;
+            const levelHeight = (endY - startY) / (ladderLevels + 1);
+            const xAt = (index) => columnWidth / 2 + index * columnWidth;
+            const rungs = ladderConnections.map(({ level, left }) => {
+                const y = startY + (level + 1) * levelHeight;
+                return `<line class="ladder-rung" style="--rung-delay: ${level * 90}ms" x1="${xAt(left)}" y1="${y}" x2="${xAt(left + 1)}" y2="${y}"/>`;
+            }).join('');
+            const rails = ladderParticipants.map((nickname, index) =>
+                `<line class="ladder-line" x1="${xAt(index)}" y1="${startY}" x2="${xAt(index)}" y2="${endY}"/>`).join('');
+            const names = ladderParticipants.map((nickname, index) => {
+                const canReveal = isAdmin() || nickname === currentUser?.nickname;
+                const label = canReveal ? nickname : '참가자';
+                return `<text class="ladder-name" x="${xAt(index)}" y="28" text-anchor="middle" ${canReveal ? `onclick="selectLadderParticipant(${index})" style="cursor:pointer"` : ''}>${escapeHtml(label)}</text>`;
+            }).join('');
+            let selectedPath = '';
+            if (selectedLadderParticipant !== null) {
+                const route = ladderPath(selectedLadderParticipant);
+                let x = xAt(selectedLadderParticipant);
+                let path = `M ${x} ${startY}`;
+                route.points.forEach(({ level, position }) => {
+                    const y = startY + (level + 1) * levelHeight;
+                    path += ` L ${x} ${y}`;
+                    const connection = ladderConnections.find((item) => item.level === level &&
+                        (item.left === position || item.left + 1 === position));
+                    if (connection) {
+                        x = xAt(connection.left === position ? position + 1 : position - 1);
+                        path += ` L ${x} ${y}`;
+                    }
+                });
+                selectedPath = `<path id="ladder-selected-path" class="ladder-path" d="${path} L ${x} ${endY}"/><circle id="ladder-runner-dot" class="ladder-runner-dot" r="8" opacity="0"/>`;
+            }
+            const selectedResult = selectedLadderParticipant === null
+                ? ''
+                : `${ladderParticipants[selectedLadderParticipant]}님의 결과: ${ladderRewardAt(ladderPath(selectedLadderParticipant).result)}`;
+            const rankResults = [0, 1, 2].filter((index) => index < ladderParticipants.length).map((index) => `
+                <div class="ladder-rank-result">
+                    <strong>${index + 1}등 ${escapeHtml(ladderWinnerAt(index))}</strong>
+                    <span>${escapeHtml(ladderRewardAt(index))}</span>
+                </div>`).join('');
+            board.innerHTML = `<svg class="ladder-svg" viewBox="0 0 ${width} 450" role="img" aria-label="참가자 사다리 결과">${rails}${rungs}${selectedPath}${names}</svg><p class="ladder-select-note">닉네임을 클릭하면 경로와 결과를 확인할 수 있습니다.${selectedResult ? ` ${selectedResult}` : ''}</p><div class="ladder-rank-results">${rankResults}</div>`;
         }
 
         function saveBossTimers() {
@@ -4430,7 +5022,7 @@
             unlockBossAudio();
             playBossBeep();
             if ('speechSynthesis' in window) {
-                const message = `${timer.name}입니다`;
+                const message = `${timer.name} 출몰 5분 전입니다`;
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(message);
                 utterance.lang = 'ko-KR';
@@ -4456,7 +5048,7 @@
                 const remaining = nextBossTime(timer.time).getTime() - Date.now();
                 card.querySelector('[data-remaining]').textContent = formatBossRemaining(remaining);
                 const alertKey = `${timer.id}-${new Date().toDateString()}`;
-                if (bossAlertsEnabled && timer.alertEnabled && remaining <= 300000 && remaining > 0 && !bossAlertedTimers.has(alertKey)) {
+                if (bossAlertsEnabled && timer.alertEnabled && remaining <= bossAlertLeadTime && remaining > 0 && !bossAlertedTimers.has(alertKey)) {
                     bossAlertedTimers.add(alertKey);
                     testBossVoice(timer);
                 }
@@ -4490,6 +5082,7 @@
                 점령전: 'occupation',
                 쟁탈전: 'capture',
                 전초전: 'outpost',
+                VCC: 'vcc',
                 클랜임무: 'mission',
                 클랜수호: 'defense'
             }[activity];
@@ -4542,32 +5135,47 @@
             loadAttendancePasswords();
         }
 
+        function syncPasswordSetting(key, saved, storagePrefix) {
+            const password = typeof saved === 'string' ? saved : saved?.password;
+            const expiresAt = typeof saved === 'object' ? Number(saved.expiresAt) : 0;
+            if (password && expiresAt) {
+                localStorage.setItem(`${storagePrefix}${key}`, password);
+                localStorage.setItem(`${storagePrefix}${key}ExpiresAt`, `${expiresAt}`);
+                const input = document.getElementById(`password-${key}`);
+                if (input) input.value = password;
+                return;
+            }
+            localStorage.removeItem(`${storagePrefix}${key}`);
+            localStorage.removeItem(`${storagePrefix}${key}ExpiresAt`);
+        }
+
         function loadAttendancePasswords() {
-            ['13-early', '13-floor', '13-end', '21-early', '21-floor', '21-end'].forEach((key) => {
-                database.ref(`settings/attendancePasswords/${key}`).once('value').then((snapshot) => {
-                    const saved = snapshot.val();
-                    const password = typeof saved === 'string' ? saved : saved?.password;
-                    const expiresAt = typeof saved === 'object' ? Number(saved.expiresAt) : 0;
-                    if (!password) return;
-                    localStorage.setItem(`dokdoAttendancePassword${key}`, password);
-                    if (expiresAt) localStorage.setItem(`dokdoAttendancePassword${key}ExpiresAt`, `${expiresAt}`);
-                    document.getElementById(`password-${key}`).value = password;
-                    updatePasswordExpiryDisplays();
-                }).catch(() => {});
-            });
-            ['에노크', '마슈미드', '점령전', '쟁탈전', '전초전', '클랜임무', '클랜수호'].forEach((activity) => {
-                const key = eventPasswordKey(activity);
-                database.ref(`settings/eventPasswords/${key}`).once('value').then((snapshot) => {
-                    const saved = snapshot.val();
-                    const password = typeof saved === 'string' ? saved : saved?.password;
-                    const expiresAt = typeof saved === 'object' ? Number(saved.expiresAt) : 0;
-                    if (!password) return;
-                    localStorage.setItem(`dokdoEventPassword${key}`, password);
-                    if (expiresAt) localStorage.setItem(`dokdoEventPassword${key}ExpiresAt`, `${expiresAt}`);
-                    document.getElementById(`password-${key}`).value = password;
-                    updatePasswordExpiryDisplays();
-                }).catch(() => {});
-            });
+            if (attendancePasswordSyncStarted) return;
+            attendancePasswordSyncStarted = true;
+
+            database.ref('settings/attendancePasswords').on('value', (snapshot) => {
+                const settings = snapshot.val() || {};
+                [
+                    { key: '13-early', legacyKey: '13' },
+                    { key: '13-floor' },
+                    { key: '13-end' },
+                    { key: '21-early', legacyKey: '21' },
+                    { key: '21-floor' },
+                    { key: '21-end' }
+                ].forEach(({ key, legacyKey }) => {
+                    syncPasswordSetting(key, settings[key] || settings[legacyKey], 'dokdoAttendancePassword');
+                });
+                updatePasswordExpiryDisplays();
+            }, () => {});
+
+            database.ref('settings/eventPasswords').on('value', (snapshot) => {
+                const settings = snapshot.val() || {};
+                ['에노크', '마슈미드', '점령전', '쟁탈전', '전초전', 'VCC', '클랜임무', '클랜수호'].forEach((activity) => {
+                    const key = eventPasswordKey(activity);
+                    syncPasswordSetting(key, settings[key], 'dokdoEventPassword');
+                });
+                updatePasswordExpiryDisplays();
+            }, () => {});
         }
 
         function passwordExpiryKey(key) {
@@ -4601,7 +5209,7 @@
             }
             if (!confirm('모든 출석 비밀번호 타이머를 초기화하시겠습니까?')) return;
 
-            const keys = ['13-early', '13-floor', '13-end', '21-early', '21-floor', '21-end', 'enok', 'mashmid', 'occupation', 'capture', 'outpost', 'mission', 'defense'];
+            const keys = ['13-early', '13-floor', '13-end', '21-early', '21-floor', '21-end', 'enok', 'mashmid', 'occupation', 'capture', 'outpost', 'vcc', 'mission', 'defense'];
             keys.forEach((key) => {
                 localStorage.removeItem(passwordExpiryKey(key));
                 const path = key.startsWith('13-') || key.startsWith('21-')
@@ -4620,7 +5228,7 @@
             }
             if (!confirm('모든 콘텐츠 비밀번호를 초기화하시겠습니까?')) return;
 
-            const keys = ['13-early', '13-floor', '13-end', '21-early', '21-floor', '21-end', 'enok', 'mashmid', 'occupation', 'capture', 'outpost', 'mission', 'defense'];
+            const keys = ['13-early', '13-floor', '13-end', '21-early', '21-floor', '21-end', 'enok', 'mashmid', 'occupation', 'capture', 'outpost', 'vcc', 'mission', 'defense'];
             keys.forEach((key) => {
                 const localPrefix = key.startsWith('13-') || key.startsWith('21-')
                     ? 'dokdoAttendancePassword'
@@ -4840,7 +5448,7 @@
                 .then((snapshot) => {
                     const record = snapshot.val() || {};
                     const totalScore = Number(record.score) || 0;
-                    const participationRate = Math.min(100, Math.round((totalScore / 35) * 100));
+                    const participationRate = Math.min(100, Math.round((totalScore / maxShuffleScore) * 100));
 
                     result.className = 'participation-result';
                     result.replaceChildren();
@@ -4871,7 +5479,7 @@
                 });
         }
 
-        function updateAttendanceRow(row) {
+        function updateAttendanceRow(row, shouldSave = true) {
             const time13 = row.dataset.time13Activities ? row.dataset.time13Activities.split('|').filter(Boolean) : [];
             const time21 = row.dataset.time21Activities ? row.dataset.time21Activities.split('|').filter(Boolean) : [];
             const events = row.dataset.events ? row.dataset.events.split('|').filter(Boolean) : [];
@@ -4881,13 +5489,14 @@
             const enokScore = events.includes('에노크') && events.includes('마슈미드') ? 2 : 0;
             const occupationScore = events.includes('점령전') ? 2 : 0;
             const siegeScore = events.includes('전초전') && events.includes('쟁탈전') ? 1 : 0;
+            const vccScore = events.includes('VCC') ? 1 : 0;
             const missionScore = events.includes('클랜임무') && events.includes('클랜수호') ? 1 : 0;
-            const dailyScore = time13Score + time21Score + enokScore + occupationScore + siegeScore + missionScore;
+            const dailyScore = time13Score + time21Score + enokScore + occupationScore + siegeScore + vccScore + missionScore;
             const totalScore = Number(row.dataset.baseScore || 0) + dailyScore;
-            const participationRate = Math.round((totalScore / 35) * 100);
+            const participationRate = Math.round((totalScore / maxShuffleScore) * 100);
             const timeProgress = `${time13Score + time21Score}점 (${time13.length}/3, ${time21.length}/3)`;
             const enokProgress = (events.includes('에노크') ? 1 : 0) + (events.includes('마슈미드') ? 1 : 0);
-            const siegeProgress = events.includes('전초전') || events.includes('쟁탈전') ? 1 : 0;
+            const pvpProgress = ['전초전', 'VCC', '쟁탈전'].filter((activity) => events.includes(activity)).length;
             const eventDetails = enokScore
                 ? '2점 (2/2)'
                 : events.includes('에노크') || events.includes('마슈미드')
@@ -4899,10 +5508,10 @@
             row.cells[3].textContent = timeProgress;
             row.cells[4].textContent = eventDetails.trim();
             row.cells[5].textContent = `${occupationScore}점 (${events.includes('점령전') ? '1' : '0'}/1)`;
-            row.cells[6].textContent = `${siegeScore}점 (${siegeProgress}/1)`;
+            row.cells[6].textContent = `${siegeScore + vccScore}점 (${pvpProgress}/3)`;
             row.cells[7].textContent = `${missionScore}점 (${missionScore === 2 ? '2' : '0'}/2)`;
             row.cells[8].textContent = events.length || time13.length || time21.length ? '기록 있음' : '없음';
-            saveAttendanceRecord(row);
+            if (shouldSave) saveAttendanceRecord(row);
         }
 
         function attendanceUserKey(nickname) {
@@ -4961,6 +5570,24 @@
             }).catch(() => {});
         }
 
+        function renameUserAccount(previousNickname, newNickname, memberRole) {
+            if (previousNickname === newNickname) return Promise.resolve();
+
+            const previousKey = encodeURIComponent(previousNickname).replace(/[.#$[\]]/g, '_');
+            const newKey = encodeURIComponent(newNickname).replace(/[.#$[\]]/g, '_');
+
+            return database.ref(`users/${previousKey}`).once('value').then((snapshot) => {
+                const account = snapshot.val();
+                if (!account) return;
+
+                const role = memberRole === '일반' ? 'member' : 'admin';
+                return database.ref('users').update({
+                    [previousKey]: null,
+                    [newKey]: { ...account, nickname: newNickname, role }
+                });
+            }).catch(() => {});
+        }
+
         function saveAttendanceRecord(row) {
             const nickname = row.cells[0].textContent;
             const score = Number(row.cells[1].textContent.match(/^\d+/)?.[0]) || 0;
@@ -4972,6 +5599,7 @@
                 events.includes('에노크') && events.includes('마슈미드'),
                 events.includes('점령전'),
                 events.includes('전초전') && events.includes('쟁탈전'),
+                events.includes('VCC'),
                 events.includes('클랜임무') && events.includes('클랜수호')]
                 .filter(Boolean).length +
                 (events.includes('에노크') && events.includes('마슈미드') ? 1 : 0) +
@@ -4981,14 +5609,14 @@
             const participant = {
                 nickname,
                 score,
-                rate: Math.round((score / 35) * 100)
+                rate: Math.round((score / maxShuffleScore) * 100)
             };
             const dailyParticipant = {
                 nickname,
                 activities: [...time13, ...time21, ...events].join('/') || '',
                 score: dailyScore,
                 totalScore,
-                rate: Math.round((totalScore / 35) * 100)
+                rate: Math.round((totalScore / maxShuffleScore) * 100)
             };
             const cachedRecord = shuffleRecordsCache[recordId] || {
                 startDate: dateInputValue(new Date(Number(recordId))),
@@ -5019,45 +5647,57 @@
             database.ref(`shuffleRecords/${recordId}/daily/${currentAttendanceDay()}/${participantKey}`).set(dailyParticipant).catch(() => {});
         }
 
+        let attendanceRecordsSyncStarted = false;
+        let attendanceRecordsCache = {};
+
+        function applyAttendanceRecords(records) {
+            attendanceRecordsCache = records;
+            const validNames = new Set(Object.values(memberLists).flat().map((member) => member.nickname));
+            const staleRecordUpdates = {};
+
+            Object.entries(records).forEach(([key, record]) => {
+                if (!record.nickname || !validNames.has(record.nickname) || record.shuffleId !== currentShuffleId()) {
+                    staleRecordUpdates[key] = null;
+                }
+            });
+
+            if (Object.keys(staleRecordUpdates).length) {
+                database.ref('attendance').update(staleRecordUpdates).catch(() => {});
+            }
+
+            document.querySelectorAll('#attendance-body tr.attendance-member-row').forEach((row) => {
+                const record = records[attendanceUserKey(row.cells[0].textContent)];
+                if (!record || record.shuffleId !== currentShuffleId()) {
+                    row.dataset.time13Activities = '';
+                    row.dataset.time21Activities = '';
+                    row.dataset.events = '';
+                    row.dataset.baseScore = 0;
+                    updateAttendanceRow(row, false);
+                    return;
+                }
+
+                const isToday = record.attendanceDay === currentAttendanceDay();
+                row.dataset.time13Activities = isToday ? record.time13Activities || '' : '';
+                row.dataset.time21Activities = isToday ? record.time21Activities || '' : '';
+                row.dataset.events = isToday ? record.events || '' : '';
+                row.dataset.baseScore = isToday
+                    ? Number(record.baseScore) || 0
+                    : Number(record.score) || 0;
+                updateAttendanceRow(row, false);
+            });
+        }
+
         function loadAttendanceRecords() {
             renderAttendanceMembers();
             loadMembers();
-            database.ref('attendance').once('value').then((snapshot) => {
-                const records = snapshot.val() || {};
-                const validNames = new Set(Object.values(memberLists).flat().map((member) => member.nickname));
-                const staleRecordUpdates = {};
-
-                Object.entries(records).forEach(([key, record]) => {
-                    if (!record.nickname || !validNames.has(record.nickname) || record.shuffleId !== currentShuffleId()) {
-                        staleRecordUpdates[key] = null;
-                    }
-                });
-
-                if (Object.keys(staleRecordUpdates).length) {
-                    database.ref('attendance').update(staleRecordUpdates).catch(() => {});
-                }
-
-                document.querySelectorAll('#attendance-body tr.attendance-member-row').forEach((row) => {
-                    const record = records[attendanceUserKey(row.cells[0].textContent)];
-                    if (!record || record.shuffleId !== currentShuffleId()) {
-                        row.dataset.time13Activities = '';
-                        row.dataset.time21Activities = '';
-                        row.dataset.events = '';
-                        row.dataset.baseScore = 0;
-                        updateAttendanceRow(row);
-                        return;
-                    }
-
-                    const isToday = record.attendanceDay === currentAttendanceDay();
-                    row.dataset.time13Activities = isToday ? record.time13Activities || '' : '';
-                    row.dataset.time21Activities = isToday ? record.time21Activities || '' : '';
-                    row.dataset.events = isToday ? record.events || '' : '';
-                    row.dataset.baseScore = isToday
-                        ? Number(record.baseScore) || 0
-                        : Number(record.score) || 0;
-                    updateAttendanceRow(row);
-                });
-            }).catch(() => {});
+            if (attendanceRecordsSyncStarted) {
+                applyAttendanceRecords(attendanceRecordsCache);
+                return;
+            }
+            attendanceRecordsSyncStarted = true;
+            database.ref('attendance').on('value', (snapshot) => {
+                applyAttendanceRecords(snapshot.val() || {});
+            }, () => {});
         }
 
         function loadMembers() {
@@ -5180,6 +5820,10 @@
                 alert('닉네임과 비밀번호를 입력하세요.');
                 return;
             }
+            if (!isClanMember(nickname)) {
+                alert('클랜원 명단에 등록된 닉네임만 회원가입할 수 있습니다.');
+                return;
+            }
 
             const role = adminNicknames.includes(nickname) ? 'admin' : 'member';
             const userKey = encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
@@ -5208,7 +5852,39 @@
         }
 
         function handleReset() {
-            alert('비밀번호 재설정 링크를 준비 중입니다.');
+            const nickname = document.getElementById('resetNickname').value.trim().toUpperCase();
+            const password = document.getElementById('resetPassword').value;
+            const passwordConfirm = document.getElementById('resetPasswordConfirm').value;
+            if (!nickname || !password || !passwordConfirm) {
+                alert('닉네임과 새 비밀번호를 모두 입력하세요.');
+                return;
+            }
+            if (!isClanMember(nickname)) {
+                alert('클랜원 명단에 등록된 닉네임만 비밀번호를 재설정할 수 있습니다.');
+                return;
+            }
+            if (password !== passwordConfirm) {
+                alert('새 비밀번호가 일치하지 않습니다.');
+                return;
+            }
+
+            const userKey = encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
+            database.ref(`users/${userKey}`).once('value')
+                .then((snapshot) => {
+                    if (!snapshot.exists()) {
+                        throw new Error('회원가입된 계정이 없습니다. 먼저 회원가입하세요.');
+                    }
+                    return database.ref(`users/${userKey}/password`).set(password);
+                })
+                .then(() => {
+                    alert('비밀번호가 재설정되었습니다. 새 비밀번호로 로그인하세요.');
+                    document.getElementById('loginId').value = nickname;
+                    document.getElementById('loginPassword').value = '';
+                    document.getElementById('resetPassword').value = '';
+                    document.getElementById('resetPasswordConfirm').value = '';
+                    switchAuthTab('login');
+                })
+                .catch((error) => alert(error.message || '비밀번호를 재설정하지 못했습니다.'));
         }
 
         function toggleDashboardEdit() {
