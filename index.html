@@ -6213,7 +6213,15 @@
             database.ref(`users/${userKey}`).once('value')
                 .then((snapshot) => {
                     if (snapshot.exists()) {
-                        throw new Error('이미 사용 중인 닉네임입니다.');
+                        const existingUser = snapshot.val();
+                        if (existingUser.password === password) {
+                            openDashboardForUser(existingUser);
+                            return null;
+                        }
+
+                        document.getElementById('resetNickname').value = nickname;
+                        switchAuthTab('reset');
+                        throw new Error('이 닉네임은 이미 가입되어 있습니다. 비밀번호를 확인하거나 비밀번호 재설정을 진행하세요.');
                     }
 
                     return database.ref(`users/${userKey}`).set({
@@ -6224,6 +6232,7 @@
                     });
                 })
                 .then(() => {
+                    if (localStorage.getItem('dokdoLoggedIn') === 'true') return;
                     alert(role === 'admin' ? '운영진 권한으로 회원가입되었습니다.' : '회원가입이 완료되었습니다.');
                     document.getElementById('loginId').value = nickname;
                     switchAuthTab('login');
