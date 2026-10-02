@@ -4001,29 +4001,48 @@
                 const secondIndex = distributionOrder.get(second.nickname) ?? Number.MAX_SAFE_INTEGER;
                 return firstIndex - secondIndex || compareMemberOrder(first, second);
             });
-            const activitiesByMember = new Map(clanMembers.map(({ nickname }) => [nickname, new Map()]));
-            const addRecordedActivities = (day, nickname, value) => {
-                const memberDays = activitiesByMember.get(nickname);
-                if (!memberDays || !value) return;
+            const activityCountsByMember = new Map(clanMembers.map(({ nickname }) => [nickname, 0]));
+            const attendanceScoresByMember = new Map(clanMembers.map(({ nickname }) => [nickname, 0]));
+            const recordedMemberDays = new Set();
+            const addRecordedActivities = (day, nickname, value, recordedScore) => {
+                if (!activityCountsByMember.has(nickname) || !value) return;
                 const activities = (Array.isArray(value) ? value.join('/') : String(value))
                     .split(/[|/,]+/)
                     .map((activity) => activity.trim())
                     .filter((activity) => countableActivities.has(activity));
                 if (!activities.length) return;
-                const dayActivities = memberDays.get(day) || new Set();
-                activities.forEach((activity) => dayActivities.add(activity));
-                memberDays.set(day, dayActivities);
+                activityCountsByMember.set(
+                    nickname,
+                    activityCountsByMember.get(nickname) + activities.length
+                );
+                const activitySet = new Set(activities);
+                const calculatedScore = activities.filter((activity) =>
+                    activity === '3층전' || activity === '마무리'
+                ).length * 0.5 +
+                    Number(activitySet.has('에노크') && activitySet.has('마슈미드')) +
+                    Number(activitySet.has('쟁탈전')) +
+                    Number(activitySet.has('VCC')) +
+                    Number(activitySet.has('클랜임무') && activitySet.has('클랜수호'));
+                const score = Number.isFinite(Number(recordedScore))
+                    ? Number(recordedScore)
+                    : calculatedScore;
+                attendanceScoresByMember.set(
+                    nickname,
+                    attendanceScoresByMember.get(nickname) + score
+                );
+                recordedMemberDays.add(JSON.stringify([nickname, day]));
             };
 
             Object.entries(dailyRecords).forEach(([day, participants]) => {
                 Object.values(participants || {}).forEach((participant) => {
-                    addRecordedActivities(day, participant.nickname, participant.activities);
+                    addRecordedActivities(day, participant.nickname, participant.activities, participant.score);
                 });
             });
 
             if (selectedShuffleId === currentShuffleId()) {
                 Object.values(attendanceRecords).forEach((record) => {
                     if (record.shuffleId !== selectedShuffleId || !record.attendanceDay) return;
+                    if (recordedMemberDays.has(JSON.stringify([record.nickname, record.attendanceDay]))) return;
                     const currentActivities = [record.time13Activities, record.time21Activities, record.events]
                         .filter(Boolean)
                         .join('|');
@@ -4036,8 +4055,8 @@
                 role: member.role,
                 powerMultiplier: diamondPowerMultipliers.get(member.nickname) ?? 1.0,
                 index,
-                attendanceCount: [...(activitiesByMember.get(member.nickname)?.values() || [])]
-                    .reduce((sum, activities) => sum + activities.size, 0),
+                attendanceCount: activityCountsByMember.get(member.nickname) || 0,
+                attendanceScore: attendanceScoresByMember.get(member.nickname) || 0,
                 adjustedScore: 0
             }));
             distribution.forEach((entry) => {
@@ -4089,7 +4108,7 @@
 
             const table = document.createElement('table');
             table.className = 'diamond-distribution-table';
-            table.innerHTML = '<thead><tr><th>닉네임</th><th>역할</th><th>출석 횟수</th><th>투력 배수</th><th>받는 비율</th><th>분배 다이아</th></tr></thead>';
+            table.innerHTML = '<thead><tr><th>닉네임</th><th>역할</th><th>출석 횟수</th><th>출석 점수</th><th>투력 배수</th><th>받는 비율</th><th>분배 다이아</th></tr></thead>';
             const body = document.createElement('tbody');
             distribution
                 .sort((first, second) => first.index - second.index)
@@ -4099,6 +4118,7 @@
                         entry.nickname,
                         entry.role || '일반',
                         `${entry.attendanceCount}회`,
+                        `${entry.attendanceScore.toLocaleString(undefined, { maximumFractionDigits: 1 })}점`,
                         `${entry.powerMultiplier.toFixed(1)}배`,
                         `${entry.distributionRate.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`,
                         `${entry.diamonds.toLocaleString()}개`
@@ -4111,7 +4131,7 @@
                 });
             const totalRow = document.createElement('tr');
             totalRow.className = 'diamond-distribution-total';
-            totalRow.innerHTML = `<th colspan="5">클랜원 분배 합계</th><th>${distribution.reduce((sum, entry) => sum + entry.diamonds, 0).toLocaleString()}개</th>`;
+            totalRow.innerHTML = `<th colspan="6">클랜원 분배 합계</th><th>${distribution.reduce((sum, entry) => sum + entry.diamonds, 0).toLocaleString()}개</th>`;
             body.appendChild(totalRow);
             table.appendChild(body);
             result.appendChild(table);
@@ -5193,6 +5213,9 @@
                 }
                 if (openShuffleRecordId && records[openShuffleRecordId]) {
                     showShuffleDetails(openShuffleRecordId);
+                }
+                if (!document.getElementById('tab-diamonds').classList.contains('hidden')) {
+                    calculateDiamondDistribution();
                 }
             }, () => {});
         }
