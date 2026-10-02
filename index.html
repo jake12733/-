@@ -3474,7 +3474,6 @@
             <button type="button" class="mobile-more-item member-restricted" onclick="switchTab('shuffle-records')">🗂️ 셔플 기록</button>
             <button type="button" class="mobile-more-item" onclick="switchTab('diamonds')">💎 다이아 분배</button>
             <button type="button" class="mobile-more-item admin-only" onclick="switchTab('admin')">👑 운영진 관리</button>
-            <button type="button" class="mobile-more-item admin-only" id="nav-boss-timer" onclick="switchTab('boss-timer')">⏰ 보스 타이머</button>
             <div class="mobile-more-divider"></div>
             <button type="button" class="mobile-more-item" onclick="toggleTheme()">◐ 테마 변경</button>
             <button type="button" class="mobile-more-item" onclick="handleLogout()">↪ 로그아웃</button>
@@ -3627,28 +3626,29 @@
             if (localStorage.getItem('dokdoLoggedIn') !== 'true') return;
 
             const savedUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
-            const nickname = nicknameCorrections[savedUser?.nickname] || savedUser?.nickname;
+            const nickname = nicknameCorrections[savedUser?.nickname] || nicknameMigrations.get(savedUser?.nickname) || savedUser?.nickname;
             if (!nickname || !isClanMember(nickname)) {
                 localStorage.removeItem('dokdoLoggedIn');
                 localStorage.removeItem('dokdoCurrentUser');
                 return;
             }
+            const cachedUser = { ...savedUser, nickname };
             if (nickname !== savedUser.nickname) {
-                localStorage.setItem('dokdoCurrentUser', JSON.stringify({ ...savedUser, nickname }));
+                localStorage.setItem('dokdoCurrentUser', JSON.stringify(cachedUser));
             }
+            openDashboardForUser(cachedUser);
 
             const userKey = encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
             database.ref(`users/${userKey}`).once('value')
                 .then((snapshot) => {
                     const user = snapshot.val();
-                    if (!user || !isClanMember(user.nickname)) {
-                        throw new Error('Login session is no longer valid.');
+                    if (user && isClanMember(user.nickname) &&
+                        (user.nickname !== cachedUser.nickname || user.role !== cachedUser.role)) {
+                        setCurrentUser(user.nickname, user.role);
                     }
-                    openDashboardForUser(user);
                 })
-                .catch(() => {
-                    localStorage.removeItem('dokdoLoggedIn');
-                    localStorage.removeItem('dokdoCurrentUser');
+                .catch((error) => {
+                    console.warn('로그인 세션 갱신 실패. 저장된 세션을 유지합니다.', error);
                 });
         }
 
@@ -5035,7 +5035,7 @@
         loadShuffleRecords();
         renderLadderGame();
         startLadderGameSync();
-        Promise.all(accountMigrationPromises).finally(restoreLoginSession);
+        restoreLoginSession();
 
         function toggleMobileMore() {
             const panel = document.getElementById('mobile-more-panel');
@@ -5055,7 +5055,7 @@
         }
 
         function switchTab(tabName) {
-            if (['members', 'admin', 'dashboard', 'notice', 'shuffle-records', 'boss-timer'].includes(tabName) && !isAdmin()) {
+            if (['members', 'admin', 'dashboard', 'notice', 'shuffle-records'].includes(tabName) && !isAdmin()) {
                 return;
             }
 
@@ -5075,17 +5075,14 @@
             const navShuffleRecords = document.getElementById('nav-shuffle-records');
             const navAdmin = document.getElementById('nav-admin');
             const navAttendance = document.getElementById('nav-attendance');
-            const bossTimerTab = document.getElementById('tab-boss-timer');
-            const navBossTimer = document.getElementById('nav-boss-timer');
 
             const activeNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer";
             const inactiveNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer";
 
-            [dashboardTab, noticeTab, membersTab, participationTab, diamondsTab, shuffleRecordsTab, adminTab, attendanceTab, bossTimerTab].forEach((tab) => tab.classList.add('hidden'));
-            [navDashboard, navNotice, navMembers, navParticipation, navDiamonds, navShuffleRecords, navAdmin, navAttendance, navBossTimer].filter(Boolean).forEach((nav) => nav.className = inactiveNavClass);
-            if (navBossTimer) navBossTimer.classList.toggle('hidden', !isAdmin());
+            [dashboardTab, noticeTab, membersTab, participationTab, diamondsTab, shuffleRecordsTab, adminTab, attendanceTab].forEach((tab) => tab.classList.add('hidden'));
+            [navDashboard, navNotice, navMembers, navParticipation, navDiamonds, navShuffleRecords, navAdmin, navAttendance].filter(Boolean).forEach((nav) => nav.className = inactiveNavClass);
             if (!isAdmin()) {
-                [navDashboard, navNotice, navMembers, navShuffleRecords, navAdmin, navBossTimer].filter(Boolean).forEach((nav) => nav.classList.add('hidden'));
+                [navDashboard, navNotice, navMembers, navShuffleRecords, navAdmin].filter(Boolean).forEach((nav) => nav.classList.add('hidden'));
             }
 
             if (tabName === 'dashboard') {
@@ -5116,10 +5113,6 @@
             } else if (tabName === 'attendance') {
                 attendanceTab.classList.remove('hidden');
                 navAttendance.className = activeNavClass;
-            } else if (tabName === 'boss-timer') {
-                bossTimerTab.classList.remove('hidden');
-                navBossTimer.className = activeNavClass;
-                renderBossTimers();
             }
 
             const selectedMobileTab = ['dashboard', 'attendance', 'participation'].includes(tabName) ? tabName : 'more';
