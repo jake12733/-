@@ -1273,6 +1273,24 @@
             background: #111827;
         }
 
+        .attendance-summary-heading {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 4px 14px;
+            margin-bottom: 12px;
+        }
+
+        .attendance-summary-heading h3,
+        .attendance-summary-heading p {
+            margin: 0;
+        }
+
+        .attendance-summary-note {
+            color: #f59e0b;
+            font-size: 12px;
+        }
+
         .attendance-card-title {
             margin-bottom: 12px;
             color: #fbbf24;
@@ -1696,6 +1714,58 @@
         .attendance-table td:first-child {
             color: #e2e8f0;
             font-weight: bold;
+        }
+
+        .attendance-score-controls {
+            min-width: 238px;
+        }
+
+        .attendance-score-adjustments {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .attendance-score-controls button {
+            min-width: 36px;
+            min-height: 32px;
+            padding: 4px 5px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .attendance-score-decrease {
+            border-color: #7f1d1d !important;
+            background: #450a0a !important;
+            color: #fecaca !important;
+        }
+
+        .attendance-score-increase-half {
+            border-color: #166534 !important;
+            background: #052e16 !important;
+            color: #bbf7d0 !important;
+        }
+
+        .attendance-score-increase-full {
+            border-color: #1d4ed8 !important;
+            background: #172554 !important;
+            color: #bfdbfe !important;
+        }
+
+        .attendance-vcc-award {
+            border-color: #a16207 !important;
+            background: #422006 !important;
+            color: #fde68a !important;
+        }
+
+        .attendance-vcc-award:disabled {
+            border-color: #475569 !important;
+            background: #1f2937 !important;
+            color: #94a3b8 !important;
+            cursor: default;
         }
 
         .present {
@@ -2620,16 +2690,76 @@
                 white-space: nowrap;
             }
             .member-list-panel,
-            .attendance-card:has(.attendance-table),
             .shuffle-record-panel:has(table) {
                 overflow-x: auto;
             }
             .member-table,
-            .attendance-table,
             .shuffle-record-table,
             .shuffle-detail-table {
                 min-width: 620px;
             }
+            .attendance-card:has(.attendance-table) { overflow: visible; }
+            .attendance-table {
+                display: block;
+                width: 100%;
+                min-width: 0;
+            }
+            .attendance-table thead { display: none; }
+            .attendance-table tbody { display: block; }
+            .attendance-table .attendance-group-row { display: block; margin-top: 10px; }
+            .attendance-table .attendance-group-row th {
+                display: block;
+                padding: 14px 2px 8px;
+            }
+            .attendance-table .attendance-member-row {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0 12px;
+                margin-bottom: 10px;
+                padding: 8px 12px;
+                border: 1px solid #334155;
+                border-radius: 8px;
+                background: #0b1220;
+            }
+            .attendance-table .attendance-member-row td {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: 8px;
+                min-width: 0;
+                padding: 8px 0;
+                border-bottom: 1px solid #1e293b;
+                overflow-wrap: anywhere;
+            }
+            .attendance-table .attendance-member-row td::before {
+                flex: 0 0 auto;
+                color: #94a3b8;
+                content: attr(data-label);
+                font-size: 10px;
+                font-weight: 700;
+            }
+            .attendance-table .attendance-member-row td:first-child,
+            .attendance-table .attendance-member-row td:last-child { grid-column: 1 / -1; }
+            .attendance-table .attendance-member-row td:first-child {
+                color: #f8fafc;
+                font-size: 14px;
+            }
+            .attendance-table .attendance-member-row td:nth-child(2) {
+                color: #34d399;
+                font-size: 14px;
+                font-weight: 800;
+            }
+            .attendance-table .attendance-member-row .attendance-score-controls {
+                display: block;
+                min-width: 0;
+                border-bottom: 0;
+            }
+            .attendance-table .attendance-member-row .attendance-score-controls::before {
+                display: block;
+                margin-bottom: 7px;
+            }
+            .attendance-table .attendance-score-adjustments { flex-wrap: wrap; }
+            .attendance-table .attendance-score-adjustments button { min-height: 36px; }
             .attendance-select-row { grid-template-columns: 1fr; }
             .attendance-grid { grid-template-columns: 1fr; }
             .boss-timer-register h3 { line-height: 1.5; }
@@ -3080,7 +3210,7 @@
                     <div id="dashboard-info" class="notice-content">
                         <h3 contenteditable="false">🗓️ 한셔플당 획득 가능 점수</h3>
                         <div contenteditable="false">
-                            <p>13시 / 21시 게헨나: 매일 각 1점 (14일 x 2점 = 28점)</p>
+                            <p>13시 / 21시 게헨나: 3층전·마무리 각 0.5점, 타임별 최대 1점 (14일 x 2점 = 28점)</p>
                             <p>클랜임무 / 클랜수호: 시즌 1회 완료 시 1점</p>
                             <p>에노크 / 마슈미드: 시즌 1회 완료 시 1점</p>
                             <p>쟁탈전: 시즌 1회 1점</p>
@@ -3407,10 +3537,13 @@
                 </div>
 
                 <div class="attendance-card">
-                    <h3>출석 클랜원별 현황</h3>
+                    <div class="attendance-summary-heading">
+                        <h3>출석 클랜원별 현황</h3>
+                        <p class="attendance-summary-note">3층전, 마무리는 각각 0.5점씩으로 반영됩니다 (단 최종점수에서의 0.5단위는 계산되지 않습니다)</p>
+                    </div>
                     <table class="attendance-table">
                         <thead>
-                            <tr><th>닉네임</th><th>총 점수</th><th>오늘 현황</th><th>13시/21시</th><th>에노크/마슈</th><th>쟁탈전</th><th>VCC</th><th>임무/수호</th><th>상세 내역</th></tr>
+                            <tr><th>닉네임</th><th>총 점수</th><th>오늘 현황</th><th>13시/21시</th><th>에노크/마슈</th><th>쟁탈전</th><th>VCC</th><th>임무/수호</th><th>상세 내역</th><th class="admin-only">점수 조정</th></tr>
                         </thead>
                         <tbody id="attendance-body">
                         </tbody>
@@ -4322,15 +4455,50 @@
             ['admin', 'normal'].forEach((listName) => {
                 const groupRow = document.createElement('tr');
                 groupRow.className = 'attendance-group-row';
-                groupRow.innerHTML = `<th colspan="9">${listName === 'admin' ? '운영진' : '일반 클랜원'}</th>`;
+                groupRow.innerHTML = `<th colspan="${isAdmin() ? 10 : 9}">${listName === 'admin' ? '운영진' : '일반 클랜원'}</th>`;
                 body.appendChild(groupRow);
 
                 memberLists[listName].slice().sort(compareMemberOrder).forEach((member) => {
                 const row = document.createElement('tr');
                     row.className = 'attendance-member-row';
-                row.innerHTML = '<td></td><td class="present">0점 (0%)</td><td>미출석</td><td>0점 (0/2, 0/2)</td><td>0점 (0/2)</td><td>0점 (0/1)</td><td>0점 (0/1)</td><td>0점 (0/2)</td><td>없음</td>';
+                row.innerHTML = '<td></td><td class="present">0점 (0%)</td><td>미출석</td><td>0점 (13시 0점, 0/2 · 21시 0점, 0/2)</td><td>0점 (0/2)</td><td>0점 (0/1)</td><td>0점 (0/1)</td><td>0점 (0/2)</td><td>없음</td>';
                 row.cells[0].textContent = member.nickname;
                 if (member.power === '블라인드') row.dataset.blindPower = 'true';
+                if (isAdmin()) {
+                    const controlsCell = row.insertCell();
+                    controlsCell.className = 'attendance-score-controls';
+                    row.dataset.vccBonusAwarded = 'false';
+                    const adjustments = document.createElement('div');
+                    adjustments.className = 'attendance-score-adjustments';
+                    [
+                        { label: '-1', amount: -1, className: 'attendance-score-decrease' },
+                        { label: '-0.5', amount: -0.5, className: 'attendance-score-decrease' },
+                        { label: '+0.5', amount: 0.5, className: 'attendance-score-increase-half' },
+                        { label: '+1', amount: 1, className: 'attendance-score-increase-full' }
+                    ].forEach(({ label, amount, className }) => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = className;
+                        button.textContent = label;
+                        button.title = `${member.nickname} 점수 ${Math.abs(amount)}점 ${amount > 0 ? '올리기' : '내리기'}`;
+                        button.setAttribute('aria-label', button.title);
+                        button.onclick = () => adjustAttendanceScore(member.nickname, amount);
+                        adjustments.appendChild(button);
+                    });
+                    const vccButton = document.createElement('button');
+                    vccButton.type = 'button';
+                    vccButton.className = 'attendance-vcc-award';
+                    vccButton.textContent = 'VCC +1';
+                    vccButton.title = `${member.nickname} VCC 시즌 보너스 1점 지급`;
+                    vccButton.setAttribute('aria-label', vccButton.title);
+                    vccButton.onclick = () => awardAttendanceVcc(member.nickname);
+                    adjustments.appendChild(vccButton);
+                    controlsCell.appendChild(adjustments);
+                }
+                const attendanceColumnLabels = ['닉네임', '총 점수', '오늘 현황', '13시/21시', '에노크/마슈', '쟁탈전', 'VCC', '임무/수호', '상세 내역', '점수 조정'];
+                [...row.cells].forEach((cell, index) => {
+                    cell.dataset.label = attendanceColumnLabels[index];
+                });
                 body.appendChild(row);
                 });
             });
@@ -4642,13 +4810,16 @@
             const selectedPeriod = periodSelect.value;
             periodSelect.replaceChildren(new Option('셔플기간 선택하기', ''));
             Object.entries(records)
-                .sort(([, first], [, second]) => second.startDate.localeCompare(first.startDate))
+                .sort(([, first], [, second]) => String(second.startDate || '').localeCompare(String(first.startDate || '')))
                 .forEach(([recordId, record]) => {
-                    periodSelect.add(new Option(`${record.startDate} ~ ${record.endDate}`, recordId));
+                    const startDate = record.startDate || dateInputValue(new Date(Number(recordId)));
+                    const endDate = record.endDate || dateInputValue(new Date(Number(recordId) + 13 * 86400000));
+                    periodSelect.add(new Option(`${startDate} ~ ${endDate}`, recordId));
                 });
             periodSelect.value = records[selectedPeriod] ? selectedPeriod : '';
             body.replaceChildren();
-            const entries = Object.entries(records).sort(([, first], [, second]) => second.startDate.localeCompare(first.startDate));
+            const entries = Object.entries(records).sort(([, first], [, second]) =>
+                String(second.startDate || '').localeCompare(String(first.startDate || '')));
 
             if (!entries.length) {
                 const row = document.createElement('tr');
@@ -4658,12 +4829,14 @@
             }
 
             entries.forEach(([recordId, record]) => {
+                const startDate = record.startDate || dateInputValue(new Date(Number(recordId)));
+                const endDate = record.endDate || dateInputValue(new Date(Number(recordId) + 13 * 86400000));
                 const row = document.createElement('tr');
                 const periodCell = document.createElement('td');
                 const periodButton = document.createElement('button');
                 periodButton.className = 'shuffle-period-button';
                 periodButton.type = 'button';
-                periodButton.textContent = `${record.startDate} ~ ${record.endDate}`;
+                periodButton.textContent = `${startDate} ~ ${endDate}`;
                 periodButton.onclick = () => showShuffleDetails(recordId);
                 periodCell.appendChild(periodButton);
                 const serverCell = document.createElement('td');
@@ -5035,7 +5208,7 @@
         loadShuffleRecords();
         renderLadderGame();
         startLadderGameSync();
-        restoreLoginSession();
+        window.setTimeout(restoreLoginSession, 0);
 
         function toggleMobileMore() {
             const panel = document.getElementById('mobile-more-panel');
@@ -5819,7 +5992,7 @@
                 completedActivities.push(activity);
                 row.dataset[completedKey] = completedActivities.join('|');
 
-                updateAttendanceRow(row).then((saved) => {
+                updateAttendanceRow(row, true, { field: completedKey, activity }).then((saved) => {
                     if (saved) showAttendanceNotice(`${member}님 ${time}시 ${activity} 출석이 완료되었습니다.`);
                 });
             };
@@ -5898,7 +6071,7 @@
                 if (activity === 'VCC') {
                     row.dataset.vccBonusAwarded = 'true';
                 }
-                updateAttendanceRow(row).then((saved) => {
+                updateAttendanceRow(row, true, { field: 'events', activity }).then((saved) => {
                     if (saved) showAttendanceNotice(`${member}님 ${activity} 출석이 완료되었습니다.`);
                 });
             };
@@ -5971,13 +6144,13 @@
                 });
         }
 
-        function updateAttendanceRow(row, shouldSave = true) {
+        function updateAttendanceRow(row, shouldSave = true, activityAddition = null) {
             const time13 = row.dataset.time13Activities ? row.dataset.time13Activities.split('|').filter(Boolean) : [];
             const time21 = row.dataset.time21Activities ? row.dataset.time21Activities.split('|').filter(Boolean) : [];
             const events = row.dataset.events ? row.dataset.events.split('|').filter(Boolean) : [];
 
-            const time13Score = time13.length === 2 ? 1 : 0;
-            const time21Score = time21.length === 2 ? 1 : 0;
+            const time13Score = time13.length * 0.5;
+            const time21Score = time21.length * 0.5;
             const enokScore = events.includes('에노크') && events.includes('마슈미드') ? 1 : 0;
             const captureScore = events.includes('쟁탈전') ? 1 : 0;
             const vccBonusAwarded = row.dataset.vccBonusAwarded === 'true';
@@ -5986,7 +6159,7 @@
             const dailyScore = time13Score + time21Score + enokScore + captureScore + dailyVccScore + missionScore;
             const totalScore = Number(row.dataset.baseScore || 0) + dailyScore;
             const participationRate = Math.round((totalScore / maxShuffleScore) * 100);
-            const timeProgress = `${time13Score + time21Score}점 (${time13.length}/2, ${time21.length}/2)`;
+            const timeProgress = `${time13Score + time21Score}점 (13시 ${time13Score}점, ${time13.length}/2 · 21시 ${time21Score}점, ${time21.length}/2)`;
             const enokProgress = (events.includes('에노크') ? 1 : 0) + (events.includes('마슈미드') ? 1 : 0);
             const missionProgress = (events.includes('클랜임무') ? 1 : 0) + (events.includes('클랜수호') ? 1 : 0);
             const eventDetails = enokScore
@@ -6006,7 +6179,7 @@
             row.cells[7].textContent = `${missionScore}점 (${missionProgress}/2)`;
             row.cells[8].textContent = hasSupportedEvent || time13.length || time21.length ? '기록 있음' : '없음';
             if (!shouldSave) return Promise.resolve(true);
-            return saveAttendanceRecord(row).then(() => true).catch((error) => {
+            return saveAttendanceRecord(row, activityAddition).then(() => true).catch((error) => {
                 console.error('출석 기록 저장 실패:', error);
                 applyAttendanceRecords(attendanceRecordsCache);
                 showAttendanceNotice(`${row.cells[0].textContent}님의 출석 기록을 저장하지 못했습니다. 연결 상태를 확인한 뒤 다시 시도하세요.`);
@@ -6033,7 +6206,7 @@
 
         function resetDailyAttendance() {
             document.querySelectorAll('#attendance-body tr.attendance-member-row').forEach((row) => {
-                row.dataset.baseScore = Number(row.cells[1].textContent.match(/^\d+/)?.[0]) || 0;
+                row.dataset.baseScore = Number(row.cells[1].textContent.match(/^\d+(?:\.\d+)?/)?.[0]) || 0;
                 row.dataset.time13Activities = '';
                 row.dataset.time21Activities = '';
                 row.dataset.events = '';
@@ -6170,9 +6343,105 @@
             }
         }
 
-        function saveAttendanceRecord(row) {
+        function saveAttendanceActivity(row, activityAddition) {
             const nickname = row.cells[0].textContent;
-            const score = Number(row.cells[1].textContent.match(/^\d+/)?.[0]) || 0;
+            const participantKey = attendanceUserKey(nickname);
+            const recordId = currentShuffleId();
+            const currentDay = currentAttendanceDay();
+            const attendanceRef = database.ref(`attendance/${participantKey}`);
+
+            return attendanceRef.transaction((currentRecord) => {
+                const sameShuffle = currentRecord?.shuffleId === recordId;
+                const sameDay = sameShuffle && currentRecord.attendanceDay === currentDay;
+                const record = sameDay
+                    ? { ...currentRecord }
+                    : {
+                        nickname,
+                        shuffleId: recordId,
+                        attendanceDay: currentDay,
+                        baseScore: sameShuffle ? Number(currentRecord.score) || 0 : 0,
+                        time13Activities: '',
+                        time21Activities: '',
+                        events: '',
+                        vccBonusAwarded: sameShuffle && currentRecord.vccBonusAwarded === true
+                    };
+                const existingActivities = String(record[activityAddition.field] || '').split('|').filter(Boolean);
+                if (!existingActivities.includes(activityAddition.activity)) {
+                    existingActivities.push(activityAddition.activity);
+                }
+                record[activityAddition.field] = existingActivities.join('|');
+                if (activityAddition.activity === 'VCC') record.vccBonusAwarded = true;
+
+                const time13 = String(record.time13Activities || '').split('|').filter(Boolean);
+                const time21 = String(record.time21Activities || '').split('|').filter(Boolean);
+                const events = String(record.events || '').split('|').filter(Boolean);
+                const dailyScore = time13.length * 0.5 + time21.length * 0.5 +
+                    Number(events.includes('에노크') && events.includes('마슈미드')) +
+                    Number(events.includes('쟁탈전')) +
+                    Number(events.includes('VCC') && record.vccBonusAwarded === true) +
+                    Number(events.includes('클랜임무') && events.includes('클랜수호'));
+                record.score = (Number(record.baseScore) || 0) + dailyScore;
+                record.updatedAt = firebase.database.ServerValue.TIMESTAMP;
+                return record;
+            }).then((result) => {
+                if (!result.committed) throw new Error('출석 기록 저장이 완료되지 않았습니다.');
+                const attendanceRecord = result.snapshot.val();
+                const time13 = String(attendanceRecord.time13Activities || '').split('|').filter(Boolean);
+                const time21 = String(attendanceRecord.time21Activities || '').split('|').filter(Boolean);
+                const events = String(attendanceRecord.events || '').split('|').filter(Boolean);
+                const dailyScore = Number(attendanceRecord.score) - (Number(attendanceRecord.baseScore) || 0);
+                const score = Number(attendanceRecord.score) || 0;
+                const participant = {
+                    nickname,
+                    score,
+                    rate: Math.round((score / maxShuffleScore) * 100)
+                };
+                const dailyParticipant = {
+                    nickname,
+                    activities: [...time13, ...time21, ...events].join('/'),
+                    score: dailyScore,
+                    totalScore: score,
+                    rate: Math.round((score / maxShuffleScore) * 100)
+                };
+                row.dataset.time13Activities = attendanceRecord.time13Activities || '';
+                row.dataset.time21Activities = attendanceRecord.time21Activities || '';
+                row.dataset.events = attendanceRecord.events || '';
+                row.dataset.baseScore = String(Number(attendanceRecord.baseScore) || 0);
+                row.dataset.vccBonusAwarded = attendanceRecord.vccBonusAwarded ? 'true' : 'false';
+                updateAttendanceVccButton(row);
+                updateAttendanceRow(row, false);
+                attendanceRecordsCache[participantKey] = attendanceRecord;
+
+                const cachedRecord = {
+                    ...(shuffleRecordsCache[recordId] || {}),
+                    startDate: shuffleRecordsCache[recordId]?.startDate || dateInputValue(new Date(Number(recordId))),
+                    endDate: shuffleRecordsCache[recordId]?.endDate || dateInputValue(new Date(Number(recordId) + 13 * 86400000)),
+                    serverName: shuffleRecordsCache[recordId]?.serverName || document.getElementById('server-name').value,
+                    participants: { ...(shuffleRecordsCache[recordId]?.participants || {}), [participantKey]: participant },
+                    daily: { ...(shuffleRecordsCache[recordId]?.daily || {}) }
+                };
+                cachedRecord.daily[currentDay] = {
+                    ...(cachedRecord.daily[currentDay] || {}),
+                    [participantKey]: dailyParticipant
+                };
+                const updates = {
+                    [`shuffleRecords/${recordId}/startDate`]: cachedRecord.startDate,
+                    [`shuffleRecords/${recordId}/endDate`]: cachedRecord.endDate,
+                    [`shuffleRecords/${recordId}/serverName`]: cachedRecord.serverName,
+                    [`shuffleRecords/${recordId}/participants/${participantKey}`]: participant,
+                    [`shuffleRecords/${recordId}/daily/${currentDay}/${participantKey}`]: dailyParticipant
+                };
+                return database.ref().update(updates).then(() => {
+                    shuffleRecordsCache[recordId] = cachedRecord;
+                });
+            });
+        }
+
+        function saveAttendanceRecord(row, activityAddition = null) {
+            if (activityAddition) return saveAttendanceActivity(row, activityAddition);
+
+            const nickname = row.cells[0].textContent;
+            const score = Number(row.cells[1].textContent.match(/^\d+(?:\.\d+)?/)?.[0]) || 0;
             const totalScore = score;
             const time13 = row.dataset.time13Activities ? row.dataset.time13Activities.split('|').filter(Boolean) : [];
             const time21 = row.dataset.time21Activities ? row.dataset.time21Activities.split('|').filter(Boolean) : [];
@@ -6180,7 +6449,7 @@
             const enokCompleted = events.includes('에노크') && events.includes('마슈미드');
             const missionCompleted = events.includes('클랜임무') && events.includes('클랜수호');
             const vccBonusAwarded = row.dataset.vccBonusAwarded === 'true';
-            const dailyScore = Number(time13.length === 2) + Number(time21.length === 2) +
+            const dailyScore = time13.length * 0.5 + time21.length * 0.5 +
                 (enokCompleted ? 1 : 0) + Number(events.includes('쟁탈전')) +
                 Number(events.includes('VCC') && vccBonusAwarded) + Number(missionCompleted);
             const recordId = currentShuffleId();
@@ -6197,12 +6466,13 @@
                 totalScore,
                 rate: Math.round((totalScore / maxShuffleScore) * 100)
             };
-            const cachedRecord = shuffleRecordsCache[recordId] || {
-                startDate: dateInputValue(new Date(Number(recordId))),
-                endDate: dateInputValue(new Date(Number(recordId) + 13 * 86400000)),
-                serverName: document.getElementById('server-name').value,
-                participants: {},
-                daily: {}
+            const cachedRecord = {
+                ...(shuffleRecordsCache[recordId] || {}),
+                startDate: shuffleRecordsCache[recordId]?.startDate || dateInputValue(new Date(Number(recordId))),
+                endDate: shuffleRecordsCache[recordId]?.endDate || dateInputValue(new Date(Number(recordId) + 13 * 86400000)),
+                serverName: shuffleRecordsCache[recordId]?.serverName || document.getElementById('server-name').value,
+                participants: { ...(shuffleRecordsCache[recordId]?.participants || {}) },
+                daily: { ...(shuffleRecordsCache[recordId]?.daily || {}) }
             };
             cachedRecord.participants = { ...(cachedRecord.participants || {}), [participantKey]: participant };
             const currentDay = currentAttendanceDay();
@@ -6224,6 +6494,9 @@
                 updatedAt: firebase.database.ServerValue.TIMESTAMP
             };
             const updates = {
+                [`shuffleRecords/${recordId}/startDate`]: cachedRecord.startDate,
+                [`shuffleRecords/${recordId}/endDate`]: cachedRecord.endDate,
+                [`shuffleRecords/${recordId}/serverName`]: cachedRecord.serverName,
                 [`attendance/${participantKey}`]: attendanceRecord,
                 [`shuffleRecords/${recordId}/participants/${participantKey}`]: participant,
                 [`shuffleRecords/${recordId}/daily/${currentAttendanceDay()}/${participantKey}`]: dailyParticipant
@@ -6285,6 +6558,7 @@
                     ? Number(record.baseScore) || 0
                     : Number(record.score) || 0;
                 row.dataset.vccBonusAwarded = record.vccBonusAwarded ? 'true' : 'false';
+                updateAttendanceVccButton(row);
                 updateAttendanceRow(row, false);
             });
         }
@@ -6345,6 +6619,7 @@
                 row.dataset.time21Activities = '';
                 row.dataset.events = '';
                 row.dataset.vccBonusAwarded = 'false';
+                updateAttendanceVccButton(row);
                 database.ref(`attendance/${attendanceUserKey(row.cells[0].textContent)}`).remove().catch(() => {});
             });
             database.ref(`shuffleRecords/${currentShuffleId()}/participants`).remove().catch(() => {});
@@ -6389,6 +6664,57 @@
                 if (!saved) return;
                 input.value = '';
                 showAttendanceNotice(`${nickname}님의 점수와 출석 기록이 초기화되었습니다.`);
+            });
+        }
+
+        function adjustAttendanceScore(nickname, amount) {
+            if (!isAdmin()) return;
+            const row = [...document.querySelectorAll('#attendance-body tr.attendance-member-row')]
+                .find((candidate) => candidate.cells[0].textContent === nickname);
+            if (!row) return;
+
+            const time13 = String(row.dataset.time13Activities || '').split('|').filter(Boolean);
+            const time21 = String(row.dataset.time21Activities || '').split('|').filter(Boolean);
+            const events = String(row.dataset.events || '').split('|').filter(Boolean);
+            const dailyScore = time13.length * 0.5 + time21.length * 0.5 +
+                Number(events.includes('에노크') && events.includes('마슈미드')) +
+                Number(events.includes('쟁탈전')) +
+                Number(events.includes('VCC') && row.dataset.vccBonusAwarded === 'true') +
+                Number(events.includes('클랜임무') && events.includes('클랜수호'));
+            const currentBaseScore = Number(row.dataset.baseScore) || 0;
+            const nextBaseScore = Math.max(-dailyScore, currentBaseScore + amount);
+            if (nextBaseScore === currentBaseScore) return;
+
+            row.dataset.baseScore = String(nextBaseScore);
+            const appliedAmount = nextBaseScore - currentBaseScore;
+            updateAttendanceRow(row).then((saved) => {
+                if (!saved) return;
+                showAttendanceNotice(`${nickname}님의 점수가 ${Math.abs(appliedAmount)}점 ${appliedAmount > 0 ? '올랐습니다.' : '내려갔습니다.'}`);
+            });
+        }
+
+        function updateAttendanceVccButton(row) {
+            const button = row.querySelector('.attendance-vcc-award');
+            if (!button) return;
+            const awarded = row.dataset.vccBonusAwarded === 'true';
+            button.disabled = awarded;
+            button.textContent = awarded ? 'VCC 완료' : 'VCC +1';
+        }
+
+        function awardAttendanceVcc(nickname) {
+            if (!isAdmin()) return;
+            const row = [...document.querySelectorAll('#attendance-body tr.attendance-member-row')]
+                .find((candidate) => candidate.cells[0].textContent === nickname);
+            if (!row || row.dataset.vccBonusAwarded === 'true') return;
+
+            const activities = String(row.dataset.events || '').split('|').filter(Boolean);
+            if (!activities.includes('VCC')) activities.push('VCC');
+            row.dataset.events = activities.join('|');
+            row.dataset.vccBonusAwarded = 'true';
+            updateAttendanceVccButton(row);
+            return updateAttendanceRow(row, true, { field: 'events', activity: 'VCC' }).then((saved) => {
+                if (saved) showAttendanceNotice(`${nickname}님에게 VCC 시즌 보너스 1점을 지급했습니다.`);
+                return saved;
             });
         }
 
