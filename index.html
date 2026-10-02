@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>DOKDO 시스템</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -1870,7 +1871,7 @@
             font-weight: 700;
         }
 
-        #view-dashboard nav button:not([class*="bg-red-600"]),
+        #view-dashboard nav button:not([class*="bg-red-600"]):not(.mobile-tab),
         #view-dashboard #current-user-name,
         #view-dashboard #current-user-role,
         #view-dashboard .tab-content h2,
@@ -2018,7 +2019,7 @@
         body.theme-dark #view-dashboard .attendance-table td,
         body.theme-dark #view-dashboard .shuffle-record-table td,
         body.theme-dark #view-dashboard .shuffle-detail-table td,
-        body.theme-dark #view-dashboard nav button:not([class*="bg-red-600"]),
+        body.theme-dark #view-dashboard nav button:not([class*="bg-red-600"]):not(.mobile-tab),
         body.theme-dark #view-dashboard #current-user-name,
         body.theme-dark #view-dashboard #current-user-role,
         body.theme-dark #view-dashboard .member-help,
@@ -2250,6 +2251,8 @@
 
             .mount-race-header { align-items: flex-start; flex-direction: column; }
             .mount-race-layout, .mount-race-results { grid-template-columns: 1fr; }
+            .ladder-game-layout { grid-template-columns: minmax(0, 1fr); }
+            .ladder-controls, .ladder-board { min-width: 0; }
             .mount-race-track { min-height: 390px; }
             .race-runner { width: 126px; }
             .race-runner img { width: 96px; height: 82px; }
@@ -2270,7 +2273,7 @@
                 overflow: auto;
             }
 
-            #view-dashboard {
+            #view-dashboard:not(.hidden) {
                 display: block;
                 min-height: 100vh;
                 height: auto;
@@ -2599,15 +2602,23 @@
             .shuffle-record-panel,
             .boss-timer-register,
             .member-form,
-            .server-form,
             .diamond-form,
             .participation-search {
                 grid-template-columns: 1fr;
             }
             .member-form button,
-            .server-form button,
             .diamond-form button,
             .participation-search button { width: 100%; }
+            .server-form {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+            }
+            .server-form input { width: 100%; }
+            .server-form button {
+                width: auto;
+                min-height: 42px;
+                white-space: nowrap;
+            }
             .member-list-panel,
             .attendance-card:has(.attendance-table),
             .shuffle-record-panel:has(table) {
@@ -2724,6 +2735,186 @@
         }
         body.theme-dark #view-dashboard aside h1 { color: #f87171 !important; }
         body.theme-dark #view-dashboard .boss-timer-form label { color: #fbbf24 !important; }
+
+        .mobile-app-header,
+        .mobile-tabbar,
+        .mobile-more-panel {
+            display: none;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                min-height: 100dvh;
+                height: auto;
+                overflow: hidden;
+            }
+
+            #view-dashboard:not(.hidden) {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                min-height: 100dvh;
+                height: 100dvh;
+                overflow: hidden;
+                background: #080b12;
+            }
+
+            #view-dashboard aside {
+                display: none;
+            }
+
+            .mobile-app-header {
+                display: flex;
+                flex: 0 0 auto;
+                align-items: center;
+                justify-content: space-between;
+                min-height: 58px;
+                box-sizing: border-box;
+                padding: 0 18px;
+                border-bottom: 1px solid #202938;
+                background: #0d121b;
+            }
+
+            .mobile-app-brand {
+                color: #f87171;
+                font-size: 18px;
+                font-style: italic;
+                font-weight: 900;
+                letter-spacing: 1px;
+            }
+
+            .mobile-app-caption {
+                margin-left: 9px;
+                color: #94a3b8;
+                font-size: 11px;
+            }
+
+            #view-dashboard main {
+                flex: 1 1 auto;
+                width: 100%;
+                min-height: 0;
+                height: auto;
+                box-sizing: border-box;
+                overflow-x: hidden;
+                overflow-y: auto;
+                padding: 22px 16px calc(88px + env(safe-area-inset-bottom));
+                overscroll-behavior-y: contain;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .mobile-tabbar {
+                position: fixed;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 60;
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                min-height: calc(64px + env(safe-area-inset-bottom));
+                padding: 6px 8px env(safe-area-inset-bottom);
+                border-top: 1px solid #263142;
+                background: rgba(13, 18, 27, .97);
+                backdrop-filter: blur(14px);
+            }
+
+            .mobile-tab {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                min-width: 0;
+                padding: 5px 2px;
+                border: 0;
+                background: transparent;
+                color: #8491a4;
+                font-size: 10px;
+                font-weight: 700;
+                cursor: pointer;
+            }
+
+            .mobile-tab-icon {
+                font-size: 19px;
+                line-height: 1;
+            }
+
+            .mobile-tab.is-active {
+                color: #f87171;
+            }
+
+            .mobile-tab.is-active .mobile-tab-icon {
+                filter: drop-shadow(0 0 7px rgba(248, 113, 113, .45));
+            }
+
+            .mobile-more-panel:not(.hidden) {
+                position: fixed;
+                right: 12px;
+                bottom: calc(72px + env(safe-area-inset-bottom));
+                left: 12px;
+                z-index: 59;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+                max-height: min(62dvh, 440px);
+                overflow-y: auto;
+                padding: 14px;
+                border: 1px solid #344155;
+                border-radius: 16px;
+                background: #111824;
+                box-shadow: 0 18px 50px rgba(0, 0, 0, .5);
+            }
+
+            .mobile-more-item {
+                min-height: 46px;
+                padding: 9px 10px;
+                border: 1px solid #263448;
+                border-radius: 9px;
+                background: #182231;
+                color: #dbe4ef;
+                font-size: 12px;
+                font-weight: 700;
+                text-align: left;
+                cursor: pointer;
+            }
+
+            .mobile-more-item:active {
+                border-color: #b91c1c;
+                background: #291920;
+            }
+
+            .mobile-more-divider {
+                grid-column: 1 / -1;
+                height: 1px;
+                margin: 2px 0;
+                background: #263448;
+            }
+
+            .dashboard-page h2,
+            .dashboard-header h2,
+            .notice-page h2,
+            .member-page h2,
+            .diamond-page h2,
+            .participation-page h2,
+            .boss-timer-page h2 {
+                font-size: 22px;
+                line-height: 1.3;
+            }
+
+            .dashboard-summary {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .dashboard-card {
+                min-height: 0;
+                padding: 18px;
+            }
+
+            .mobile-more-panel .admin-only.hidden,
+            .mobile-more-panel .member-restricted.hidden {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="bg-[#030712] text-gray-100 flex h-screen overflow-hidden m-0 p-0">
@@ -2841,6 +3032,11 @@
                 </button>
             </div>
         </aside>
+
+        <header class="mobile-app-header">
+            <div><span class="mobile-app-brand">DOKDO</span><span class="mobile-app-caption">CLAN SYSTEM</span></div>
+            <span id="mobile-current-user" class="text-xs text-gray-400"></span>
+        </header>
 
         <!-- 메인 콘텐츠 영역 -->
         <main class="flex-1 flex flex-col h-screen overflow-y-auto p-8">
@@ -3271,6 +3467,25 @@
                 </div>
             </div>
         </main>
+
+        <div id="mobile-more-panel" class="mobile-more-panel hidden" aria-label="전체 메뉴">
+            <button type="button" class="mobile-more-item member-restricted" onclick="switchTab('notice')">📢 공지사항</button>
+            <button type="button" class="mobile-more-item admin-only" onclick="switchTab('members')">👥 클랜원 명단</button>
+            <button type="button" class="mobile-more-item member-restricted" onclick="switchTab('shuffle-records')">🗂️ 셔플 기록</button>
+            <button type="button" class="mobile-more-item" onclick="switchTab('diamonds')">💎 다이아 분배</button>
+            <button type="button" class="mobile-more-item admin-only" onclick="switchTab('admin')">👑 운영진 관리</button>
+            <button type="button" class="mobile-more-item admin-only" id="nav-boss-timer" onclick="switchTab('boss-timer')">⏰ 보스 타이머</button>
+            <div class="mobile-more-divider"></div>
+            <button type="button" class="mobile-more-item" onclick="toggleTheme()">◐ 테마 변경</button>
+            <button type="button" class="mobile-more-item" onclick="handleLogout()">↪ 로그아웃</button>
+        </div>
+
+        <nav class="mobile-tabbar" aria-label="주요 메뉴">
+            <button type="button" class="mobile-tab member-restricted" data-mobile-tab="dashboard" onclick="switchTab('dashboard')"><span class="mobile-tab-icon">⌂</span><span>홈</span></button>
+            <button type="button" class="mobile-tab" data-mobile-tab="attendance" onclick="switchTab('attendance')"><span class="mobile-tab-icon">✓</span><span>출석</span></button>
+            <button type="button" class="mobile-tab" data-mobile-tab="participation" onclick="switchTab('participation')"><span class="mobile-tab-icon">⌕</span><span>참여율</span></button>
+            <button type="button" class="mobile-tab" data-mobile-tab="more" onclick="toggleMobileMore()" aria-expanded="false"><span class="mobile-tab-icon">☰</span><span>더보기</span></button>
+        </nav>
     </div>
 
     <div id="boss-edit-modal" class="boss-edit-modal hidden">
@@ -3370,6 +3585,7 @@
             localStorage.setItem('dokdoCurrentUser', JSON.stringify({ nickname, role }));
             document.getElementById('current-user-name').textContent = nickname;
             document.getElementById('current-user-role').textContent = role;
+            document.getElementById('mobile-current-user').textContent = nickname;
             document.getElementById('nav-admin').classList.toggle('hidden', role !== 'admin');
             const participationInput = document.getElementById('participation-search-input');
             if (participationInput) participationInput.value = nickname;
@@ -4821,6 +5037,23 @@
         startLadderGameSync();
         Promise.all(accountMigrationPromises).finally(restoreLoginSession);
 
+        function toggleMobileMore() {
+            const panel = document.getElementById('mobile-more-panel');
+            const button = document.querySelector('[data-mobile-tab="more"]');
+            const isOpening = panel.classList.contains('hidden');
+            panel.classList.toggle('hidden', !isOpening);
+            panel.setAttribute('aria-hidden', String(!isOpening));
+            button.setAttribute('aria-expanded', String(isOpening));
+        }
+
+        function closeMobileMore() {
+            const panel = document.getElementById('mobile-more-panel');
+            const button = document.querySelector('[data-mobile-tab="more"]');
+            panel.classList.add('hidden');
+            panel.setAttribute('aria-hidden', 'true');
+            button.setAttribute('aria-expanded', 'false');
+        }
+
         function switchTab(tabName) {
             if (['members', 'admin', 'dashboard', 'notice', 'shuffle-records', 'boss-timer'].includes(tabName) && !isAdmin()) {
                 return;
@@ -4844,14 +5077,13 @@
             const navAttendance = document.getElementById('nav-attendance');
             const bossTimerTab = document.getElementById('tab-boss-timer');
             const navBossTimer = document.getElementById('nav-boss-timer');
-            const mountRaceTab = document.getElementById('tab-mount-race');
-            const navMountRace = document.getElementById('nav-mount-race');
 
             const activeNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-600/15 text-red-500 font-medium text-sm transition text-left cursor-pointer";
             const inactiveNavClass = "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-gray-800/40 hover:text-gray-200 text-sm transition text-left cursor-pointer";
 
-            [dashboardTab, noticeTab, membersTab, participationTab, diamondsTab, shuffleRecordsTab, adminTab, attendanceTab, bossTimerTab, mountRaceTab].forEach((tab) => tab.classList.add('hidden'));
-            [navDashboard, navNotice, navMembers, navParticipation, navDiamonds, navShuffleRecords, navAdmin, navAttendance, navBossTimer, navMountRace].filter(Boolean).forEach((nav) => nav.className = inactiveNavClass);
+            [dashboardTab, noticeTab, membersTab, participationTab, diamondsTab, shuffleRecordsTab, adminTab, attendanceTab, bossTimerTab].forEach((tab) => tab.classList.add('hidden'));
+            [navDashboard, navNotice, navMembers, navParticipation, navDiamonds, navShuffleRecords, navAdmin, navAttendance, navBossTimer].filter(Boolean).forEach((nav) => nav.className = inactiveNavClass);
+            if (navBossTimer) navBossTimer.classList.toggle('hidden', !isAdmin());
             if (!isAdmin()) {
                 [navDashboard, navNotice, navMembers, navShuffleRecords, navAdmin, navBossTimer].filter(Boolean).forEach((nav) => nav.classList.add('hidden'));
             }
@@ -4888,11 +5120,13 @@
                 bossTimerTab.classList.remove('hidden');
                 navBossTimer.className = activeNavClass;
                 renderBossTimers();
-            } else if (tabName === 'mount-race') {
-                mountRaceTab.classList.remove('hidden');
-                navMountRace.className = activeNavClass;
-                renderLadderGame();
             }
+
+            const selectedMobileTab = ['dashboard', 'attendance', 'participation'].includes(tabName) ? tabName : 'more';
+            document.querySelectorAll('[data-mobile-tab]').forEach((button) => {
+                button.classList.toggle('is-active', button.dataset.mobileTab === selectedMobileTab);
+            });
+            closeMobileMore();
         }
 
         function saveLadderParticipants() {
