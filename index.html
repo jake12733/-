@@ -3865,39 +3865,54 @@
         }
 
         const diamondDistributionInputs = [
-            { nickname: 'DOKDO한국', powerMultiplier: 1.4 },
             { nickname: 'DOKDO라닷지', powerMultiplier: 1.5 },
+            { nickname: 'DOKDO마왕', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO한국', powerMultiplier: 1.4 },
+            { nickname: 'DOKDO제비', powerMultiplier: 1.4 },
             { nickname: 'DOKDO겨울', powerMultiplier: 1.1 },
             { nickname: 'DOKDO마자용', powerMultiplier: 1.3 },
+            { nickname: 'DOKDO로이', powerMultiplier: 1.2 },
+            { nickname: 'DOKDO소주', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO결마로', powerMultiplier: 1.2 },
+            { nickname: 'DOKDO파도', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO용이', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO꽁치', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO가을', powerMultiplier: 1.1 },
             { nickname: 'DOKDO가수', powerMultiplier: 1.1 },
             { nickname: 'DOKDO우주', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO결마로', powerMultiplier: 1.2 },
-            { nickname: 'DOKDO로이', powerMultiplier: 1.2 },
-            { nickname: 'DOKDO흑표', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO망나뇽', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO1SG', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO미로', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO2', powerMultiplier: 1.0 },
             { nickname: 'DOKDO꼬부기', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO1SG', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO2', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO망나뇽', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO유령', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO흑표', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO카이', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO봄', powerMultiplier: 1.0 },
             { nickname: 'DOKDO나옹이', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO가을', powerMultiplier: 1.1 },
+            { nickname: 'DOKDO한빠', powerMultiplier: 1.0 },
             { nickname: 'DOKDO수호', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO해적', powerMultiplier: 1.0 },
             { nickname: 'DOKDO9', powerMultiplier: 1.0 },
             { nickname: 'DOKDO모션', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO냐짱', powerMultiplier: 1.0 },
             { nickname: 'DOKDO라팍', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO미쓰', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO한빠', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO제비', powerMultiplier: 1.4 },
-            { nickname: 'DOKDO유령', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO우리땅', powerMultiplier: 1.0 },
-            { nickname: 'MARVIS', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO두리안', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO철가방', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO미르', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO호미', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO냐짱', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO해적', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO풀악셀', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO미로', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO빙바', powerMultiplier: 1.0 },
             { nickname: 'DOKDO코코', powerMultiplier: 1.0 },
-            { nickname: 'DOKDO푸린', powerMultiplier: 1.0 }
+            { nickname: 'DOKDO양아치', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO철가방', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO미쓰', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO푸린', powerMultiplier: 1.0 },
+            { nickname: 'MARVIS', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO우리땅', powerMultiplier: 1.0 },
+            { nickname: 'DOKDO두리안', powerMultiplier: 1.0 }
         ];
+        const diamondPowerMultipliers = new Map(
+            diamondDistributionInputs.map(({ nickname, powerMultiplier }) => [nickname, powerMultiplier])
+        );
 
         function populateDiamondShufflePeriods(records = shuffleRecordsCache) {
             const select = document.getElementById('diamond-shuffle-period');
@@ -3978,7 +3993,15 @@
             const countableActivities = new Set([
                 '3층전', '마무리', '에노크', '마슈미드', '쟁탈전', 'VCC', '클랜임무', '클랜수호'
             ]);
-            const activitiesByMember = new Map(diamondDistributionInputs.map(({ nickname }) => [nickname, new Map()]));
+            const distributionOrder = new Map(
+                diamondDistributionInputs.map(({ nickname }, index) => [nickname, index])
+            );
+            const clanMembers = [...memberLists.admin, ...memberLists.normal].sort((first, second) => {
+                const firstIndex = distributionOrder.get(first.nickname) ?? Number.MAX_SAFE_INTEGER;
+                const secondIndex = distributionOrder.get(second.nickname) ?? Number.MAX_SAFE_INTEGER;
+                return firstIndex - secondIndex || compareMemberOrder(first, second);
+            });
+            const activitiesByMember = new Map(clanMembers.map(({ nickname }) => [nickname, new Map()]));
             const addRecordedActivities = (day, nickname, value) => {
                 const memberDays = activitiesByMember.get(nickname);
                 if (!memberDays || !value) return;
@@ -4008,10 +4031,12 @@
                 });
             }
 
-            const distribution = diamondDistributionInputs.map((entry, index) => ({
-                ...entry,
+            const distribution = clanMembers.map((member, index) => ({
+                nickname: member.nickname,
+                role: member.role,
+                powerMultiplier: diamondPowerMultipliers.get(member.nickname) ?? 1.0,
                 index,
-                attendanceCount: [...(activitiesByMember.get(entry.nickname)?.values() || [])]
+                attendanceCount: [...(activitiesByMember.get(member.nickname)?.values() || [])]
                     .reduce((sum, activities) => sum + activities.size, 0),
                 adjustedScore: 0
             }));
@@ -4064,14 +4089,15 @@
 
             const table = document.createElement('table');
             table.className = 'diamond-distribution-table';
-            table.innerHTML = '<thead><tr><th>닉네임</th><th>출석 횟수</th><th>투력 배수</th><th>받는 비율</th><th>분배 다이아</th></tr></thead>';
+            table.innerHTML = '<thead><tr><th>닉네임</th><th>역할</th><th>출석 횟수</th><th>투력 배수</th><th>받는 비율</th><th>분배 다이아</th></tr></thead>';
             const body = document.createElement('tbody');
             distribution
-                .sort((first, second) => second.diamonds - first.diamonds || first.index - second.index)
+                .sort((first, second) => first.index - second.index)
                 .forEach((entry) => {
                     const row = document.createElement('tr');
                     [
                         entry.nickname,
+                        entry.role || '일반',
                         `${entry.attendanceCount}회`,
                         `${entry.powerMultiplier.toFixed(1)}배`,
                         `${entry.distributionRate.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`,
@@ -4085,7 +4111,7 @@
                 });
             const totalRow = document.createElement('tr');
             totalRow.className = 'diamond-distribution-total';
-            totalRow.innerHTML = `<th colspan="4">클랜원 분배 합계</th><th>${distribution.reduce((sum, entry) => sum + entry.diamonds, 0).toLocaleString()}개</th>`;
+            totalRow.innerHTML = `<th colspan="5">클랜원 분배 합계</th><th>${distribution.reduce((sum, entry) => sum + entry.diamonds, 0).toLocaleString()}개</th>`;
             body.appendChild(totalRow);
             table.appendChild(body);
             result.appendChild(table);
@@ -4165,7 +4191,7 @@
             ['그림리퍼', 'DOKDO푸린', '1,191,410'], ['블러드스테인', 'MARVIS', '1,171,295'],
             ['카니지', 'DOKDO우리땅', '1,136,797'], ['카니지', 'DOKDO두리안', '1,051,881']
         ];
-        const memberRosterVersion = '2026-10-01';
+        const memberRosterVersion = '2026-10-02';
         const shouldReplaceMemberRoster = localStorage.getItem('dokdoMemberRosterVersion') !== memberRosterVersion;
         if (shouldReplaceMemberRoster) {
             const previousMembers = Object.values(memberLists).flat();
@@ -4257,6 +4283,19 @@
             ['바이퍼', 'DOKDO결마로', '블라인드'],
             ['바이퍼', 'DOKDO파도', '블라인드']
         ];
+        const clanRosterPowerRollbackVersion = '2026-10-02-restore';
+        if (localStorage.getItem('dokdoClanRosterPowerRollbackVersion') !== clanRosterPowerRollbackVersion) {
+            const previousBlindPowerByNickname = new Map(
+                blindPowerMembers.map(([className, nickname, power]) => [nickname, { className, power }])
+            );
+            Object.values(memberLists).flat().forEach((member) => {
+                const previousPower = previousBlindPowerByNickname.get(member.nickname);
+                if (!previousPower) return;
+                member.className = previousPower.className;
+                member.power = previousPower.power;
+            });
+            localStorage.setItem('dokdoClanRosterPowerRollbackVersion', clanRosterPowerRollbackVersion);
+        }
         const blindPowerNicknames = new Set(blindPowerMembers.map(([, nickname]) => nickname));
         blindPowerMembers.forEach(([className, nickname, power]) => {
             const member = Object.values(memberLists).flat().find((candidate) => candidate.nickname === nickname);
@@ -4327,7 +4366,6 @@
         }
 
         const requestedMemberOrder = suppliedMemberRoster.map(([, nickname]) => nickname);
-
         let memberOrder;
         try {
             memberOrder = shouldReplaceMemberRoster
@@ -4357,8 +4395,8 @@
                 memberLists[listName].sort(compareMemberOrder).forEach((member, index) => {
                     const row = document.createElement('tr');
                     const orderCell = document.createElement('td');
-                    orderCell.textContent = `${index + 1}`;
 
+                    orderCell.textContent = `${index + 1}`;
                     const controls = document.createElement('span');
                     controls.className = 'member-rank-controls';
                     [['▲', -1], ['▼', 1]].forEach(([label, direction]) => {
