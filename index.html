@@ -4623,10 +4623,6 @@
                 alert('닉네임을 입력하세요.');
                 return;
             }
-            if (Object.values(memberLists).flat().some((member) => member.nickname === nickname)) {
-                alert('이미 등록된 클랜원입니다.');
-                return;
-            }
 
             const member = {
                 nickname,
@@ -4653,10 +4649,6 @@
             const role = document.getElementById('admin-member-role').value;
             if (!nickname) {
                 alert('닉네임을 입력하세요.');
-                return;
-            }
-            if (Object.values(memberLists).flat().some((member) => member.nickname === nickname)) {
-                alert('이미 등록된 클랜원입니다.');
                 return;
             }
             memberLists[role === '일반' ? 'normal' : 'admin'].push({
@@ -4755,17 +4747,9 @@
             }
             const nickname = row.cells[1].querySelector('input').value.trim().toUpperCase();
             const currentMember = memberLists[listName][index];
-            const duplicate = Object.values(memberLists).flat().some((member, memberIndex) => {
-                const isCurrentMember = member === currentMember;
-                return !isCurrentMember && member.nickname === nickname;
-            });
 
             if (!nickname) {
                 alert('닉네임을 입력하세요.');
-                return;
-            }
-            if (duplicate) {
-                alert('이미 등록된 클랜원입니다.');
                 return;
             }
 
@@ -6366,13 +6350,6 @@
             const previousAccount = previousUserSnapshot.val();
             const newAccount = newUserSnapshot.val();
             const previousAttendance = previousAttendanceSnapshot.val();
-            const newAttendance = newAttendanceSnapshot.val();
-            if (previousAccount && newAccount) {
-                throw new Error(`${newNickname} 계정이 이미 있어 닉네임을 변경할 수 없습니다.`);
-            }
-            if (previousAttendance && newAttendance) {
-                throw new Error(`${newNickname} 출석 기록이 이미 있어 기록을 덮어쓰지 않도록 변경을 중단했습니다.`);
-            }
 
             const updates = {};
             if (previousAccount) {
@@ -6390,10 +6367,6 @@
             const shuffleRecords = shuffleRecordsSnapshot.val() || {};
             Object.entries(shuffleRecords).forEach(([recordId, record]) => {
                 const previousParticipant = record.participants?.[previousKey];
-                const newParticipant = record.participants?.[newKey];
-                if (previousParticipant && newParticipant) {
-                    throw new Error(`${newNickname} 셔플 기록이 이미 있어 기록을 덮어쓰지 않도록 변경을 중단했습니다.`);
-                }
                 if (previousParticipant) {
                     updates[`shuffleRecords/${recordId}/participants/${previousKey}`] = null;
                     updates[`shuffleRecords/${recordId}/participants/${newKey}`] = {
@@ -6404,10 +6377,6 @@
 
                 Object.entries(record.daily || {}).forEach(([day, participants]) => {
                     const previousDailyParticipant = participants?.[previousKey];
-                    const newDailyParticipant = participants?.[newKey];
-                    if (previousDailyParticipant && newDailyParticipant) {
-                        throw new Error(`${newNickname} ${day} 출석 기록이 이미 있어 기록을 덮어쓰지 않도록 변경을 중단했습니다.`);
-                    }
                     if (previousDailyParticipant) {
                         updates[`shuffleRecords/${recordId}/daily/${day}/${previousKey}`] = null;
                         updates[`shuffleRecords/${recordId}/daily/${day}/${newKey}`] = {
