@@ -4233,6 +4233,9 @@
                     ? previousMember.role
                     : '일반';
                 const member = { nickname, className, power, role };
+                if (previousMember && power === '블라인드' && previousMember.power && previousMember.power !== '블라인드') {
+                    member.power = previousMember.power;
+                }
                 memberLists[role === '일반' ? 'normal' : 'admin'].push(member);
             });
             localStorage.setItem('dokdoMemberRosterVersion', memberRosterVersion);
@@ -4321,7 +4324,7 @@
             );
             Object.values(memberLists).flat().forEach((member) => {
                 const previousPower = previousBlindPowerByNickname.get(member.nickname);
-                if (!previousPower) return;
+                if (!previousPower || member.power !== '블라인드') return;
                 member.className = previousPower.className;
                 member.power = previousPower.power;
             });
