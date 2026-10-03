@@ -3247,8 +3247,9 @@
                             <p>클랜임무 + 클랜수호: 한 주 4점, 셔플 기간 총 8점</p>
                             <p>에노크 + 마슈미드: 한 주 1점, 셔플 기간 총 2점</p>
                             <p>쟁탈전: 시즌 1회 1점</p>
+                            <p>점령전: 주 1회 1점, 셔플 총 2점</p>
                             <p>VCC: 시즌 보너스 +1점 (시즌 1회만 지급)</p>
-                            <p>일반 점수 도합: 37점 / VCC 보너스 포함 최대 38점</p>
+                            <p>일반 점수 도합: 39점 / VCC 보너스 포함 최대 40점</p>
                         </div>
                         <h3 contenteditable="false">⚠️ 출석 체크 기간 안내</h3>
                         <div contenteditable="false">
@@ -3480,6 +3481,14 @@
                                 <button type="button" class="password-save-capture" onclick="saveEventPassword('쟁탈전')">저장</button>
                             </div>
                         </div>
+                        <div class="attendance-password-group conquest-group">
+                            <div class="attendance-password-group-title">점령전</div>
+                            <div class="attendance-setting">
+                                <strong>점령전 비밀번호</strong>
+                                <input id="password-conquest" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-capture" onclick="saveEventPassword('점령전')">저장</button>
+                            </div>
+                        </div>
                         <div class="attendance-password-group vcc-group">
                             <div class="attendance-password-group-title">VCC</div>
                             <div class="attendance-setting">
@@ -3557,9 +3566,10 @@
                     </div>
 
                     <div class="attendance-group">
-                        <h3 class="attendance-group-title">⚔️ PVP <small class="attendance-point-info">쟁탈전 시즌 1회 1점 · VCC 시즌 보너스 +1점</small></h3>
+                        <h3 class="attendance-group-title">⚔️ PVP <small class="attendance-point-info">쟁탈전 시즌 1회 1점 · 점령전 주 1회 1점 · VCC 시즌 보너스 +1점</small></h3>
                         <div class="event-row">
                             <button type="button" data-password-key="capture" class="event-button purple" onclick="checkEvent('쟁탈전', this)">쟁탈전</button>
+                            <button type="button" data-password-key="conquest" class="event-button purple" onclick="checkEvent('점령전', this)">점령전</button>
                             <button type="button" data-password-key="vcc" class="event-button purple" onclick="checkEvent('VCC', this)">VCC</button>
                         </div>
                     </div>
@@ -3689,7 +3699,7 @@
         bossTimers = bossTimers.map(({ alertEnabled, ...timer }) => timer);
         localStorage.setItem('dokdoBossTimers', JSON.stringify(bossTimers));
         localStorage.removeItem('dokdoBossAlertsEnabled');
-        const maxShuffleScore = 38;
+        const maxShuffleScore = 40;
         let attendancePasswordSyncStarted = false;
         let ladderParticipants;
         try {
@@ -4009,7 +4019,7 @@
             }
 
             const countableActivities = new Set([
-                '3층전', '마무리', '에노크', '마슈미드', '쟁탈전', 'VCC', '클랜임무', '클랜수호'
+                '3층전', '마무리', '에노크', '마슈미드', '쟁탈전', '점령전', 'VCC', '클랜임무', '클랜수호'
             ]);
             const clanMembers = [...memberLists.admin, ...memberLists.normal].sort(compareMemberOrder);
             const activityCountsByMember = new Map(clanMembers.map(({ nickname }) => [nickname, 0]));
@@ -4031,7 +4041,7 @@
                     activity === '3층전' || activity === '마무리'
                 ).length * 0.5 +
                     Number(activitySet.has('에노크')) * 0.5 + Number(activitySet.has('마슈미드')) * 0.5 +
-                    Number(activitySet.has('쟁탈전')) +
+                    Number(activitySet.has('쟁탈전')) + Number(activitySet.has('점령전')) +
                     Number(activitySet.has('VCC')) +
                     Number(activitySet.has('클랜임무')) * 2 + Number(activitySet.has('클랜수호')) * 2;
                 const score = Number.isFinite(Number(recordedScore))
@@ -5833,6 +5843,7 @@
                 에노크: 'enok',
                 마슈미드: 'mashmid',
                 쟁탈전: 'capture',
+                점령전: 'conquest',
                 VCC: 'vcc',
                 클랜임무: 'mission',
                 클랜수호: 'defense'
@@ -5924,7 +5935,7 @@
 
             database.ref('settings/eventPasswords').on('value', (snapshot) => {
                 const settings = snapshot.val() || {};
-                ['에노크', '마슈미드', '쟁탈전', 'VCC', '클랜임무', '클랜수호'].forEach((activity) => {
+                ['에노크', '마슈미드', '쟁탈전', '점령전', 'VCC', '클랜임무', '클랜수호'].forEach((activity) => {
                     const key = eventPasswordKey(activity);
                     syncPasswordSetting(key, settings[key], 'dokdoEventPassword');
                 });
@@ -5963,7 +5974,7 @@
             }
             if (!confirm('모든 출석 비밀번호 타이머를 초기화하시겠습니까?')) return;
 
-            const keys = ['13-floor', '13-end', '21-floor', '21-end', 'enok', 'mashmid', 'capture', 'vcc', 'mission', 'defense'];
+            const keys = ['13-floor', '13-end', '21-floor', '21-end', 'enok', 'mashmid', 'capture', 'conquest', 'vcc', 'mission', 'defense'];
             keys.forEach((key) => {
                 localStorage.removeItem(passwordExpiryKey(key));
                 const path = key.startsWith('13-') || key.startsWith('21-')
@@ -5982,7 +5993,7 @@
             }
             if (!confirm('모든 콘텐츠 비밀번호를 초기화하시겠습니까?')) return;
 
-            const keys = ['13-floor', '13-end', '21-floor', '21-end', 'enok', 'mashmid', 'capture', 'vcc', 'mission', 'defense'];
+            const keys = ['13-floor', '13-end', '21-floor', '21-end', 'enok', 'mashmid', 'capture', 'conquest', 'vcc', 'mission', 'defense'];
             keys.forEach((key) => {
                 const localPrefix = key.startsWith('13-') || key.startsWith('21-')
                     ? 'dokdoAttendancePassword'
@@ -6276,7 +6287,7 @@
             const time13Score = time13.length * 0.5;
             const time21Score = time21.length * 0.5;
             const enokScore = (events.includes('에노크') ? 0.5 : 0) + (events.includes('마슈미드') ? 0.5 : 0);
-            const captureScore = events.includes('쟁탈전') ? 1 : 0;
+            const captureScore = (events.includes('쟁탈전') ? 1 : 0) + (events.includes('점령전') ? 1 : 0);
             const vccBonusAwarded = row.dataset.vccBonusAwarded === 'true';
             const dailyVccScore = events.includes('VCC') && vccBonusAwarded ? 1 : 0;
             const missionScore = (events.includes('클랜임무') ? 2 : 0) + (events.includes('클랜수호') ? 2 : 0);
@@ -6288,7 +6299,7 @@
             const missionProgress = (events.includes('클랜임무') ? 1 : 0) + (events.includes('클랜수호') ? 1 : 0);
             const eventDetails = `${enokScore}점 (${enokProgress}/2)`;
             const vccSummary = vccBonusAwarded ? '1점 (시즌 보너스 획득)' : '0점 (시즌 보너스 미획득)';
-            const hasSupportedEvent = events.some((activity) => ['에노크', '마슈미드', '쟁탈전', 'VCC', '클랜임무', '클랜수호'].includes(activity));
+            const hasSupportedEvent = events.some((activity) => ['에노크', '마슈미드', '쟁탈전', '점령전', 'VCC', '클랜임무', '클랜수호'].includes(activity));
 
             row.cells[1].textContent = `${totalScore}점 (${participationRate}%)`;
             row.cells[2].textContent = totalScore > 0 ? '출석 진행 중' : '미출석';
@@ -6483,7 +6494,7 @@
                 const events = String(record.events || '').split('|').filter(Boolean);
                 const dailyScore = time13.length * 0.5 + time21.length * 0.5 +
                     Number(events.includes('에노크')) * 0.5 + Number(events.includes('마슈미드')) * 0.5 +
-                    Number(events.includes('쟁탈전')) +
+                    Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
                     Number(events.includes('VCC') && record.vccBonusAwarded === true) +
                     Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2;
                 record.score = (Number(record.baseScore) || 0) + dailyScore;
@@ -6556,7 +6567,7 @@
             const missionScore = (events.includes('클랜임무') ? 2 : 0) + (events.includes('클랜수호') ? 2 : 0);
             const vccBonusAwarded = row.dataset.vccBonusAwarded === 'true';
             const dailyScore = time13.length * 0.5 + time21.length * 0.5 +
-                enokScore + Number(events.includes('쟁탈전')) +
+                enokScore + Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
                 Number(events.includes('VCC') && vccBonusAwarded) + missionScore;
             const recordId = currentShuffleId();
             const participantKey = attendanceUserKey(nickname);
@@ -6655,7 +6666,7 @@
                 const filteredEvents = (record.events || '')
                     .split('|')
                     .filter(Boolean)
-                    .filter((activity) => activity !== '점령전' && activity !== '전초전');
+                    .filter((activity) => activity !== '전초전');
 
                 row.dataset.time13Activities = isToday ? filteredTime13.join('|') : '';
                 row.dataset.time21Activities = isToday ? filteredTime21.join('|') : '';
@@ -6785,7 +6796,7 @@
             const events = String(row.dataset.events || '').split('|').filter(Boolean);
             const dailyScore = time13.length * 0.5 + time21.length * 0.5 +
                 Number(events.includes('에노크')) * 0.5 + Number(events.includes('마슈미드')) * 0.5 +
-                Number(events.includes('쟁탈전')) +
+                Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
                 Number(events.includes('VCC') && row.dataset.vccBonusAwarded === 'true') +
                 Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2;
             const currentBaseScore = Number(row.dataset.baseScore) || 0;
