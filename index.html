@@ -4332,19 +4332,35 @@
             body.replaceChildren();
             blindPowerMembers.forEach(([className, nickname, power], index) => {
                 const row = document.createElement('tr');
-                const member = Object.values(memberLists).flat().find((candidate) => candidate.nickname === nickname);
-                const role = member?.role || '일반';
+                let member = Object.values(memberLists).flat().find((candidate) => candidate.nickname === nickname);
+                if (!member) {
+                    member = { nickname, className, power, role: '일반' };
+                    memberLists.normal.push(member);
+                    if (!memberOrder.includes(nickname)) memberOrder.push(nickname);
+                    saveMemberLists();
+                    localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
+                }
+                const role = member.role || '일반';
+                const findMemberPosition = () => {
+                    const target = Object.values(memberLists).flat()
+                        .find((candidate) => candidate.nickname === member.nickname);
+                    if (!target) return { listName: null, memberIndex: -1 };
+                    const listName = memberLists.admin.includes(target) ? 'admin' : 'normal';
+                    return { listName, memberIndex: memberLists[listName].indexOf(target) };
+                };
                 const orderCell = document.createElement('td');
                 orderCell.textContent = `${index + 1}`;
                 const controls = document.createElement('span');
                 controls.className = 'member-rank-controls';
-                const listName = memberLists.admin.includes(member) ? 'admin' : 'normal';
-                const memberIndex = memberLists[listName].indexOf(member);
                 [['▲', -1], ['▼', 1]].forEach(([label, direction]) => {
                     const button = document.createElement('button');
                     button.type = 'button';
                     button.textContent = label;
-                    button.onclick = () => moveMember(listName, memberIndex, direction);
+                    button.onclick = () => {
+                        const { listName, memberIndex } = findMemberPosition();
+                        if (memberIndex < 0) return;
+                        moveMember(listName, memberIndex, direction);
+                    };
                     controls.appendChild(button);
                 });
                 orderCell.appendChild(controls);
@@ -4352,9 +4368,9 @@
                 const nicknameCell = document.createElement('td');
                 nicknameCell.textContent = nickname;
                 const classCell = document.createElement('td');
-                classCell.textContent = member?.className || className;
+                classCell.textContent = member.className || className;
                 const powerCell = document.createElement('td');
-                powerCell.textContent = member?.power === '블라인드' ? 'Blind' : member?.power || power;
+                powerCell.textContent = member.power === '블라인드' ? 'Blind' : member.power || power;
                 const roleCell = document.createElement('td');
                 const roleBadge = document.createElement('span');
                 roleBadge.className = `member-role ${role === '클마' ? 'leader' : role === '일반' ? 'normal' : ''}`;
@@ -4365,12 +4381,20 @@
                 editButton.type = 'button';
                 editButton.className = 'member-edit';
                 editButton.textContent = '수정';
-                editButton.onclick = () => editMember(listName, memberIndex, row, editButton);
+                editButton.onclick = () => {
+                    const { listName, memberIndex } = findMemberPosition();
+                    if (memberIndex < 0) return;
+                    editMember(listName, memberIndex, row, editButton);
+                };
                 const deleteButton = document.createElement('button');
                 deleteButton.type = 'button';
                 deleteButton.className = 'member-delete';
                 deleteButton.textContent = '삭제';
-                deleteButton.onclick = () => deleteMember(listName, memberIndex);
+                deleteButton.onclick = () => {
+                    const { listName, memberIndex } = findMemberPosition();
+                    if (memberIndex < 0) return;
+                    deleteMember(listName, memberIndex);
+                };
                 actionCell.append(editButton, deleteButton);
                 row.append(orderCell, nicknameCell, classCell, powerCell, roleCell, actionCell);
                 body.appendChild(row);
@@ -4675,6 +4699,7 @@
             const windowScrollY = window.scrollY;
             const list = memberLists[listName];
             const member = list[index];
+            if (!member) return;
             const targetIndex = index + direction;
             if (targetIndex < 0 || targetIndex >= list.length) return;
             const targetMember = list[targetIndex];
@@ -4689,6 +4714,7 @@
             saveMemberLists();
             localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
             renderMemberLists();
+            renderBlindPowerMembers();
 
             const updatedRow = [...document.querySelectorAll(`#${listName}-member-body tr`)]
                 .find((row) => row.cells[1].textContent === member.nickname);
@@ -4733,6 +4759,7 @@
             }
 
             const member = memberLists[listName][index];
+            if (!member) return;
             row.cells[1].replaceChildren(createMemberInput(member.nickname));
             row.cells[2].replaceChildren(createMemberSelect(member.className, ['아카샤', '카니지', '바이퍼', '블러드스테인', '그림리퍼']));
             row.cells[3].replaceChildren(createMemberInput(member.power));
@@ -4773,6 +4800,11 @@
             }
 
             memberLists[listName][index] = updatedMember;
+            const blindEntry = blindPowerMembers.find(([, blindNickname]) => blindNickname === previousNickname);
+            if (blindEntry) {
+                blindEntry[1] = updatedMember.nickname;
+                blindEntry[0] = updatedMember.className;
+            }
             const memberOrderIndex = memberOrder.indexOf(previousNickname);
             if (memberOrderIndex >= 0) memberOrder[memberOrderIndex] = updatedMember.nickname;
             if (!memberOrder.includes(updatedMember.nickname)) memberOrder.push(updatedMember.nickname);
@@ -4799,6 +4831,7 @@
                 return;
             }
             const member = memberLists[listName][index];
+            if (!member) return;
             if (!confirm(`${member.nickname}님을 명단에서 삭제하시겠습니까?`)) return;
 
             memberLists[listName].splice(index, 1);
@@ -4806,6 +4839,7 @@
             saveMemberLists();
             localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
             renderMemberLists();
+            renderBlindPowerMembers();
             loadAttendanceRecords();
         }
 
