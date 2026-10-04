@@ -6336,6 +6336,24 @@
             return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         }
 
+        function attendanceRecordBaseScore(record) {
+            const baseScore = Number(record.baseScore);
+            if (Number.isFinite(baseScore)) return baseScore;
+
+            const recordedScore = Number(record.score);
+            if (!Number.isFinite(recordedScore)) return 0;
+
+            const time13 = String(record.time13Activities || '').split('|').filter(Boolean);
+            const time21 = String(record.time21Activities || '').split('|').filter(Boolean);
+            const events = String(record.events || '').split('|').filter(Boolean);
+            const dailyScore = time13.length * 0.5 + time21.length * 0.5 +
+                Number(events.includes('에노크')) * 0.5 + Number(events.includes('마슈미드')) * 0.5 +
+                Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
+                Number(events.includes('VCC') && record.vccBonusAwarded === true) +
+                Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2;
+            return recordedScore - dailyScore;
+        }
+
         function resetDailyAttendance() {
             document.querySelectorAll('#attendance-body tr.attendance-member-row').forEach((row) => {
                 row.dataset.baseScore = Number(row.cells[1].textContent.match(/^\d+(?:\.\d+)?/)?.[0]) || 0;
@@ -6471,7 +6489,7 @@
                 const sameShuffle = currentRecord?.shuffleId === recordId;
                 const sameDay = sameShuffle && currentRecord.attendanceDay === currentDay;
                 const record = sameDay
-                    ? { ...currentRecord }
+                    ? { ...currentRecord, baseScore: attendanceRecordBaseScore(currentRecord) }
                     : {
                         nickname,
                         shuffleId: recordId,
@@ -6672,7 +6690,7 @@
                 row.dataset.time21Activities = isToday ? filteredTime21.join('|') : '';
                 row.dataset.events = isToday ? filteredEvents.join('|') : '';
                 row.dataset.baseScore = isToday
-                    ? Number(record.baseScore) || 0
+                    ? attendanceRecordBaseScore(record)
                     : Number(record.score) || 0;
                 row.dataset.vccBonusAwarded = record.vccBonusAwarded ? 'true' : 'false';
                 updateAttendanceVccButton(row);
