@@ -4054,20 +4054,33 @@
                 recordedMemberDays.add(JSON.stringify([nickname, day]));
             };
 
-            Object.entries(dailyRecords).forEach(([day, participants]) => {
-                Object.values(participants || {}).forEach((participant) => {
-                    addRecordedActivities(day, participant.nickname, participant.activities, participant.score);
-                });
-            });
-
-            if (selectedShuffleId === currentShuffleId()) {
+            // 현재 출석체크 기록(attendance)이 가장 최신이므로 먼저 반영하고, 나머지 날짜는 셔플 기록에서 채웁니다.
+            const currentId = currentShuffleId();
+            if (selectedShuffleId === currentId || selectedRecordId === currentId) {
                 Object.values(attendanceRecords).forEach((record) => {
-                    if (record.shuffleId !== selectedShuffleId || !record.attendanceDay) return;
-                    if (recordedMemberDays.has(JSON.stringify([record.nickname, record.attendanceDay]))) return;
+                    if (!record || !record.attendanceDay) return;
+                    if (record.shuffleId !== selectedShuffleId && record.shuffleId !== selectedRecordId) return;
                     const currentActivities = [record.time13Activities, record.time21Activities, record.events]
                         .filter(Boolean)
                         .join('|');
                     addRecordedActivities(record.attendanceDay, record.nickname, currentActivities);
+                });
+            }
+
+            Object.entries(dailyRecords).forEach(([day, participants]) => {
+                Object.values(participants || {}).forEach((participant) => {
+                    if (recordedMemberDays.has(JSON.stringify([participant.nickname, day]))) return;
+                    addRecordedActivities(day, participant.nickname, participant.activities, participant.score);
+                });
+            });
+
+            // 출석체크 탭의 누적 점수(record.score)를 그대로 사용해 두 화면의 점수를 일치시킵니다.
+            if (selectedShuffleId === currentId || selectedRecordId === currentId) {
+                Object.values(attendanceRecords).forEach((record) => {
+                    if (!record || !attendanceScoresByMember.has(record.nickname)) return;
+                    if (record.shuffleId !== selectedShuffleId && record.shuffleId !== selectedRecordId) return;
+                    const total = Number(record.score);
+                    if (Number.isFinite(total)) attendanceScoresByMember.set(record.nickname, total);
                 });
             }
 
@@ -4081,7 +4094,7 @@
                 adjustedScore: 0
             }));
             distribution.forEach((entry) => {
-                entry.adjustedScore = entry.attendanceCount * entry.powerMultiplier;
+                entry.adjustedScore = entry.attendanceScore * entry.powerMultiplier;
             });
             const totalAdjustedScore = distribution.reduce((sum, entry) => sum + entry.adjustedScore, 0);
             if (!totalAdjustedScore) {
@@ -6645,8 +6658,17 @@
         let attendanceRecordsSyncStarted = false;
         let attendanceRecordsCache = {};
 
+        let diamondRefreshTimer = null;
+        function refreshDiamondDistribution() {
+            const tab = document.getElementById('tab-diamonds');
+            if (!tab || tab.classList.contains('hidden')) return;
+            clearTimeout(diamondRefreshTimer);
+            diamondRefreshTimer = setTimeout(() => calculateDiamondDistribution(), 300);
+        }
+
         function applyAttendanceRecords(records) {
             attendanceRecordsCache = records;
+            refreshDiamondDistribution();
             const validNames = new Set(Object.values(memberLists).flat().map((member) => member.nickname));
             const staleRecordUpdates = {};
 
