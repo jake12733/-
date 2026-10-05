@@ -4467,7 +4467,24 @@
                 (secondIndex < 0 ? memberOrder.length : secondIndex);
         }
 
+        function dedupeMemberLists() {
+            const seen = new Set();
+            let changed = false;
+            ['admin', 'normal'].forEach((listName) => {
+                const before = memberLists[listName].length;
+                memberLists[listName] = memberLists[listName].filter((member) => {
+                    const key = String(member.nickname || '').trim().toUpperCase();
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                });
+                if (memberLists[listName].length !== before) changed = true;
+            });
+            if (changed) saveMemberLists();
+        }
+
         function renderMemberLists() {
+            dedupeMemberLists();
             renderClassPowerBoard();
             ['admin', 'normal'].forEach((listName) => {
                 const body = document.getElementById(`${listName}-member-body`);
@@ -4685,6 +4702,11 @@
                 return;
             }
 
+            if (Object.values(memberLists).flat().some((candidate) => candidate.nickname === nickname)) {
+                alert('이미 등록된 닉네임입니다.');
+                return;
+            }
+
             const member = {
                 nickname,
                 className: document.getElementById('member-class').value,
@@ -4710,6 +4732,10 @@
             const role = document.getElementById('admin-member-role').value;
             if (!nickname) {
                 alert('닉네임을 입력하세요.');
+                return;
+            }
+            if (Object.values(memberLists).flat().some((candidate) => candidate.nickname === nickname)) {
+                alert('이미 등록된 닉네임입니다.');
                 return;
             }
             memberLists[role === '일반' ? 'normal' : 'admin'].push({
