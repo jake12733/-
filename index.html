@@ -4442,8 +4442,12 @@
             localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
         }
 
+        let clanRosterSyncReady = false;
+        let lastClanRosterJson = '';
+
         function saveMemberLists() {
             localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
+            persistClanRoster();
         }
 
         const requestedMemberOrder = suppliedMemberRoster.map(([, nickname]) => nickname);
@@ -4716,7 +4720,7 @@
             memberLists[role === '일반' ? 'normal' : 'admin'].push(member);
             if (!memberOrder.includes(member.nickname)) memberOrder.push(member.nickname);
             saveMemberLists();
-            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
+            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder)); persistClanRoster();
             renderMemberLists();
             loadAttendanceRecords();
             event.target.reset();
@@ -4775,7 +4779,7 @@
                     [memberOrder[targetOrderIndex], memberOrder[orderIndex]];
             }
             saveMemberLists();
-            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
+            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder)); persistClanRoster();
             renderMemberLists();
             renderBlindPowerMembers();
 
@@ -4877,7 +4881,7 @@
                 memberLists[targetList].push(updatedMember);
             }
             saveMemberLists();
-            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
+            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder)); persistClanRoster();
             renderMemberLists();
             renderBlindPowerMembers();
             const currentUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
@@ -4900,7 +4904,7 @@
             memberLists[listName].splice(index, 1);
             memberOrder = memberOrder.filter((nickname) => nickname !== member.nickname);
             saveMemberLists();
-            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
+            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder)); persistClanRoster();
             renderMemberLists();
             renderBlindPowerMembers();
             loadAttendanceRecords();
@@ -4908,6 +4912,54 @@
 
         renderMemberLists();
         renderBlindPowerMembers();
+                function persistClanRoster() {
+            if (!clanRosterSyncReady) return;
+            const json = JSON.stringify({ memberLists, memberOrder, blindPowerMembers });
+            if (json === lastClanRosterJson) return;
+            lastClanRosterJson = json;
+            database.ref('clanRoster').set({ data: json, updatedAt: firebase.database.ServerValue.TIMESTAMP })
+                .catch((error) => {
+                    lastClanRosterJson = '';
+                    console.error('클랜원 명단 서버 저장 실패:', error);
+                    alert('클랜원 명단을 서버에 저장하지 못했습니다. 연결 상태를 확인한 뒤 다시 저장하세요.');
+                });
+        }
+
+        function applyClanRosterFromServer(json) {
+            let roster;
+            try { roster = JSON.parse(json); } catch (error) { return; }
+            if (!roster || !roster.memberLists) return;
+            memberLists = {
+                admin: roster.memberLists.admin || [],
+                normal: roster.memberLists.normal || []
+            };
+            memberOrder = roster.memberOrder || memberOrder;
+            if (Array.isArray(roster.blindPowerMembers)) {
+                blindPowerMembers.splice(0, blindPowerMembers.length, ...roster.blindPowerMembers);
+            }
+            localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
+            localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
+            lastClanRosterJson = JSON.stringify({ memberLists, memberOrder, blindPowerMembers });
+            renderMemberLists();
+            renderBlindPowerMembers();
+            renderAttendanceMembers();
+            loadAttendanceRecords();
+        }
+
+        database.ref('clanRoster').once('value').then((snapshot) => {
+            const saved = snapshot.val();
+            if (saved && saved.data) {
+                applyClanRosterFromServer(saved.data);
+            }
+            clanRosterSyncReady = true;
+            if (!saved || !saved.data) persistClanRoster();
+            database.ref('clanRoster/data').on('value', (dataSnapshot) => {
+                const json = dataSnapshot.val();
+                if (json && json !== lastClanRosterJson) applyClanRosterFromServer(json);
+            });
+        }).catch((error) => {
+            console.error('클랜원 명단 불러오기 실패:', error);
+        });
 
         const nicknameMigrations = new Map(correctedAttendanceNames);
         nicknameMigrations.set('DOKDO패왕', 'DOKDO한빠');
