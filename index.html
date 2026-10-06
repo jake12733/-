@@ -6519,10 +6519,17 @@
                 return;
             }
 
-            database.ref(`attendance/${attendanceUserKey(member.nickname)}`).once('value')
-                .then((snapshot) => {
+            const memberKey = attendanceUserKey(member.nickname);
+            Promise.all([
+                database.ref(`attendance/${memberKey}`).once('value'),
+                database.ref(`shuffleRecords/${currentShuffleId()}/participants/${memberKey}`).once('value')
+            ])
+                .then(([snapshot, participantSnapshot]) => {
                     const record = snapshot.val() || {};
-                    const totalScore = Number(record.score) || 0;
+                    const recordIsCurrent = record.shuffleId === currentShuffleId();
+                    const totalScore = recordIsCurrent
+                        ? Number(record.score) || 0
+                        : Number(participantSnapshot.val()?.score) || 0;
                     const participationRate = Math.min(100, Math.round((totalScore / maxShuffleScore) * 100));
 
                     result.className = 'participation-result';
