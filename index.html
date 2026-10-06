@@ -5110,7 +5110,7 @@
                     const sameShuffle = source.shuffleId === shuffleId;
                     const record = {
                         time13Activities: '', time21Activities: '', events: '', ...(sameShuffle ? source : {}),
-                        nickname,
+                        nickname: legacyAttendanceName(nickname),
                         shuffleId,
                         attendanceDay: sameShuffle && source.attendanceDay ? source.attendanceDay : currentAttendanceDay(),
                         score: 13,
@@ -6775,6 +6775,11 @@
             }
         }
 
+        // 구버전 페이지가 새 닉네임의 기록을 삭제하지 않도록 기존 이름을 기록용으로 유지
+        function legacyAttendanceName(nickname) {
+            return nickname === 'DOKDO천상계' ? 'DOKDO한빠' : nickname;
+        }
+
         function saveAttendanceActivity(row, activityAddition) {
             const nickname = row.cells[0].textContent;
             const participantKey = attendanceUserKey(nickname);
@@ -6788,7 +6793,7 @@
                 const record = sameDay
                     ? { ...currentRecord, baseScore: attendanceRecordBaseScore(currentRecord) }
                     : {
-                        nickname,
+                        nickname: legacyAttendanceName(nickname),
                         shuffleId: recordId,
                         attendanceDay: currentDay,
                         baseScore: sameShuffle ? Number(currentRecord.score) || 0 : 0,
@@ -6914,7 +6919,7 @@
             } };
             shuffleRecordsCache[recordId] = cachedRecord;
             const attendanceRecord = {
-                nickname,
+                nickname: legacyAttendanceName(nickname),
                 score,
                 shuffleId: currentShuffleId(),
                 baseScore: Number(row.dataset.baseScore) || 0,
