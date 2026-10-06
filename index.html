@@ -5531,6 +5531,7 @@
                 const records = snapshot.val() || {};
                 renderShuffleRecords(records);
                 populateDiamondShufflePeriods(records);
+                if (attendanceRecordsSyncStarted) applyAttendanceRecords(attendanceRecordsCache);
                 const currentStartDate = dateInputValue(new Date(Number(currentShuffleId())));
                 const currentRecord = records[currentShuffleId()] ||
                     Object.values(records).find((record) => record.startDate === currentStartDate);
@@ -6949,10 +6950,14 @@
             document.querySelectorAll('#attendance-body tr.attendance-member-row').forEach((row) => {
                 const record = records[attendanceUserKey(row.cells[0].textContent)];
                 if (!record || record.shuffleId !== currentShuffleId()) {
+                    const savedScore = !record
+                        ? Number(shuffleRecordsCache[currentShuffleId()]?.participants?.[
+                            attendanceUserKey(row.cells[0].textContent)]?.score)
+                        : NaN;
                     row.dataset.time13Activities = '';
                     row.dataset.time21Activities = '';
                     row.dataset.events = '';
-                    row.dataset.baseScore = 0;
+                    row.dataset.baseScore = Number.isFinite(savedScore) ? savedScore : 0;
                     row.dataset.vccBonusAwarded = 'false';
                     updateAttendanceRow(row, false);
                     return;
