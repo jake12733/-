@@ -3377,7 +3377,7 @@
                         <input id="diamond-total-input" type="number" min="0" step="1" placeholder="전체 다이아 수량을 입력하세요" required>
                         <button type="submit">분배 계산</button>
                     </form>
-                    <p class="diamond-rules">선택한 셔플 기간의 출석체크 기록을 기준으로 계산합니다. 운영진 관리비 9,000개를 제외한 뒤 출석 횟수와 투력 배수에 따라 나눕니다.</p>
+                    <p class="diamond-rules">선택한 셔플 기간의 출석체크 점수를 기준으로 계산합니다. 운영진 관리비 9,000개를 제외한 뒤 출석 점수와 투력 배수에 따라 나눕니다.</p>
                 </section>
                 <section id="diamond-result" class="diamond-table-panel">
                     <div class="diamond-empty">전체 다이아 수량을 입력하면 분배 결과가 표시됩니다.</div>
@@ -4000,8 +4000,10 @@
                 : currentEntry[0];
         }
 
+        let diamondCalculationRequestId = 0;
         async function calculateDiamondDistribution(event) {
             event?.preventDefault();
+            const requestId = ++diamondCalculationRequestId;
             const totalInput = document.getElementById('diamond-total-input');
             const result = document.getElementById('diamond-result');
             if (!totalInput.value.trim()) {
@@ -4037,9 +4039,11 @@
                 attendanceRecords = attendanceSnapshot.val() || {};
                 nicknameAliases = aliasSnapshot.val() || {};
             } catch (error) {
+                if (requestId !== diamondCalculationRequestId) return;
                 result.innerHTML = '<div class="diamond-distribution-error">출석체크와 셔플 기록을 불러오지 못했습니다. 연결 상태를 확인한 뒤 다시 시도하세요.</div>';
                 return;
             }
+            if (requestId !== diamondCalculationRequestId) return;
 
             const countableActivities = new Set([
                 '3층전', '마무리', '에노크', '마슈미드', '쟁탈전', '점령전', 'VCC', '클랜임무', '클랜수호'
@@ -4077,8 +4081,9 @@
                     Number(activitySet.has('쟁탈전')) + Number(activitySet.has('점령전')) +
                     Number(activitySet.has('VCC')) +
                     Number(activitySet.has('클랜임무')) * 2 + Number(activitySet.has('클랜수호')) * 2;
-                const score = Number.isFinite(Number(recordedScore))
-                    ? Number(recordedScore)
+                const storedScore = Number(recordedScore);
+                const score = Number.isFinite(storedScore) && (storedScore > 0 || calculatedScore === 0)
+                    ? storedScore
                     : calculatedScore;
                 attendanceScoresByMember.set(
                     nickname,
@@ -4107,7 +4112,7 @@
                 });
             });
 
-            // 출석체크 탭의 누적 점수(record.score)를 그대로 사용해 두 화면의 점수를 일치시킵니다.
+            // 누적 점수를 우선 사용하되, 활동 기록이 있는데 점수가 0이면 활동으로 점수를 복원합니다.
             if (selectedShuffleId === currentId || selectedRecordId === currentId) {
                 Object.values(attendanceRecords).forEach((record) => {
                     if (!record) return;
@@ -4115,7 +4120,12 @@
                     if (!attendanceScoresByMember.has(memberName)) return;
                     if (record.shuffleId !== selectedShuffleId && record.shuffleId !== selectedRecordId) return;
                     const total = Number(record.score);
-                    if (Number.isFinite(total)) attendanceScoresByMember.set(memberName, total);
+                    const hasActivityScore = recordedMemberDays.has(
+                        JSON.stringify([memberName, record.attendanceDay])
+                    );
+                    if (Number.isFinite(total) && (total > 0 || !hasActivityScore)) {
+                        attendanceScoresByMember.set(memberName, total);
+                    }
                 });
             }
 
@@ -4124,15 +4134,12 @@
                 role: member.role,
                 powerMultiplier: diamondPowerMultiplierFor(member),
                 index,
-                attendanceCount: member.nickname === 'DOKDO천상계'
-                    ? Math.max(activityCountsByMember.get(member.nickname) || 0,
-                        (attendanceScoresByMember.get(member.nickname) || 0) * 2)
-                    : activityCountsByMember.get(member.nickname) || 0,
+                attendanceCount: activityCountsByMember.get(member.nickname) || 0,
                 attendanceScore: attendanceScoresByMember.get(member.nickname) || 0,
                 adjustedScore: 0
             }));
             distribution.forEach((entry) => {
-                entry.adjustedScore = entry.attendanceCount * entry.powerMultiplier;
+                entry.adjustedScore = entry.attendanceScore * entry.powerMultiplier;
             });
             const totalAdjustedScore = distribution.reduce((sum, entry) => sum + entry.adjustedScore, 0);
             if (!totalAdjustedScore) {
