@@ -3377,7 +3377,7 @@
                         <input id="diamond-total-input" type="number" min="0" step="1" placeholder="전체 다이아 수량을 입력하세요" required>
                         <button type="submit">분배 계산</button>
                     </form>
-                    <p class="diamond-rules">선택한 셔플 기간의 출석체크 점수를 기준으로 계산합니다. 운영진 관리비 9,000개를 제외한 뒤 출석 점수와 투력 배수에 따라 나눕니다.</p>
+                    <p class="diamond-rules">선택한 셔플 기간의 출석체크 점수를 기준으로 계산합니다. 망나뇽·천상계 운영진 관리비 각 3,000개(총 6,000개)를 제외하고, 남은 다이아는 출석 점수와 투력 배수에 따라 클랜원에게 나눕니다.</p>
                 </section>
                 <section id="diamond-result" class="diamond-table-panel">
                     <div class="diamond-empty">전체 다이아 수량을 입력하면 분배 결과가 표시됩니다.</div>
@@ -3706,7 +3706,7 @@
     <!-- 스크립트 제어 -->
     <script>
         let attendanceEnabled = true;
-        const adminNicknames = ['DOKDO한빠', 'DOKDO망나뇽', 'DOKDO수호'];
+        const adminNicknames = ['DOKDO한빠', 'DOKDO망나뇽'];
         let bossTimers = JSON.parse(localStorage.getItem('dokdoBossTimers') || '[]');
         bossTimers = bossTimers.map(({ alertEnabled, ...timer }) => timer);
         localStorage.setItem('dokdoBossTimers', JSON.stringify(bossTimers));
@@ -3725,7 +3725,6 @@
         let ladderAnimationFrame = null;
         let ladderGameSyncStarted = false;
         let ladderRewards = { first: '', second: '', third: '' };
-
         function applyTheme(theme) {
             const isDark = theme === 'dark';
             document.body.classList.toggle('theme-dark', isDark);
@@ -3773,6 +3772,7 @@
         }
 
         function setCurrentUser(nickname, role = adminNicknames.includes(nickname) ? 'admin' : 'member') {
+            if (nickname === 'DOKDO수호') role = 'member';
             localStorage.setItem('dokdoCurrentUser', JSON.stringify({ nickname, role }));
             document.getElementById('current-user-name').textContent = nickname;
             document.getElementById('current-user-role').textContent = role;
@@ -3804,7 +3804,15 @@
         }
 
         function openDashboardForUser(user) {
-            setCurrentUser(user.nickname, user.role);
+            const role = user.nickname === 'DOKDO수호' ? 'member' : user.role;
+            setCurrentUser(user.nickname, role);
+            if (user.nickname === 'DOKDO수호' && user.role !== 'member') {
+                const userKey = encodeURIComponent(user.nickname).replace(/[.#$[\]]/g, '_');
+                database.ref(`users/${userKey}`).update({ role: 'member' }).catch((error) => {
+                    console.error('수호 계정 운영진 권한 제거 실패:', error);
+                    alert('수호 계정의 운영진 권한을 서버에 저장하지 못했습니다. 연결 상태를 확인한 뒤 다시 시도하세요.');
+                });
+            }
             localStorage.setItem('dokdoLoggedIn', 'true');
             document.getElementById('loginPassword').value = '';
             document.getElementById('view-login').classList.add('hidden');
@@ -4013,7 +4021,7 @@
 
             const totalDiamonds = Number(totalInput.value);
             const managementFeePerAdmin = 3000;
-            const managementAdmins = ['DOKDO망나뇽', 'DOKDO수호', 'DOKDO한빠'];
+            const managementAdmins = ['DOKDO망나뇽', 'DOKDO천상계'];
             const totalManagementFees = managementFeePerAdmin * managementAdmins.length;
             const distributableDiamonds = totalDiamonds - totalManagementFees;
             if (!Number.isSafeInteger(totalDiamonds) || distributableDiamonds < 0) {
@@ -4219,10 +4227,10 @@
         const defaultMembers = {
             admin: [
                 { nickname: 'DOKDO망나뇽', className: '아카샤', power: '1,420,944만', role: '클마' },
-                { nickname: 'DOKDO수호', className: '바이퍼', power: '1,324,246만', role: '운영진' },
                 { nickname: 'DOKDO한빠', className: '카니지', power: '1,331,459만', role: '운영진' }
             ],
             normal: [
+                { nickname: 'DOKDO수호', className: '바이퍼', power: '1,324,246만', role: '일반' },
                 { nickname: 'DOKDO라닷지', className: '바이퍼', power: '블라인드', role: '일반' },
                 { nickname: 'DOKDO제비', className: '바이퍼', power: '블라인드', role: '일반' },
                 { nickname: 'DOKDO한국', className: '카니지', power: '블라인드', role: '일반' },
@@ -4290,16 +4298,18 @@
             ['그림리퍼', 'DOKDO푸린', '1,191,410'], ['블러드스테인', 'MARVIS', '1,171,295'],
             ['카니지', 'DOKDO우리땅', '1,136,797'], ['카니지', 'DOKDO두리안', '1,051,881']
         ];
-        const memberRosterVersion = '2026-10-02';
+        const memberRosterVersion = '2026-10-11';
         const shouldReplaceMemberRoster = localStorage.getItem('dokdoMemberRosterVersion') !== memberRosterVersion;
         if (shouldReplaceMemberRoster) {
             const previousMembers = Object.values(memberLists).flat();
             memberLists = { admin: [], normal: [] };
             suppliedMemberRoster.forEach(([className, nickname, power]) => {
                 const previousMember = previousMembers.find((member) => member.nickname === nickname);
-                const role = previousMember?.role === '클마' || previousMember?.role === '운영진'
-                    ? previousMember.role
-                    : '일반';
+                const role = nickname === 'DOKDO수호'
+                    ? '일반'
+                    : (previousMember?.role === '클마' || previousMember?.role === '운영진')
+                        ? previousMember.role
+                        : '일반';
                 const member = { nickname, className, power, role };
                 if (previousMember && power === '블라인드' && previousMember.power && previousMember.power !== '블라인드') {
                     member.power = previousMember.power;
@@ -5070,10 +5080,26 @@
             try { roster = JSON.parse(json); } catch (error) { return; }
             if (!roster || !roster.memberLists) return;
             let rosterPowerUpdated = false;
+            let rosterRoleUpdated = false;
             memberLists = {
                 admin: roster.memberLists.admin || [],
                 normal: roster.memberLists.normal || []
             };
+            const suhoIndex = memberLists.admin.findIndex((member) => member.nickname === 'DOKDO수호');
+            if (suhoIndex >= 0) {
+                const [suho] = memberLists.admin.splice(suhoIndex, 1);
+                suho.role = '일반';
+                const existingMember = memberLists.normal.find((member) => member.nickname === 'DOKDO수호');
+                if (existingMember) existingMember.role = '일반';
+                else memberLists.normal.push(suho);
+                rosterRoleUpdated = true;
+            } else {
+                const suho = memberLists.normal.find((member) => member.nickname === 'DOKDO수호');
+                if (suho && suho.role !== '일반') {
+                    suho.role = '일반';
+                    rosterRoleUpdated = true;
+                }
+            }
             memberOrder = roster.memberOrder || memberOrder;
             if (Array.isArray(roster.blindPowerMembers)) {
                 blindPowerMembers.splice(0, blindPowerMembers.length, ...roster.blindPowerMembers);
@@ -5093,11 +5119,12 @@
             }
             localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
             localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
-            lastClanRosterJson = rosterPowerUpdated ? '' : rosterSnapshotJson();
+            lastClanRosterJson = rosterPowerUpdated || rosterRoleUpdated ? '' : rosterSnapshotJson();
             renderMemberLists();
             renderBlindPowerMembers();
             renderAttendanceMembers();
             loadAttendanceRecords();
+            if (rosterRoleUpdated && clanRosterSyncReady) persistClanRoster();
         }
 
         function restoreCheonsangScore() {
