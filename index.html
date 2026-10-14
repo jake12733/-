@@ -1592,6 +1592,21 @@
             margin-top: 18px;
         }
 
+        .attendance-group.luchef-group {
+            padding: 12px;
+            border: 1px solid #db2777;
+            border-radius: 10px;
+            background: rgba(131, 24, 67, 0.2);
+        }
+
+        .attendance-group.luchef-group .attendance-group-title {
+            color: #f9a8d4;
+        }
+
+        .attendance-group.luchef-group .event-button {
+            background: #be185d;
+        }
+
         .attendance-group:first-of-type {
             margin-top: 0;
         }
@@ -3255,11 +3270,12 @@
                         <div contenteditable="false">
                             <p>13시 / 21시 게헨나: 3층전·마무리 각 0.5점, 타임별 최대 1점 (13일 x 2점 = 26점, 하루 최대 2점)</p>
                             <p>클랜임무 + 클랜수호: 한 주 4점, 셔플 기간 총 8점</p>
+                            <p>루체프 출석: 1일 1회 3점 · 한시간 이상: 1일 1회 2점</p>
                             <p>에노크 + 마슈미드: 한 주 1점, 셔플 기간 총 2점</p>
                             <p>쟁탈전: 시즌 1회 1점</p>
                             <p>점령전: 주 1회 1점, 셔플 총 2점</p>
                             <p>VCC: 시즌 보너스 +1점 (시즌 1회만 지급)</p>
-                            <p>일반 점수 도합: 39점 / VCC 보너스 포함 최대 40점</p>
+                            <p>일반 점수 도합: 최대 104점 / VCC 보너스 포함 최대 105점</p>
                         </div>
                         <h3 contenteditable="false">⚠️ 출석 체크 기간 안내</h3>
                         <div contenteditable="false">
@@ -3525,6 +3541,22 @@
                                 <button type="button" class="password-save-defense" onclick="saveEventPassword('클랜수호')">저장</button>
                             </div>
                         </div>
+                        <div class="attendance-password-group mission-group">
+                            <div class="attendance-password-group-title">루체프 출석</div>
+                            <div class="attendance-setting">
+                                <strong>루체프 출석 비밀번호</strong>
+                                <input id="password-luchef" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-mission" onclick="saveEventPassword('루체프 출석')">저장</button>
+                            </div>
+                        </div>
+                        <div class="attendance-password-group defense-group">
+                            <div class="attendance-password-group-title">한시간 이상</div>
+                            <div class="attendance-setting">
+                                <strong>한시간 이상 비밀번호</strong>
+                                <input id="password-hour" placeholder="4자리" maxlength="4">
+                                <button type="button" class="password-save-defense" onclick="saveEventPassword('한시간 이상')">저장</button>
+                            </div>
+                        </div>
                         <div class="attendance-reset-controls">
                             <div class="attendance-member-reset admin-only">
                                 <input id="attendance-reset-member" type="text" placeholder="닉네임 입력" aria-label="초기화할 닉네임">
@@ -3587,10 +3619,18 @@
                     </div>
 
                     <div class="attendance-group">
-                        <h3 class="attendance-group-title">🛡️ 클랜 활동 <small class="attendance-point-info">클랜임무·클랜수호 각 2점 · 한 주 4점 / 셔플 총 8점</small></h3>
+                        <h3 class="attendance-group-title">🛡️ 클랜 활동 <small class="attendance-point-info">클랜임무·클랜수호 각 2점</small></h3>
                         <div class="event-row">
                             <button type="button" data-password-key="mission" class="event-button green" onclick="checkEvent('클랜임무', this)">클랜임무</button>
                             <button type="button" data-password-key="defense" class="event-button green" onclick="checkEvent('클랜수호', this)">클랜수호</button>
+                        </div>
+                    </div>
+
+                    <div class="attendance-group luchef-group">
+                        <h3 class="attendance-group-title">🌊 루체프 <small class="attendance-point-info">루체프 출석 3점 · 한시간 이상 2점</small></h3>
+                        <div class="event-row">
+                            <button type="button" data-password-key="luchef" class="event-button green" onclick="checkEvent('루체프 출석', this)">루체프 출석 (+3점)</button>
+                            <button type="button" data-password-key="hour" class="event-button green" onclick="checkEvent('한시간 이상', this)">한시간 이상 (+2점)</button>
                         </div>
                     </div>
                 </div>
@@ -3602,7 +3642,7 @@
                     </div>
                     <table class="attendance-table">
                         <thead>
-                            <tr><th>닉네임</th><th>총 점수</th><th>오늘 현황</th><th>13시/21시</th><th>에노크/마슈</th><th>쟁탈전</th><th>VCC</th><th>임무/수호</th><th>상세 내역</th><th class="admin-only">점수 조정</th></tr>
+                            <tr><th>닉네임</th><th>총 점수</th><th>오늘 현황</th><th>13시/21시</th><th>에노크/마슈</th><th>쟁탈전</th><th>VCC</th><th>클랜 활동</th><th>상세 내역</th><th class="admin-only">점수 조정</th></tr>
                         </thead>
                         <tbody id="attendance-body">
                         </tbody>
@@ -3711,7 +3751,8 @@
         bossTimers = bossTimers.map(({ alertEnabled, ...timer }) => timer);
         localStorage.setItem('dokdoBossTimers', JSON.stringify(bossTimers));
         localStorage.removeItem('dokdoBossAlertsEnabled');
-        const maxShuffleScore = 40;
+        const maxShuffleScore = 105;
+        const firstShuffleStartDate = Date.UTC(2026, 9, 14);
         let attendancePasswordSyncStarted = false;
         let ladderParticipants;
         try {
@@ -4054,7 +4095,7 @@
             if (requestId !== diamondCalculationRequestId) return;
 
             const countableActivities = new Set([
-                '3층전', '마무리', '에노크', '마슈미드', '쟁탈전', '점령전', 'VCC', '클랜임무', '클랜수호'
+                '3층전', '마무리', '에노크', '마슈미드', '쟁탈전', '점령전', 'VCC', '클랜임무', '클랜수호', '루체프 출석', '한시간 이상'
             ]);
             const clanMembers = [...memberLists.admin, ...memberLists.normal].sort(compareMemberOrder);
             const activityCountsByMember = new Map(clanMembers.map(({ nickname }) => [nickname, 0]));
@@ -4088,7 +4129,8 @@
                     Number(activitySet.has('에노크')) * 0.5 + Number(activitySet.has('마슈미드')) * 0.5 +
                     Number(activitySet.has('쟁탈전')) + Number(activitySet.has('점령전')) +
                     Number(activitySet.has('VCC')) +
-                    Number(activitySet.has('클랜임무')) * 2 + Number(activitySet.has('클랜수호')) * 2;
+                    Number(activitySet.has('클랜임무')) * 2 + Number(activitySet.has('클랜수호')) * 2 +
+                    Number(activitySet.has('루체프 출석')) * 3 + Number(activitySet.has('한시간 이상')) * 2;
                 const storedScore = Number(recordedScore);
                 const score = Number.isFinite(storedScore) && (storedScore > 0 || calculatedScore === 0)
                     ? storedScore
@@ -5157,7 +5199,8 @@
                         Number(events.includes('에노크')) * 0.5 + Number(events.includes('마슈미드')) * 0.5 +
                         Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
                         Number(events.includes('VCC') && record.vccBonusAwarded === true) +
-                        Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2;
+                        Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2 +
+                        Number(events.includes('루체프 출석')) * 3 + Number(events.includes('한시간 이상')) * 2;
                     record.baseScore = 13 - dailyScore;
                     return database.ref().update({
                         [`attendance/${key}`]: record,
@@ -5213,12 +5256,11 @@
         }
 
         function updateShufflePeriod() {
-            const shuffleStart = Date.UTC(2026, 7, 19);
             const today = new Date();
             const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-            const daysSinceFirstShuffle = Math.floor((todayUtc - shuffleStart) / 86400000);
+            const daysSinceFirstShuffle = Math.floor((todayUtc - firstShuffleStartDate) / 86400000);
             const shuffleNumber = Math.floor(daysSinceFirstShuffle / 14);
-            const currentStart = new Date(shuffleStart + shuffleNumber * 14 * 86400000);
+            const currentStart = new Date(firstShuffleStartDate + shuffleNumber * 14 * 86400000);
             const currentEnd = new Date(currentStart.getTime() + 13 * 86400000);
 
             document.getElementById('shuffle-period').textContent =
@@ -6167,7 +6209,9 @@
                 점령전: 'conquest',
                 VCC: 'vcc',
                 클랜임무: 'mission',
-                클랜수호: 'defense'
+                클랜수호: 'defense',
+                '루체프 출석': 'luchef',
+                '한시간 이상': 'hour'
             }[activity];
         }
 
@@ -6256,7 +6300,7 @@
 
             database.ref('settings/eventPasswords').on('value', (snapshot) => {
                 const settings = snapshot.val() || {};
-                ['에노크', '마슈미드', '쟁탈전', '점령전', 'VCC', '클랜임무', '클랜수호'].forEach((activity) => {
+                ['에노크', '마슈미드', '쟁탈전', '점령전', 'VCC', '클랜임무', '클랜수호', '루체프 출석', '한시간 이상'].forEach((activity) => {
                     const key = eventPasswordKey(activity);
                     syncPasswordSetting(key, settings[key], 'dokdoEventPassword');
                 });
@@ -6618,16 +6662,18 @@
             const captureScore = (events.includes('쟁탈전') ? 1 : 0) + (events.includes('점령전') ? 1 : 0);
             const vccBonusAwarded = row.dataset.vccBonusAwarded === 'true';
             const dailyVccScore = events.includes('VCC') && vccBonusAwarded ? 1 : 0;
-            const missionScore = (events.includes('클랜임무') ? 2 : 0) + (events.includes('클랜수호') ? 2 : 0);
+            const missionScore = (events.includes('클랜임무') ? 2 : 0) + (events.includes('클랜수호') ? 2 : 0) +
+                (events.includes('루체프 출석') ? 3 : 0) + (events.includes('한시간 이상') ? 2 : 0);
             const dailyScore = time13Score + time21Score + enokScore + captureScore + dailyVccScore + missionScore;
             const totalScore = Number(row.dataset.baseScore || 0) + dailyScore;
             const participationRate = Math.round((totalScore / maxShuffleScore) * 100);
             const timeProgress = `${time13Score + time21Score}점 (13시 ${time13Score}점, ${time13.length}/2 · 21시 ${time21Score}점, ${time21.length}/2)`;
             const enokProgress = (events.includes('에노크') ? 1 : 0) + (events.includes('마슈미드') ? 1 : 0);
-            const missionProgress = (events.includes('클랜임무') ? 1 : 0) + (events.includes('클랜수호') ? 1 : 0);
+            const missionProgress = (events.includes('클랜임무') ? 1 : 0) + (events.includes('클랜수호') ? 1 : 0) +
+                (events.includes('루체프 출석') ? 1 : 0) + (events.includes('한시간 이상') ? 1 : 0);
             const eventDetails = `${enokScore}점 (${enokProgress}/2)`;
             const vccSummary = vccBonusAwarded ? '1점 (시즌 보너스 획득)' : '0점 (시즌 보너스 미획득)';
-            const hasSupportedEvent = events.some((activity) => ['에노크', '마슈미드', '쟁탈전', '점령전', 'VCC', '클랜임무', '클랜수호'].includes(activity));
+            const hasSupportedEvent = events.some((activity) => ['에노크', '마슈미드', '쟁탈전', '점령전', 'VCC', '클랜임무', '클랜수호', '루체프 출석', '한시간 이상'].includes(activity));
 
             row.cells[1].textContent = `${totalScore}점 (${participationRate}%)`;
             row.cells[2].textContent = totalScore > 0 ? '출석 진행 중' : '미출석';
@@ -6635,7 +6681,7 @@
             row.cells[4].textContent = eventDetails.trim();
             row.cells[5].textContent = `${captureScore}점 (${events.includes('쟁탈전') ? '1' : '0'}/1)`;
             row.cells[6].textContent = vccSummary;
-            row.cells[7].textContent = `${missionScore}점 (${missionProgress}/2)`;
+            row.cells[7].textContent = `${missionScore}점 (${missionProgress}/4)`;
             row.cells[8].textContent = hasSupportedEvent || time13.length || time21.length ? '기록 있음' : '없음';
             updateDashboardParticipation();
             if (!shouldSave) return Promise.resolve(true);
@@ -6652,11 +6698,10 @@
         }
 
         function currentShuffleId() {
-            const shuffleStart = Date.UTC(2026, 7, 19);
             const today = new Date();
             const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-            const shuffleNumber = Math.floor((todayUtc - shuffleStart) / (14 * 86400000));
-            return `${shuffleStart + shuffleNumber * 14 * 86400000}`;
+            const shuffleNumber = Math.floor((todayUtc - firstShuffleStartDate) / (14 * 86400000));
+            return `${firstShuffleStartDate + shuffleNumber * 14 * 86400000}`;
         }
 
         function currentAttendanceDay() {
@@ -6678,7 +6723,8 @@
                 Number(events.includes('에노크')) * 0.5 + Number(events.includes('마슈미드')) * 0.5 +
                 Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
                 Number(events.includes('VCC') && record.vccBonusAwarded === true) +
-                Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2;
+                Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2 +
+                Number(events.includes('루체프 출석')) * 3 + Number(events.includes('한시간 이상')) * 2;
             return recordedScore - dailyScore;
         }
 
@@ -6850,7 +6896,8 @@
                     Number(events.includes('에노크')) * 0.5 + Number(events.includes('마슈미드')) * 0.5 +
                     Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
                     Number(events.includes('VCC') && record.vccBonusAwarded === true) +
-                    Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2;
+                    Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2 +
+                    Number(events.includes('루체프 출석')) * 3 + Number(events.includes('한시간 이상')) * 2;
                 record.score = (Number(record.baseScore) || 0) + dailyScore;
                 record.updatedAt = firebase.database.ServerValue.TIMESTAMP;
                 return record;
@@ -6918,7 +6965,8 @@
             const time21 = row.dataset.time21Activities ? row.dataset.time21Activities.split('|').filter(Boolean) : [];
             const events = row.dataset.events ? row.dataset.events.split('|').filter(Boolean) : [];
             const enokScore = (events.includes('에노크') ? 0.5 : 0) + (events.includes('마슈미드') ? 0.5 : 0);
-            const missionScore = (events.includes('클랜임무') ? 2 : 0) + (events.includes('클랜수호') ? 2 : 0);
+            const missionScore = (events.includes('클랜임무') ? 2 : 0) + (events.includes('클랜수호') ? 2 : 0) +
+                (events.includes('루체프 출석') ? 3 : 0) + (events.includes('한시간 이상') ? 2 : 0);
             const vccBonusAwarded = row.dataset.vccBonusAwarded === 'true';
             const dailyScore = time13.length * 0.5 + time21.length * 0.5 +
                 enokScore + Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
@@ -7153,7 +7201,8 @@
                 Number(events.includes('에노크')) * 0.5 + Number(events.includes('마슈미드')) * 0.5 +
                 Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
                 Number(events.includes('VCC') && row.dataset.vccBonusAwarded === 'true') +
-                Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2;
+                Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2 +
+                Number(events.includes('루체프 출석')) * 3 + Number(events.includes('한시간 이상')) * 2;
             const currentBaseScore = Number(row.dataset.baseScore) || 0;
             const nextBaseScore = Math.max(-dailyScore, currentBaseScore + amount);
             if (nextBaseScore === currentBaseScore) return;
