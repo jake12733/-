@@ -1377,14 +1377,14 @@
         .attendance-password-empty { order: 4; }
         .attendance-password-group.vcc-group { order: 5; }
         .attendance-password-group.capture-group { order: 6; }
-        .attendance-password-group.mission-group { order: 7; }
-        .attendance-password-group.defense-group { order: 8; }
+        .attendance-password-group.clan-mission-group { order: 7; grid-column: 1; }
+        .attendance-password-group.clan-defense-group { order: 8; grid-column: 2; }
+        .attendance-password-group.luchef-group { order: 9; grid-column: 1; }
+        .attendance-password-group.hour-group { order: 10; grid-column: 2; }
         .attendance-password-group.event-password-group { order: 3; }
         .attendance-password-empty { grid-column: 2; }
         .attendance-password-group.vcc-group { grid-column: 1; }
         .attendance-password-group.capture-group { grid-column: 2; }
-        .attendance-password-group.mission-group { grid-column: 1; }
-        .attendance-password-group.defense-group { grid-column: 2; }
 
         .admin-settings-header {
             display: flex;
@@ -1851,6 +1851,30 @@
             .attendance-password-group,
             .attendance-password-empty {
                 grid-column: 1;
+            }
+
+            #view-dashboard #admin-settings-content {
+                grid-template-columns: minmax(0, 1fr) !important;
+            }
+
+            #view-dashboard #admin-settings-content .attendance-password-group {
+                grid-column: 1 !important;
+                width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+            }
+
+            .admin-settings-header-actions {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                width: 100%;
+            }
+
+            .admin-settings-header-actions > button {
+                width: 100%;
+                min-width: 0;
+                padding-right: 6px !important;
+                padding-left: 6px !important;
             }
         }
 
@@ -3525,7 +3549,7 @@
                                 <button type="button" class="password-save-vcc" onclick="saveEventPassword('VCC')">저장</button>
                             </div>
                         </div>
-                        <div class="attendance-password-group mission-group">
+                        <div class="attendance-password-group clan-mission-group">
                             <div class="attendance-password-group-title">클랜임무</div>
                             <div class="attendance-setting">
                                 <strong>클랜임무 비밀번호</strong>
@@ -3533,7 +3557,7 @@
                                 <button type="button" class="password-save-mission" onclick="saveEventPassword('클랜임무')">저장</button>
                             </div>
                         </div>
-                        <div class="attendance-password-group defense-group">
+                        <div class="attendance-password-group clan-defense-group">
                             <div class="attendance-password-group-title">클랜수호</div>
                             <div class="attendance-setting">
                                 <strong>클랜수호 비밀번호</strong>
@@ -3541,7 +3565,7 @@
                                 <button type="button" class="password-save-defense" onclick="saveEventPassword('클랜수호')">저장</button>
                             </div>
                         </div>
-                        <div class="attendance-password-group mission-group">
+                        <div class="attendance-password-group luchef-group">
                             <div class="attendance-password-group-title">루체프 출석</div>
                             <div class="attendance-setting">
                                 <strong>루체프 출석 비밀번호</strong>
@@ -3549,7 +3573,7 @@
                                 <button type="button" class="password-save-mission" onclick="saveEventPassword('루체프 출석')">저장</button>
                             </div>
                         </div>
-                        <div class="attendance-password-group defense-group">
+                        <div class="attendance-password-group hour-group">
                             <div class="attendance-password-group-title">한시간 이상</div>
                             <div class="attendance-setting">
                                 <strong>한시간 이상 비밀번호</strong>
