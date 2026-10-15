@@ -6741,10 +6741,17 @@
 
         function scheduleMidnightReset() {
             const now = new Date();
+            const scheduledShuffleId = currentShuffleId();
             const nextMidnight = new Date(now);
             nextMidnight.setHours(24, 0, 0, 0);
             window.setTimeout(() => {
-                resetDailyAttendance();
+                if (currentShuffleId() !== scheduledShuffleId) {
+                    updateShufflePeriod();
+                    setCurrentShuffleRecordInputs();
+                    applyAttendanceRecords(attendanceRecordsCache);
+                } else {
+                    resetDailyAttendance();
+                }
                 scheduleMidnightReset();
             }, nextMidnight.getTime() - now.getTime());
         }
