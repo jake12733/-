@@ -411,6 +411,27 @@
             cursor: wait;
         }
 
+        .shuffle-attendance-manual-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .shuffle-attendance-manual-entry .shuffle-attendance-remove-button {
+            background: #b91c1c;
+        }
+
+        .shuffle-attendance-manual-selection {
+            grid-column: 1 / -1;
+            margin: 0;
+            padding: 9px 11px;
+            border-radius: 7px;
+            background: rgba(37, 99, 235, .12);
+            color: #bfdbfe;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
         .shuffle-attendance-manual-status {
             margin: 0;
             color: #94a3b8;
@@ -839,6 +860,25 @@
         .shuffle-attendance-grid tbody tr td:nth-child(2) {
             background: #fef3c7 !important;
             color: #92400e;
+        }
+
+        .shuffle-attendance-grid td.is-selectable {
+            cursor: pointer;
+        }
+
+        .shuffle-attendance-grid td.is-selectable:hover {
+            background: #dbeafe;
+        }
+
+        .shuffle-attendance-grid td.is-selectable:focus-visible {
+            outline: 3px solid #2563eb;
+            outline-offset: -3px;
+        }
+
+        .shuffle-attendance-grid td.is-selected {
+            outline: 3px solid #2563eb;
+            outline-offset: -3px;
+            background: #dbeafe !important;
         }
 
         .shuffle-attendance-grid tbody tr td:first-child {
@@ -3785,6 +3825,21 @@
                 font-weight: 800;
             }
 
+            .shuffle-attendance-mobile-slot {
+                border: 0;
+                cursor: pointer;
+                font: inherit;
+            }
+
+            .shuffle-attendance-mobile-slot:not(button) {
+                cursor: default;
+            }
+
+            .shuffle-attendance-mobile-slot.is-selected {
+                outline: 2px solid #3b82f6;
+                outline-offset: 1px;
+            }
+
             body:not(.theme-dark) .shuffle-attendance-mobile-card {
                 border-color: #cbd5e1;
                 background: #ffffff;
@@ -6721,7 +6776,7 @@
             const section = document.createElement('section');
             section.className = 'shuffle-attendance-manual-entry';
             section.innerHTML = `
-                <h4>출석 수기로 추가 / 점수 수정</h4>
+                <h4>출석 칸 선택 · 점수 추가 / 제거</h4>
                 <label>출석 날짜<select class="shuffle-attendance-manual-date"></select></label>
                 <label>출석 시간
                     <select class="shuffle-attendance-manual-time">
@@ -6730,21 +6785,29 @@
                     </select>
                 </label>
                 <label>닉네임<select class="shuffle-attendance-manual-member"></select></label>
-                <label>추가 점수
+                <label>변경 점수
                     <select class="shuffle-attendance-manual-points">
-                        <option value="0.5">0.5점 추가</option>
-                        <option value="1">1점 추가</option>
+                        <option value="0.5">0.5점</option>
+                        <option value="1">1점</option>
                     </select>
                 </label>
-                <button type="button" class="shuffle-attendance-manual-save">동그라미와 점수 추가</button>
-                <p class="shuffle-attendance-manual-status" role="status" aria-live="polite">한 사람은 날짜·시간 칸마다 동그라미 하나만 표시하고, 점수는 추가한 만큼 합산합니다. 예: 1점에 1점을 추가하면 동그라미 하나와 2점으로 표시됩니다.</p>
+                <p class="shuffle-attendance-manual-selection">출석표의 날짜·시간 칸을 선택하세요.</p>
+                <div class="shuffle-attendance-manual-actions">
+                    <button type="button" class="shuffle-attendance-manual-add-button">점수 추가</button>
+                    <button type="button" class="shuffle-attendance-remove-button">점수 제거</button>
+                </div>
+                <p class="shuffle-attendance-manual-status" role="status" aria-live="polite">칸을 누른 다음 점수를 추가하거나 제거하세요. 제거는 선택한 점수만큼 차감되며, 0점이 되면 출석 표시가 사라집니다.</p>
             `;
 
             const dateSelect = section.querySelector('.shuffle-attendance-manual-date');
             const memberSelect = section.querySelector('.shuffle-attendance-manual-member');
+            const timeSelect = section.querySelector('.shuffle-attendance-manual-time');
             const pointsSelect = section.querySelector('.shuffle-attendance-manual-points');
-            const saveButton = section.querySelector('.shuffle-attendance-manual-save');
+            const addButton = section.querySelector('.shuffle-attendance-manual-add-button');
+            const removeButton = section.querySelector('.shuffle-attendance-remove-button');
+            const selectionLabel = section.querySelector('.shuffle-attendance-manual-selection');
             const status = section.querySelector('.shuffle-attendance-manual-status');
+            let currentCell = null;
             dateSelect.replaceChildren(...days.map(([day]) =>
                 new Option(day.replace(/-/g, '.'), day)));
             if (days.some(([day]) => day === currentAttendanceDay())) {
@@ -6755,46 +6818,105 @@
                 .sort((first, second) => compareMemberOrder(first, second))
                 .forEach((member) => memberSelect.add(new Option(member.nickname, member.nickname)));
 
-            saveButton.addEventListener('click', async () => {
+            const currentPoints = () => {
+                const dayRecord = days.find(([day]) => day === dateSelect.value)?.[1] || {};
+                const participant = Object.values(dayRecord).find((entry) =>
+                    entry.nickname === memberSelect.value);
+                const slotIndex = timeSelect.value === '13' ? 0 : 1;
+                return getShuffleDailyAttendanceSlotPoints(participant)[slotIndex] || 0;
+            };
+            const updateSelection = () => {
+                const nickname = memberSelect.value;
+                const day = dateSelect.value;
+                const time = timeSelect.value;
+                const points = currentPoints();
+                selectionLabel.textContent = nickname
+                    ? `${nickname} · ${day.replace(/-/g, '.')} · ${time}시 · 현재 ${formatShuffleScore(points)}점`
+                    : '닉네임을 선택하고 출석표의 칸을 누르세요.';
+                removeButton.disabled = !nickname || points <= 0;
+                if (currentCell) {
+                    currentCell.classList.remove('is-selected');
+                    currentCell.setAttribute('aria-pressed', 'false');
+                    currentCell = null;
+                }
+            };
+            section.selectAttendanceSlot = (selection, element) => {
+                dateSelect.value = selection.day;
+                timeSelect.value = selection.time;
+                memberSelect.value = selection.nickname;
+                updateSelection();
+                currentCell = element || null;
+                if (currentCell) {
+                    currentCell.classList.add('is-selected');
+                    currentCell.setAttribute('aria-pressed', 'true');
+                }
+            };
+            [dateSelect, timeSelect, memberSelect].forEach((select) =>
+                select.addEventListener('change', updateSelection));
+            updateSelection();
+
+            const applyManualScore = async (operation) => {
                 const nickname = memberSelect.value;
                 if (!nickname) {
-                    status.textContent = '출석을 추가할 닉네임을 선택하세요.';
+                    status.textContent = '출석표에서 날짜·시간 칸을 선택하거나 닉네임을 선택하세요.';
+                    status.dataset.error = 'true';
+                    return;
+                }
+                if (operation === 'remove' && currentPoints() <= 0) {
+                    status.textContent = '선택한 칸에 제거할 점수가 없습니다.';
                     status.dataset.error = 'true';
                     return;
                 }
 
-                saveButton.disabled = true;
+                addButton.disabled = true;
+                removeButton.disabled = true;
                 status.textContent = '출석 기록을 저장하고 있습니다.';
                 status.dataset.error = 'false';
+                const points = Number(pointsSelect.value);
+                const day = dateSelect.value;
+                const time = timeSelect.value;
                 try {
-                    await saveShuffleAttendanceImport(recordId, dateSelect.value,
-                        section.querySelector('.shuffle-attendance-manual-time').value, [{
+                    await saveShuffleAttendanceImport(recordId, day, time, [{
                             nickname,
-                            points: Number(pointsSelect.value)
-                        }], true);
+                            points
+                        }], operation);
                     await showShuffleDetails(recordId);
+                    const refreshedPanel = document.querySelector('#shuffle-detail-panel');
+                    const refreshedCell = [...refreshedPanel.querySelectorAll('[data-attendance-slot]')]
+                        .find((element) => element.dataset.day === day &&
+                            element.dataset.time === time && element.dataset.nickname === nickname);
+                    const refreshedManualEntry = refreshedPanel.querySelector('.shuffle-attendance-manual-entry');
+                    refreshedManualEntry?.selectAttendanceSlot(
+                        { day, time, nickname },
+                        refreshedCell || null
+                    );
                     const refreshedStatus = document.querySelector(
                         '#shuffle-detail-panel .shuffle-attendance-manual-status'
                     );
                     if (refreshedStatus) {
-                        refreshedStatus.textContent =
-                            `${nickname}님에게 ${formatShuffleScore(Number(pointsSelect.value))}점을 추가했습니다.`;
+                        refreshedStatus.textContent = operation === 'add'
+                            ? `${nickname}님 ${day.replace(/-/g, '.')} ${time}시 칸에 ${formatShuffleScore(points)}점을 추가했습니다.`
+                            : `${nickname}님 ${day.replace(/-/g, '.')} ${time}시 칸에서 ${formatShuffleScore(points)}점을 제거했습니다.`;
                         refreshedStatus.dataset.error = 'false';
                     }
                 } catch (error) {
-                    console.error('수기 셔플 출석 저장 실패:', error);
+                    console.error('셔플 출석 점수 변경 실패:', error);
                     status.textContent = `수기 출석을 저장하지 못했습니다: ${error.message || '연결 상태를 확인하세요.'}`;
                     status.dataset.error = 'true';
-                    saveButton.disabled = false;
+                    addButton.disabled = false;
+                    removeButton.disabled = currentPoints() <= 0;
                 }
-            });
+            };
+            addButton.addEventListener('click', () => applyManualScore('add'));
+            removeButton.addEventListener('click', () => applyManualScore('remove'));
 
             return section;
         }
 
-        async function saveShuffleAttendanceImport(recordId, day, time, selectedEntries, addToExistingSlot = false) {
+        async function saveShuffleAttendanceImport(recordId, day, time, selectedEntries, operation = 'replace') {
             if (!isAdmin()) throw new Error('운영진만 출석을 저장할 수 있습니다.');
             if (!['13', '21'].includes(time)) throw new Error('출석 시간을 선택하세요.');
+            if (!['replace', 'add', 'remove'].includes(operation)) throw new Error('점수 변경 방식을 확인하세요.');
             if (!selectedEntries.length) throw new Error('저장할 닉네임을 선택하세요.');
 
             const [dailySnapshot, recordSnapshot] = await Promise.all([
@@ -6840,38 +6962,50 @@
                         !['3층전', '마무리', '5분전', '전초전'].includes(activity));
                 const hasExplicitSlotActivities =
                     Object.prototype.hasOwnProperty.call(previous, slotField);
+                const hasExplicitOtherSlotActivities =
+                    Object.prototype.hasOwnProperty.call(previous, otherSlotField);
+                const legacySlotActivities = previousActivities.filter((activity) =>
+                    ['3층전', '마무리'].includes(activity));
                 const oldSlotActivities = hasExplicitSlotActivities
                     ? previousTimeActivities
-                    : previousActivities.filter((activity) => ['3층전', '마무리'].includes(activity));
+                    : time === '13'
+                        ? legacySlotActivities.slice(0, 2)
+                        : legacySlotActivities.slice(2);
+                const resolvedOtherSlotActivities = hasExplicitOtherSlotActivities
+                    ? previousOtherTimeActivities
+                    : time === '13'
+                        ? legacySlotActivities.slice(2)
+                        : legacySlotActivities.slice(0, 2);
                 const oldSlotPoints = Object.prototype.hasOwnProperty.call(previous, slotPointsField)
                     ? Math.max(0, Number(previous[slotPointsField]) || 0)
                     : oldSlotActivities.length * 0.5;
                 const oldOtherSlotPoints = Object.prototype.hasOwnProperty.call(previous, otherSlotPointsField)
                     ? Math.max(0, Number(previous[otherSlotPointsField]) || 0)
-                    : previousOtherTimeActivities.length * 0.5;
+                    : resolvedOtherSlotActivities.length * 0.5;
                 const oldDailyScore = Number(previous.score) || 0;
                 const nonSlotScore = Math.max(0, oldDailyScore - oldSlotPoints);
-                const markerActivities = points === 1
-                    ? ['3층전', '마무리']
-                    : [[...oldSlotActivities].find((activity) => ['3층전', '마무리'].includes(activity)) || '3층전'];
-                const slotActivities = [oldSlotActivities.find((activity) =>
-                    ['3층전', '마무리'].includes(activity)) || markerActivities[0]];
-                const newSlotPoints = Math.round(
-                    (addToExistingSlot ? oldSlotPoints + points : points) * 2
-                ) / 2;
+                const newSlotPoints = Math.round((operation === 'add'
+                    ? oldSlotPoints + points
+                    : operation === 'remove'
+                        ? Math.max(0, oldSlotPoints - points)
+                        : points) * 2) / 2;
+                const slotActivities = newSlotPoints > 0
+                    ? [oldSlotActivities.find((activity) =>
+                        ['3층전', '마무리'].includes(activity)) || '3층전']
+                    : [];
                 const newDailyScore = Math.round((nonSlotScore + newSlotPoints) * 2) / 2;
                 const oldTotalScore = Number(record.participants?.[memberKey]?.score ??
                     previous.totalScore ?? oldDailyScore);
                 const totalScore = Math.round((oldTotalScore + newDailyScore - oldDailyScore) * 2) / 2;
                 const activities = time === '13'
-                    ? [...slotActivities, ...previousOtherTimeActivities, ...previousEvents]
-                    : [...previousOtherTimeActivities, ...slotActivities, ...previousEvents];
+                    ? [...slotActivities, ...resolvedOtherSlotActivities, ...previousEvents]
+                    : [...resolvedOtherSlotActivities, ...slotActivities, ...previousEvents];
                 const dailyParticipant = {
                     ...previous,
                     nickname,
                     activities: [...new Set(activities)].join('/'),
-                    time13Activities: time === '13' ? slotActivities : previousOtherTimeActivities,
-                    time21Activities: time === '21' ? slotActivities : previousOtherTimeActivities,
+                    time13Activities: time === '13' ? slotActivities : resolvedOtherSlotActivities,
+                    time21Activities: time === '21' ? slotActivities : resolvedOtherSlotActivities,
                     time13Points: time === '13' ? newSlotPoints : oldOtherSlotPoints,
                     time21Points: time === '21' ? newSlotPoints : oldOtherSlotPoints,
                     events: previousEvents,
@@ -6952,6 +7086,14 @@
                 if (attendanceImporter) panel.appendChild(attendanceImporter);
                 const manualAttendanceEntry = createShuffleAttendanceManualEntry(recordId, days);
                 if (manualAttendanceEntry) panel.appendChild(manualAttendanceEntry);
+                const selectAttendanceSlot = (day, time, nickname, element) => {
+                    panel.querySelectorAll('[data-attendance-slot].is-selected')
+                        .forEach((selected) => selected.classList.remove('is-selected'));
+                    manualAttendanceEntry?.selectAttendanceSlot(
+                        { day, time, nickname },
+                        element
+                    );
+                };
 
                 const attendanceGridWrapper = document.createElement('div');
                 attendanceGridWrapper.className = 'shuffle-attendance-grid-wrapper';
@@ -7047,10 +7189,31 @@
                     const mobileDays = document.createElement('div');
                     mobileDays.className = 'shuffle-attendance-mobile-days';
                     participantsByDay.forEach((participantMap, dayIndex) => {
+                        const day = days[dayIndex][0];
                         const participant = participantMap.get(member.nickname);
                         const slotPoints = getShuffleDailyAttendanceSlotPoints(participant);
                         slotPoints.forEach((points, slotIndex) => {
                             const cell = document.createElement('td');
+                            const time = slotIndex === 0 ? '13' : '21';
+                            if (isAdmin()) {
+                                cell.classList.add('is-selectable');
+                                cell.dataset.attendanceSlot = '';
+                                cell.dataset.day = day;
+                                cell.dataset.time = time;
+                                cell.dataset.nickname = member.nickname;
+                                cell.setAttribute('role', 'button');
+                                cell.setAttribute('aria-pressed', 'false');
+                                cell.tabIndex = 0;
+                                cell.setAttribute('aria-label',
+                                    `${member.nickname} ${day} ${time}시 ${formatShuffleScore(points)}점 칸 선택`);
+                                cell.addEventListener('click', () =>
+                                    selectAttendanceSlot(day, time, member.nickname, cell));
+                                cell.addEventListener('keydown', (event) => {
+                                    if (event.key !== 'Enter' && event.key !== ' ') return;
+                                    event.preventDefault();
+                                    selectAttendanceSlot(day, time, member.nickname, cell);
+                                });
+                            }
                             if (points) {
                                 const legacy = !participant ||
                                     (!Object.prototype.hasOwnProperty.call(participant, 'time13Points') &&
@@ -7068,7 +7231,7 @@
                         const mobileSlots = document.createElement('div');
                         mobileSlots.className = 'shuffle-attendance-mobile-slots';
                         slotPoints.forEach((points, slotIndex) => {
-                            const slot = document.createElement('span');
+                            const slot = document.createElement(isAdmin() ? 'button' : 'span');
                             slot.className = `shuffle-attendance-mobile-slot${points ? ' is-present' : ''}`;
                             const time = slotIndex === 0 ? '13시' : '21시';
                             slot.textContent = points
@@ -7077,6 +7240,16 @@
                             slot.setAttribute('aria-label', points
                                 ? `${time} 출석 ${formatShuffleScore(points)}점`
                                 : `${time} 미출석`);
+                            if (isAdmin()) {
+                                slot.type = 'button';
+                                slot.dataset.attendanceSlot = '';
+                                slot.dataset.day = days[dayIndex][0];
+                                slot.dataset.time = time.slice(0, 2);
+                                slot.dataset.nickname = member.nickname;
+                                slot.setAttribute('aria-pressed', 'false');
+                                slot.addEventListener('click', () =>
+                                    selectAttendanceSlot(days[dayIndex][0], time.slice(0, 2), member.nickname, slot));
+                            }
                             mobileSlots.appendChild(slot);
                         });
                         mobileDay.append(dateLabel, mobileSlots);
