@@ -801,9 +801,31 @@
             position: sticky;
             left: 0;
             z-index: 3;
-            min-width: 125px;
+            width: 145px;
+            min-width: 145px;
+            box-sizing: border-box;
             background: #111827;
             text-align: left;
+        }
+
+        .shuffle-attendance-grid thead tr:first-child th:nth-child(2),
+        .shuffle-attendance-grid tbody td:nth-child(2) {
+            position: sticky;
+            left: 145px;
+            z-index: 3;
+            width: 92px;
+            min-width: 92px;
+            box-sizing: border-box;
+            background: #111827;
+            font-weight: 700;
+        }
+
+        .shuffle-attendance-grid thead tr:first-child th:nth-child(2) {
+            z-index: 4;
+        }
+
+        .shuffle-attendance-grid tbody td:nth-child(2) {
+            color: #fbbf24;
         }
 
         .shuffle-attendance-grid tbody tr:nth-child(even) td {
@@ -812,6 +834,11 @@
 
         .shuffle-attendance-grid tbody tr:hover td {
             background: #1b2b40;
+        }
+
+        .shuffle-attendance-grid tbody tr td:nth-child(2) {
+            background: #fef3c7 !important;
+            color: #92400e;
         }
 
         .shuffle-attendance-grid tbody tr td:first-child {
@@ -834,14 +861,6 @@
             line-height: 1.2;
         }
 
-        .shuffle-attendance-grid .shuffle-attendance-legacy {
-            background: #172235 !important;
-        }
-
-        .shuffle-attendance-grid .shuffle-attendance-legacy .shuffle-attendance-circle {
-            color: #d97706;
-        }
-
         .shuffle-attendance-legend {
             margin: -8px 0 12px;
             color: #94a3b8;
@@ -850,10 +869,6 @@
 
         .shuffle-attendance-legend strong {
             color: #16a34a;
-        }
-
-        .shuffle-attendance-legend .legacy {
-            color: #d97706;
         }
 
         .shuffle-attendance-import {
@@ -2433,12 +2448,27 @@
             color: #111827 !important;
         }
 
+        #view-dashboard .shuffle-attendance-grid thead tr:first-child th:nth-child(2),
+        #view-dashboard .shuffle-attendance-grid tbody tr td:nth-child(2) {
+            background: #fef3c7 !important;
+            color: #92400e !important;
+        }
+
+        #view-dashboard .shuffle-attendance-grid thead tr:first-child th:nth-child(2) {
+            background: #fde68a;
+        }
+
         #view-dashboard .shuffle-attendance-grid tbody tr:nth-child(even) td {
             background: #f8fafc;
         }
 
         #view-dashboard .shuffle-attendance-grid tbody tr:hover td {
             background: #e2e8f0;
+        }
+
+        #view-dashboard .shuffle-attendance-grid tbody tr td:nth-child(2) {
+            background: #fef3c7;
+            color: #92400e !important;
         }
 
         #view-dashboard .shuffle-attendance-grid td {
@@ -2453,15 +2483,6 @@
         #view-dashboard .shuffle-attendance-grid .shuffle-attendance-points,
         #view-dashboard .shuffle-attendance-legend {
             color: #475569 !important;
-        }
-
-        #view-dashboard .shuffle-attendance-grid .shuffle-attendance-legacy {
-            background: #fff7ed !important;
-        }
-
-        #view-dashboard .shuffle-attendance-grid .shuffle-attendance-legacy .shuffle-attendance-points,
-        #view-dashboard .shuffle-attendance-legend .legacy {
-            color: #9a3412 !important;
         }
 
         #view-dashboard .shuffle-detail-title {
@@ -2692,11 +2713,23 @@
             background: #111827;
             color: #e2e8f0 !important;
         }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid thead tr:first-child th:nth-child(2),
+        body.theme-dark #view-dashboard .shuffle-attendance-grid tbody tr td:nth-child(2) {
+            background: #292313;
+            color: #fbbf24 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid thead tr:first-child th:nth-child(2) {
+            background: #3b3218;
+        }
         body.theme-dark #view-dashboard .shuffle-attendance-grid tbody tr:nth-child(even) td {
             background: #0f172a;
         }
         body.theme-dark #view-dashboard .shuffle-attendance-grid tbody tr:hover td {
             background: #1e293b;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid tbody tr td:nth-child(2) {
+            background: #fef3c7 !important;
+            color: #92400e !important;
         }
         body.theme-dark #view-dashboard .shuffle-attendance-grid td {
             border-color: #263448;
@@ -2721,13 +2754,6 @@
         body.theme-dark #view-dashboard .shuffle-attendance-grid .shuffle-attendance-points,
         body.theme-dark #view-dashboard .shuffle-attendance-legend {
             color: #94a3b8 !important;
-        }
-        body.theme-dark #view-dashboard .shuffle-attendance-grid .shuffle-attendance-legacy {
-            background: #172235 !important;
-        }
-        body.theme-dark #view-dashboard .shuffle-attendance-grid .shuffle-attendance-legacy .shuffle-attendance-points,
-        body.theme-dark #view-dashboard .shuffle-attendance-legend .legacy {
-            color: #d97706 !important;
         }
         body.theme-dark .theme-toggle { border-color: #475569; background: #000000; color: #ffffff; }
         body.theme-dark .theme-toggle:hover { background: #1f2937; }
@@ -5929,6 +5955,70 @@
             });
         }
 
+        function getShuffleDailyParticipantScore(participant) {
+            const asActivities = (value) => {
+                if (Array.isArray(value)) return value.filter(Boolean).map(String);
+                if (value && typeof value === 'object') return Object.values(value).filter(Boolean).map(String);
+                return String(value || '').split(/[|/,]+/).map((activity) => activity.trim()).filter(Boolean);
+            };
+            const hasExplicitTimePoints =
+                Object.prototype.hasOwnProperty.call(participant || {}, 'time13Points') ||
+                Object.prototype.hasOwnProperty.call(participant || {}, 'time21Points');
+            const legacyActivities = asActivities(participant?.activities);
+            const time13Points = Number.isFinite(Number(participant?.time13Points))
+                ? Math.max(0, Number(participant.time13Points))
+                : asActivities(participant?.time13Activities).length * 0.5;
+            const time21Points = Number.isFinite(Number(participant?.time21Points))
+                ? Math.max(0, Number(participant.time21Points))
+                : asActivities(participant?.time21Activities).length * 0.5;
+            const events = asActivities(participant?.events);
+            const eventSet = new Set(events.length
+                ? events
+                : legacyActivities.filter((activity) => !['3층전', '마무리', '5분전', '전초전'].includes(activity)));
+            const calculatedScore = (hasExplicitTimePoints || participant?.time13Activities || participant?.time21Activities
+                ? time13Points + time21Points
+                : legacyActivities.filter((activity) => ['3층전', '마무리'].includes(activity)).length * 0.5) +
+                Number(eventSet.has('에노크')) * 0.5 + Number(eventSet.has('마슈미드')) * 0.5 +
+                Number(eventSet.has('쟁탈전')) + Number(eventSet.has('점령전')) +
+                Number(eventSet.has('VCC') && participant?.vccBonusAwarded === true) +
+                Number(eventSet.has('클랜임무')) * 2 +
+                Number(eventSet.has('클랜수호')) * 2 + Number(eventSet.has('루체프 출석')) * 3 +
+                Number(eventSet.has('한시간 이상')) * 2;
+            const storedScore = Number(participant?.score);
+            if (Object.prototype.hasOwnProperty.call(participant || {}, 'score') &&
+                Number.isFinite(storedScore)) {
+                return storedScore;
+            }
+            return calculatedScore;
+        }
+
+        function getShuffleDailyAttendanceSlotPoints(participant) {
+            const asActivities = (value) => {
+                if (Array.isArray(value)) return value.filter(Boolean).map(String);
+                if (value && typeof value === 'object') return Object.values(value).filter(Boolean).map(String);
+                return String(value || '').split(/[|/,]+/).map((activity) => activity.trim()).filter(Boolean);
+            };
+            const activityPoints = (value) => asActivities(value).length * 0.5;
+            const time13Points = Object.prototype.hasOwnProperty.call(participant || {}, 'time13Points')
+                ? Math.max(0, Number(participant.time13Points) || 0)
+                : activityPoints(participant?.time13Activities);
+            const time21Points = Object.prototype.hasOwnProperty.call(participant || {}, 'time21Points')
+                ? Math.max(0, Number(participant.time21Points) || 0)
+                : activityPoints(participant?.time21Activities);
+            if (time13Points > 0 || time21Points > 0) {
+                return [time13Points, time21Points];
+            }
+
+            const legacySessions = asActivities(participant?.activities)
+                .filter((activity) => ['3층전', '마무리'].includes(activity));
+            const firstSessionActivities = legacySessions.slice(0, 2);
+            const secondSessionActivities = legacySessions.slice(2, 4);
+            return [
+                activityPoints(firstSessionActivities),
+                activityPoints(secondSessionActivities)
+            ];
+        }
+
         function sortShuffleParticipants(first, second) {
             const getMember = (participant) => Object.values(memberLists).flat()
                 .find((member) => member.nickname === participant.nickname);
@@ -5962,6 +6052,60 @@
                 if (run.length > longestRun.length) longestRun = run;
             });
             return longestRun;
+        }
+
+        function normalizeShuffleAttendanceNickname(value) {
+            return String(value || '')
+                .normalize('NFKC')
+                .toUpperCase()
+                .replace(/[^A-Z0-9가-힣]/g, '');
+        }
+
+        function shuffleAttendanceEditDistance(first, second) {
+            const previousRow = Array.from({ length: second.length + 1 }, (_, index) => index);
+            for (let firstIndex = 1; firstIndex <= first.length; firstIndex += 1) {
+                let diagonal = previousRow[0];
+                previousRow[0] = firstIndex;
+                for (let secondIndex = 1; secondIndex <= second.length; secondIndex += 1) {
+                    const previous = previousRow[secondIndex];
+                    previousRow[secondIndex] = Math.min(
+                        previousRow[secondIndex] + 1,
+                        previousRow[secondIndex - 1] + 1,
+                        diagonal + (first[firstIndex - 1] === second[secondIndex - 1] ? 0 : 1)
+                    );
+                    diagonal = previous;
+                }
+            }
+            return previousRow[second.length];
+        }
+
+        function matchShuffleAttendanceNickname(recognizedText, members) {
+            const recognized = normalizeShuffleAttendanceNickname(recognizedText);
+            if (!recognized) return null;
+            const normalizedMembers = members.map((member) => ({
+                member,
+                nickname: normalizeShuffleAttendanceNickname(member.nickname)
+            }));
+            const exactMatches = normalizedMembers.filter((candidate) =>
+                candidate.nickname === recognized);
+            if (exactMatches.length === 1) {
+                return { member: exactMatches[0].member, confidence: 'exact' };
+            }
+
+            const candidates = normalizedMembers
+                .map((candidate) => ({
+                    ...candidate,
+                    distance: shuffleAttendanceEditDistance(recognized, candidate.nickname)
+                }))
+                .sort((first, second) => first.distance - second.distance);
+            const best = candidates[0];
+            const secondBest = candidates[1];
+            const maximumDistance = best && Math.max(recognized.length, best.nickname.length) >= 3 ? 1 : 0;
+            if (!best || best.distance > maximumDistance ||
+                (secondBest && secondBest.distance <= best.distance)) {
+                return null;
+            }
+            return { member: best.member, confidence: 'fuzzy' };
         }
 
         async function extractShuffleAttendanceFromOcr(file, selectedDayIndex, selectedTime, members, worker) {
@@ -6019,31 +6163,22 @@
                 const nameColumnRight = columnBounds[0];
                 const rowData = [];
                 for (let rowIndex = 0; rowIndex < rowBounds.length - 1; rowIndex += 1) {
-                    const top = rowBounds[rowIndex];
-                    const bottom = rowBounds[rowIndex + 1];
-                    let namePixelCount = 0;
-                    for (let y = top + 2; y < bottom - 2; y += 1) {
-                        for (let x = 2; x < nameColumnRight - 2; x += 1) {
-                            if (isDarkPixel((y * width + x) * 4)) namePixelCount += 1;
-                        }
-                    }
-                    rowData.push({ rowIndex, top, bottom, hasNickname: namePixelCount > 20 });
+                    rowData.push({
+                        rowIndex,
+                        top: rowBounds[rowIndex],
+                        bottom: rowBounds[rowIndex + 1]
+                    });
                 }
-                const rosterRows = rowData.filter((row) => row.hasNickname).length;
                 const cellLeft = columnBounds[daySlot];
                 const cellRight = columnBounds[daySlot + 1];
                 const markedRows = [];
-                let rosterRowIndex = 0;
+                const unrecognizedNicknameRows = [];
 
                 await worker.setParameters({
                     tessedit_pageseg_mode: '7',
-                    tessedit_char_whitelist: '0123456789.Oo'
+                    tessedit_char_whitelist: ''
                 });
                 for (const row of rowData) {
-                    if (!row.hasNickname) continue;
-                    const member = members[rosterRowIndex];
-                    rosterRowIndex += 1;
-                    if (!member) continue;
                     const top = row.top + 2;
                     const bottom = row.bottom - 2;
                     const left = cellLeft + 2;
@@ -6061,6 +6196,27 @@
                     }
                     if (darkPixelCount < 4) continue;
 
+                    const namePadding = Math.max(2, Math.round((nameColumnRight - 4) * 0.02));
+                    const nameCanvas = document.createElement('canvas');
+                    const nameScale = Math.max(3, Math.min(6, Math.floor(180 / Math.max(1, bottom - top))));
+                    nameCanvas.width = Math.max(1, (nameColumnRight - namePadding * 2) * nameScale);
+                    nameCanvas.height = Math.max(1, (bottom - top) * nameScale);
+                    const nameContext = nameCanvas.getContext('2d', { willReadFrequently: true });
+                    nameContext.drawImage(canvas, namePadding, top, nameColumnRight - namePadding * 2,
+                        bottom - top, 0, 0, nameCanvas.width, nameCanvas.height);
+                    await worker.setParameters({ tessedit_char_whitelist: '' });
+                    const nameOcr = await worker.recognize(nameCanvas);
+                    const recognizedNickname = String(nameOcr.data.text || '').trim();
+                    const nicknameMatch = matchShuffleAttendanceNickname(recognizedNickname, members);
+                    if (!nicknameMatch) {
+                        unrecognizedNicknameRows.push({
+                            recognizedNickname,
+                            rowNumber: row.rowIndex + 1
+                        });
+                        continue;
+                    }
+
+                    await worker.setParameters({ tessedit_char_whitelist: '0123456789.,' });
                     const cellCanvas = document.createElement('canvas');
                     const scale = 8;
                     cellCanvas.width = (right - left) * scale;
@@ -6079,15 +6235,23 @@
                     }
                     cellContext.putImageData(cellImage, 0, 0);
                     const ocr = await worker.recognize(cellCanvas);
-                    const normalizedText = String(ocr.data.text || '').replace(/\s/g, '');
+                    const normalizedText = String(ocr.data.text || '')
+                        .replace(/\s/g, '')
+                        .replace(',', '.')
+                        .toUpperCase();
                     const markWidth = lastMarkPixel - firstMarkPixel + 1;
-                    // Tiny 0.5 labels are often OCR'd as 06; their ink is wider than a circle.
-                    const points = /^0[.,]?[56]$/.test(normalizedText) ||
-                        (darkPixelCount >= 10 && markWidth >= 9)
+                    const points = /^(?:0?\.5|0?\.6|05|06|O\.5|O5|OS)$/.test(normalizedText)
                         ? 0.5
-                        : 1;
+                        : /^(?:0|1|1\.0|O|Q)$/.test(normalizedText)
+                            ? 1
+                            : darkPixelCount >= 10 && markWidth >= Math.max(9, (right - left) * 0.4)
+                                ? 0.5
+                                : 1;
                     markedRows.push({
-                        nickname: member.nickname,
+                        nickname: nicknameMatch.member.nickname,
+                        recognizedNickname,
+                        nicknameConfidence: nicknameMatch.confidence,
+                        ocrConfidence: Number(nameOcr.data.confidence) || 0,
                         points,
                         rowNumber: row.rowIndex + 1
                     });
@@ -6095,8 +6259,7 @@
 
                 return {
                     matches: markedRows,
-                    rosterRows,
-                    memberCount: members.length
+                    unrecognizedNicknameRows
                 };
             } finally {
                 bitmap.close();
@@ -6151,7 +6314,7 @@
                     </select>
                 </label>
                 <label>스크린샷<input class="shuffle-attendance-import-file" type="file" accept="image/*"></label>
-                <p class="shuffle-attendance-import-note">이미지는 브라우저 안에서만 인식하며 서버나 저장소에 저장하지 않습니다. 인식이 완료되면 파일 입력과 임시 참조를 제거합니다. 표 행 수가 앱 명단과 일치하면 자동 기록하고, 다르면 잘못된 출석을 막기 위해 결과 확인 후 저장합니다. OCR 모델은 첫 실행 때 다운로드됩니다.</p>
+                <p class="shuffle-attendance-import-note">이미지는 브라우저에서만 인식하며 서버나 저장소에 저장하지 않습니다. 스크린샷의 닉네임을 앱 명단과 직접 연결하고, 정확히 일치하거나 신뢰도 높은 유일 일치만 자동 기록합니다. 닉네임이 불확실하거나 명단에 없는 표시는 확인 후 저장할 수 있습니다. OCR 모델은 첫 실행 때 다운로드됩니다.</p>
                 <p class="shuffle-attendance-import-status" role="status" aria-live="polite"></p>
                 <div class="shuffle-attendance-import-actions">
                     <button type="button" class="shuffle-attendance-recognize-button">스크린샷 인식</button>
@@ -6187,14 +6350,20 @@
             const updateSaveButton = () => {
                 saveButton.disabled = ![...entries.values()].some((entry) => entry.checkbox.checked);
             };
-            const addPreviewEntry = (member, detectedPoints = 0.5, sourceRow = null, checkedByDefault = true) => {
+            const addPreviewEntry = (
+                member,
+                detectedPoints = 0.5,
+                sourceRow = null,
+                checkedByDefault = true,
+                recognizedNickname = null
+            ) => {
                 if (entries.has(member.nickname)) {
                     const existingEntry = entries.get(member.nickname);
                     existingEntry.checkbox.checked = existingEntry.checkbox.checked || checkedByDefault;
                     if (sourceRow) {
                         existingEntry.sourceRows.push(sourceRow);
                         existingEntry.nickname.textContent =
-                            `${member.nickname} (표 ${existingEntry.sourceRows.join(', ')}행)`;
+                            `${member.nickname} (표 ${existingEntry.sourceRows.join(', ')}행${recognizedNickname ? ` · OCR: ${recognizedNickname}` : ''})`;
                     }
                     updateSaveButton();
                     return;
@@ -6215,6 +6384,11 @@
                 points.add(new Option('0.5점', '0.5'));
                 points.add(new Option('1점', '1'));
                 points.value = String(detectedPoints);
+                if (sourceRow && recognizedNickname &&
+                    normalizeShuffleAttendanceNickname(recognizedNickname) !==
+                    normalizeShuffleAttendanceNickname(member.nickname)) {
+                    nickname.textContent = `${member.nickname} (표 ${sourceRow}행 · OCR: ${recognizedNickname})`;
+                }
                 row.append(memberLabel, points);
                 preview.appendChild(row);
                 entries.set(member.nickname, { checkbox, points, nickname, sourceRows });
@@ -6274,40 +6448,64 @@
                     fileInput.value = '';
                     file = null;
                     if (!result.matches.length) {
-                        status.textContent = '선택한 날짜·시간 칸에서 닉네임과 출석 표시를 찾지 못했습니다. 날짜와 시간을 확인하거나 닉네임을 직접 추가하세요.';
+                        const unmatchedMessage = result.unrecognizedNicknameRows.length
+                            ? ` 명단과 연결되지 않은 출석 표시가 ${result.unrecognizedNicknameRows.map((row) => `표 ${row.rowNumber}행${row.recognizedNickname ? `(${row.recognizedNickname})` : ''}`).join(', ')}에 있습니다.`
+                            : '';
+                        status.textContent =
+                            `선택한 날짜·시간 칸에서 자동 기록할 닉네임과 출석 표시를 찾지 못했습니다.${unmatchedMessage} 날짜와 시간을 확인하거나 닉네임을 직접 추가하세요.`;
                     } else {
-                        const rosterMatches = result.rosterRows === result.memberCount;
                         result.matches.forEach((match) => {
                             const member = members.find((candidate) => candidate.nickname === match.nickname);
                             if (member) {
-                                addPreviewEntry(member, match.points, match.rowNumber, rosterMatches);
+                                addPreviewEntry(
+                                    member,
+                                    match.points,
+                                    match.rowNumber,
+                                    match.nicknameConfidence === 'exact' || match.ocrConfidence >= 80,
+                                    match.recognizedNickname
+                                );
                             }
                         });
-                        const rosterWarning = result.rosterRows === result.memberCount
-                            ? ''
-                            : ` 표의 닉네임 행 ${result.rosterRows}개와 앱 명단 ${result.memberCount}명이 달라 자동 선택을 해제했습니다. 행 번호와 닉네임을 확인한 뒤 저장하세요.`;
-                        status.textContent =
-                            `${result.matches.length}개의 출석 표시를 찾았습니다.${rosterWarning}`;
+                        const needsReview = result.unrecognizedNicknameRows.length > 0 ||
+                            result.matches.some((match) =>
+                                match.nicknameConfidence !== 'exact' && match.ocrConfidence < 80);
+                        const reviewWarning = result.unrecognizedNicknameRows.length
+                            ? ` 명단과 연결되지 않은 표시 ${result.unrecognizedNicknameRows.length}개(${result.unrecognizedNicknameRows.map((row) => `표 ${row.rowNumber}행${row.recognizedNickname ? `: ${row.recognizedNickname}` : ''}`).join(', ')})는 자동 기록하지 않았습니다.`
+                            : needsReview
+                                ? ' 닉네임 일부가 유사 일치되어 자동 기록하지 않습니다. 선택 상태와 이름을 확인하세요.'
+                                : '';
+                        status.textContent = `${result.matches.length}개의 출석 표시를 찾았습니다.${reviewWarning}`;
                         const recognizedEntries = result.matches
                             .map((match) => ({
                                 nickname: match.nickname,
                                 points: match.points,
+                                nicknameConfidence: match.nicknameConfidence,
+                                ocrConfidence: match.ocrConfidence,
                                 member: members.find((candidate) => candidate.nickname === match.nickname)
                             }))
                             .filter((entry) => entry.member)
-                            .map(({ nickname, points }) => ({ nickname, points }));
+                            .map(({ nickname, points, nicknameConfidence, ocrConfidence }) => ({
+                                nickname,
+                                points,
+                                nicknameConfidence,
+                                ocrConfidence
+                            }));
                         const uniqueRecognizedMembers = new Set(
                             recognizedEntries.map((entry) => entry.nickname)
                         ).size === recognizedEntries.length;
-                        if (rosterMatches && isAdmin() &&
-                            recognizedEntries.length === result.matches.length && uniqueRecognizedMembers) {
+                        const allNicknamesConfident = recognizedEntries.every(
+                            (entry) => entry.nicknameConfidence === 'exact' || entry.ocrConfidence >= 80
+                        );
+                        if (isAdmin() && result.unrecognizedNicknameRows.length === 0 &&
+                            allNicknamesConfident && recognizedEntries.length === result.matches.length &&
+                            uniqueRecognizedMembers) {
                             status.textContent = `${recognizedEntries.length}명의 출석을 자동 기록하고 있습니다.`;
                             try {
                                 await saveShuffleAttendanceImport(
                                     recordId,
                                     dateSelect.value,
                                     timeSelect.value,
-                                    recognizedEntries
+                                    recognizedEntries.map(({ nickname, points }) => ({ nickname, points }))
                                 );
                                 await showShuffleDetails(recordId);
                                 const refreshedStatus = document.querySelector(
@@ -6407,14 +6605,14 @@
                     </select>
                 </label>
                 <label>닉네임<select class="shuffle-attendance-manual-member"></select></label>
-                <label>출석 점수
+                <label>추가 점수
                     <select class="shuffle-attendance-manual-points">
-                        <option value="0.5">0.5점</option>
-                        <option value="1">1점</option>
+                        <option value="0.5">0.5점 추가</option>
+                        <option value="1">1점 추가</option>
                     </select>
                 </label>
-                <button type="button" class="shuffle-attendance-manual-save">동그라미와 점수 저장</button>
-                <p class="shuffle-attendance-manual-status" role="status" aria-live="polite">저장하면 선택한 날짜·시간 칸의 출석과 점수가 추가되거나 수정됩니다.</p>
+                <button type="button" class="shuffle-attendance-manual-save">동그라미와 점수 추가</button>
+                <p class="shuffle-attendance-manual-status" role="status" aria-live="polite">한 사람은 날짜·시간 칸마다 동그라미 하나만 표시하고, 점수는 추가한 만큼 합산합니다. 예: 1점에 1점을 추가하면 동그라미 하나와 2점으로 표시됩니다.</p>
             `;
 
             const dateSelect = section.querySelector('.shuffle-attendance-manual-date');
@@ -6448,14 +6646,14 @@
                         section.querySelector('.shuffle-attendance-manual-time').value, [{
                             nickname,
                             points: Number(pointsSelect.value)
-                        }]);
+                        }], true);
                     await showShuffleDetails(recordId);
                     const refreshedStatus = document.querySelector(
                         '#shuffle-detail-panel .shuffle-attendance-manual-status'
                     );
                     if (refreshedStatus) {
                         refreshedStatus.textContent =
-                            `${nickname}님의 출석 동그라미와 ${formatShuffleScore(Number(pointsSelect.value))}점 기록을 저장했습니다.`;
+                            `${nickname}님에게 ${formatShuffleScore(Number(pointsSelect.value))}점을 추가했습니다.`;
                         refreshedStatus.dataset.error = 'false';
                     }
                 } catch (error) {
@@ -6469,7 +6667,7 @@
             return section;
         }
 
-        async function saveShuffleAttendanceImport(recordId, day, time, selectedEntries) {
+        async function saveShuffleAttendanceImport(recordId, day, time, selectedEntries, addToExistingSlot = false) {
             if (!isAdmin()) throw new Error('운영진만 출석을 저장할 수 있습니다.');
             if (!['13', '21'].includes(time)) throw new Error('출석 시간을 선택하세요.');
             if (!selectedEntries.length) throw new Error('저장할 닉네임을 선택하세요.');
@@ -6495,6 +6693,8 @@
             }
             const slotField = time === '13' ? 'time13Activities' : 'time21Activities';
             const otherSlotField = time === '13' ? 'time21Activities' : 'time13Activities';
+            const slotPointsField = time === '13' ? 'time13Points' : 'time21Points';
+            const otherSlotPointsField = time === '13' ? 'time21Points' : 'time13Points';
             const asActivities = (value) => {
                 if (Array.isArray(value)) return value.filter(Boolean);
                 if (value && typeof value === 'object') return Object.values(value).filter(Boolean);
@@ -6513,22 +6713,28 @@
                     ? asActivities(previous.events)
                     : previousActivities.filter((activity) =>
                         !['3층전', '마무리', '5분전', '전초전'].includes(activity));
-                const oldSlotActivities = Array.isArray(previous[slotField])
+                const hasExplicitSlotActivities =
+                    Object.prototype.hasOwnProperty.call(previous, slotField);
+                const oldSlotActivities = hasExplicitSlotActivities
                     ? previousTimeActivities
-                    : previousTimeActivities.length
-                        ? previousTimeActivities
-                        : previousActivities.filter((activity) => ['3층전', '마무리'].includes(activity));
-                const existingSlotActivities = oldSlotActivities
-                    .filter((activity) => !['3층전', '마무리'].includes(activity));
-                const oldSlotCount = oldSlotActivities.filter((activity) =>
-                    ['3층전', '마무리'].includes(activity)).length;
+                    : previousActivities.filter((activity) => ['3층전', '마무리'].includes(activity));
+                const oldSlotPoints = Object.prototype.hasOwnProperty.call(previous, slotPointsField)
+                    ? Math.max(0, Number(previous[slotPointsField]) || 0)
+                    : oldSlotActivities.length * 0.5;
+                const oldOtherSlotPoints = Object.prototype.hasOwnProperty.call(previous, otherSlotPointsField)
+                    ? Math.max(0, Number(previous[otherSlotPointsField]) || 0)
+                    : previousOtherTimeActivities.length * 0.5;
                 const oldDailyScore = Number(previous.score) || 0;
-                const nonSlotScore = oldDailyScore - oldSlotCount * 0.5;
+                const nonSlotScore = Math.max(0, oldDailyScore - oldSlotPoints);
                 const markerActivities = points === 1
                     ? ['3층전', '마무리']
                     : [[...oldSlotActivities].find((activity) => ['3층전', '마무리'].includes(activity)) || '3층전'];
-                const slotActivities = [...existingSlotActivities, ...markerActivities];
-                const newDailyScore = Math.round((nonSlotScore + markerActivities.length * 0.5) * 2) / 2;
+                const slotActivities = [oldSlotActivities.find((activity) =>
+                    ['3층전', '마무리'].includes(activity)) || markerActivities[0]];
+                const newSlotPoints = Math.round(
+                    (addToExistingSlot ? oldSlotPoints + points : points) * 2
+                ) / 2;
+                const newDailyScore = Math.round((nonSlotScore + newSlotPoints) * 2) / 2;
                 const oldTotalScore = Number(record.participants?.[memberKey]?.score ??
                     previous.totalScore ?? oldDailyScore);
                 const totalScore = Math.round((oldTotalScore + newDailyScore - oldDailyScore) * 2) / 2;
@@ -6541,7 +6747,10 @@
                     activities: [...new Set(activities)].join('/'),
                     time13Activities: time === '13' ? slotActivities : previousOtherTimeActivities,
                     time21Activities: time === '21' ? slotActivities : previousOtherTimeActivities,
+                    time13Points: time === '13' ? newSlotPoints : oldOtherSlotPoints,
+                    time21Points: time === '21' ? newSlotPoints : oldOtherSlotPoints,
                     events: previousEvents,
+                    vccBonusAwarded: previous.vccBonusAwarded === true,
                     score: newDailyScore,
                     totalScore,
                     rate: Math.round((totalScore / maxShuffleScore) * 100)
@@ -6611,7 +6820,7 @@
 
                 const attendanceLegend = document.createElement('p');
                 attendanceLegend.className = 'shuffle-attendance-legend';
-                attendanceLegend.innerHTML = '<strong>○</strong> 시간 확인된 출석 <span class="legacy">○</span> 기존 기록 (시간 구분 없음)';
+                attendanceLegend.innerHTML = '<strong>○</strong> 출석 (13시 / 21시 칸별 표시)';
                 panel.appendChild(attendanceLegend);
 
                 const attendanceImporter = createShuffleAttendanceImporter(recordId, days);
@@ -6629,6 +6838,10 @@
                 nicknameHeader.rowSpan = 2;
                 nicknameHeader.textContent = '닉네임';
                 dateHeaderRow.appendChild(nicknameHeader);
+                const finalScoreHeader = document.createElement('th');
+                finalScoreHeader.rowSpan = 2;
+                finalScoreHeader.textContent = '최종 점수';
+                dateHeaderRow.appendChild(finalScoreHeader);
                 days.forEach(([day]) => {
                     const dateHeader = document.createElement('th');
                     dateHeader.colSpan = 2;
@@ -6653,21 +6866,20 @@
                     .sort((first, second) => compareMemberOrder(first, second));
                 const participantsByDay = days.map(([, dayParticipants]) =>
                     new Map(Object.values(dayParticipants).map((participant) => [participant.nickname, participant])));
-                const slotAttendancePoints = (participant, field) => {
-                    const activities = participant?.[field];
-                    if (Array.isArray(activities)) return activities.filter(Boolean).length * 0.5;
-                    if (activities && typeof activities === 'object') {
-                        return Object.values(activities).filter(Boolean).length * 0.5;
-                    }
-                    return String(activities || '').split('|').filter(Boolean).length * 0.5;
-                };
-                const legacySlotAttendancePoints = (participant) =>
-                    String(participant?.activities || '')
-                        .split(/[\/|,]/)
-                        .filter((activity) => ['3층전', '마무리'].includes(activity.trim())).length * 0.5;
+                const finalScores = new Map();
+                Object.values(dailyRecords).forEach((dayParticipants) => {
+                    Object.values(dayParticipants).forEach((participant) => {
+                        finalScores.set(participant.nickname,
+                            (finalScores.get(participant.nickname) || 0) +
+                            getShuffleDailyParticipantScore(participant));
+                    });
+                });
+                const recordedFinalScores = new Map(
+                    Object.values(record.participants || {})
+                        .map((participant) => [participant.nickname, Number(participant.score) || 0])
+                );
                 const appendAttendanceCircle = (cell, points, legacy = false) => {
                     if (legacy) {
-                        cell.classList.add('shuffle-attendance-legacy');
                         cell.title = '기존 기록: 출석은 확인되지만 13시/21시 구분 정보가 없습니다.';
                     } else {
                         cell.title = '출석 완료';
@@ -6686,23 +6898,25 @@
                     const nicknameCell = document.createElement('td');
                     nicknameCell.textContent = member.nickname;
                     row.appendChild(nicknameCell);
+                    const finalScoreCell = document.createElement('td');
+                    const finalScore = finalScores.has(member.nickname)
+                        ? finalScores.get(member.nickname)
+                        : recordedFinalScores.get(member.nickname) || 0;
+                    finalScoreCell.textContent = `${formatShuffleScore(finalScore)}점`;
+                    finalScoreCell.title = '셔플 기간 최종 점수';
+                    row.appendChild(finalScoreCell);
                     participantsByDay.forEach((participantMap) => {
                         const participant = participantMap.get(member.nickname);
-                        const hasExplicitTimeData = participant &&
-                            (Object.prototype.hasOwnProperty.call(participant, 'time13Activities') ||
-                                Object.prototype.hasOwnProperty.call(participant, 'time21Activities'));
-                        const legacyPoints = legacySlotAttendancePoints(participant);
-                        if (!hasExplicitTimeData && legacyPoints) {
+                        const slotPoints = getShuffleDailyAttendanceSlotPoints(participant);
+                        slotPoints.forEach((points, slotIndex) => {
                             const cell = document.createElement('td');
-                            cell.colSpan = 2;
-                            appendAttendanceCircle(cell, legacyPoints, true);
-                            row.appendChild(cell);
-                            return;
-                        }
-                        ['time13Activities', 'time21Activities'].forEach((field) => {
-                            const cell = document.createElement('td');
-                            const points = slotAttendancePoints(participant, field);
-                            if (points) appendAttendanceCircle(cell, points);
+                            if (points) {
+                                const legacy = !participant ||
+                                    (!Object.prototype.hasOwnProperty.call(participant, 'time13Points') &&
+                                        !Object.prototype.hasOwnProperty.call(participant, 'time21Points') &&
+                                        !participant.time13Activities && !participant.time21Activities);
+                                appendAttendanceCircle(cell, points, legacy);
+                            }
                             row.appendChild(cell);
                         });
                     });
@@ -6779,10 +6993,10 @@
                 Object.values(dailyRecords).forEach((dayParticipants) => {
                     Object.values(dayParticipants).forEach((participant) => {
                         dailyTotals.set(participant.nickname,
-                            (dailyTotals.get(participant.nickname) || 0) + (Number(participant.score) || 0));
+                            (dailyTotals.get(participant.nickname) || 0) +
+                            getShuffleDailyParticipantScore(participant));
                     });
                 });
-                const hasDailyRecords = dailyTotals.size > 0;
                 ['admin', 'normal'].forEach((listName) => {
                     const groupTitle = document.createElement('h4');
                     groupTitle.className = 'shuffle-detail-day';
@@ -6800,8 +7014,8 @@
                         rate: 0
                     })
                         .map((participant) => {
-                            const totalScore = hasDailyRecords
-                                ? dailyTotals.get(participant.nickname) || 0
+                            const totalScore = dailyTotals.has(participant.nickname)
+                                ? dailyTotals.get(participant.nickname)
                                 : Number(participant.score) || 0;
                             return {
                                 ...participant,
@@ -8249,6 +8463,8 @@
                     activities: [...time13, ...time21, ...events].join('/'),
                     time13Activities: [...time13],
                     time21Activities: [...time21],
+                    events,
+                    vccBonusAwarded: attendanceRecord.vccBonusAwarded === true,
                     score: dailyScore,
                     totalScore: score,
                     rate: Math.round((score / maxShuffleScore) * 100)
@@ -8315,6 +8531,8 @@
                 activities: [...time13, ...time21, ...events].join('/') || '',
                 time13Activities: [...time13],
                 time21Activities: [...time21],
+                events,
+                vccBonusAwarded,
                 score: dailyScore,
                 totalScore,
                 rate: Math.round((totalScore / maxShuffleScore) * 100)
