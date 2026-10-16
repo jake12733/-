@@ -353,6 +353,74 @@
             background: #111827;
         }
 
+        .shuffle-attendance-manual-entry {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin: 0 0 16px;
+            padding: 16px;
+            border: 1px solid #35445a;
+            border-radius: 10px;
+            background: #111827;
+        }
+
+        .shuffle-attendance-manual-entry h4,
+        .shuffle-attendance-manual-status {
+            grid-column: 1 / -1;
+        }
+
+        .shuffle-attendance-manual-entry h4 {
+            margin: 0;
+            color: #f8fafc;
+            font-size: 14px;
+        }
+
+        .shuffle-attendance-manual-entry label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            color: #9fb4d0;
+            font-size: 12px;
+        }
+
+        .shuffle-attendance-manual-entry select {
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 10px;
+            border: 1px solid #35445a;
+            border-radius: 6px;
+            background: #202b3b;
+            color: #f8fafc;
+            font: inherit;
+        }
+
+        .shuffle-attendance-manual-entry button {
+            min-height: 40px;
+            padding: 8px 12px;
+            border: 0;
+            border-radius: 6px;
+            background: #15803d;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .shuffle-attendance-manual-entry button:disabled {
+            opacity: .55;
+            cursor: wait;
+        }
+
+        .shuffle-attendance-manual-status {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .shuffle-attendance-manual-status[data-error="true"] {
+            color: #fca5a5;
+        }
+
         .dashboard-card-label {
             display: block;
             margin-bottom: 10px;
@@ -685,6 +753,234 @@
         .shuffle-detail-table th {
             color: #9fb4d0;
             font-weight: normal;
+        }
+
+        .shuffle-attendance-grid-wrapper {
+            overflow-x: auto;
+            margin-bottom: 24px;
+            border: 1px solid #263247;
+            border-radius: 10px;
+            background: #0b1220;
+        }
+
+        .shuffle-attendance-grid {
+            min-width: 100%;
+            width: max-content;
+            table-layout: auto;
+            text-align: center;
+        }
+
+        .shuffle-attendance-grid th,
+        .shuffle-attendance-grid td {
+            min-width: 54px;
+            padding: 9px 8px;
+            border: 1px solid #35445a;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .shuffle-attendance-grid thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: #172235;
+            color: #dbeafe;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .shuffle-attendance-grid thead tr:nth-child(2) th {
+            top: 35px;
+            background: #202d42;
+            color: #a9bdd8;
+            font-size: 11px;
+        }
+
+        .shuffle-attendance-grid thead tr:first-child th:first-child,
+        .shuffle-attendance-grid td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            min-width: 125px;
+            background: #111827;
+            text-align: left;
+        }
+
+        .shuffle-attendance-grid tbody tr:nth-child(even) td {
+            background: #101a2a;
+        }
+
+        .shuffle-attendance-grid tbody tr:hover td {
+            background: #1b2b40;
+        }
+
+        .shuffle-attendance-grid tbody tr td:first-child {
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .shuffle-attendance-grid .shuffle-attendance-circle {
+            color: #16a34a;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .shuffle-attendance-points {
+            display: block;
+            margin-top: 3px;
+            color: #94a3b8;
+            font-size: 10px;
+            line-height: 1.2;
+        }
+
+        .shuffle-attendance-grid .shuffle-attendance-legacy {
+            background: #172235 !important;
+        }
+
+        .shuffle-attendance-grid .shuffle-attendance-legacy .shuffle-attendance-circle {
+            color: #d97706;
+        }
+
+        .shuffle-attendance-legend {
+            margin: -8px 0 12px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .shuffle-attendance-legend strong {
+            color: #16a34a;
+        }
+
+        .shuffle-attendance-legend .legacy {
+            color: #d97706;
+        }
+
+        .shuffle-attendance-import {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin: 0 0 16px;
+            padding: 16px;
+            border: 1px solid #35445a;
+            border-radius: 10px;
+            background: #111827;
+        }
+
+        .shuffle-attendance-import h4,
+        .shuffle-attendance-import-note,
+        .shuffle-attendance-import-status,
+        .shuffle-attendance-preview,
+        .shuffle-attendance-import-actions {
+            grid-column: 1 / -1;
+        }
+
+        .shuffle-attendance-import h4 {
+            margin: 0;
+            color: #f8fafc;
+            font-size: 14px;
+        }
+
+        .shuffle-attendance-import label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            color: #9fb4d0;
+            font-size: 12px;
+        }
+
+        .shuffle-attendance-import select,
+        .shuffle-attendance-import input[type="file"] {
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 10px;
+            border: 1px solid #35445a;
+            border-radius: 6px;
+            background: #202b3b;
+            color: #f8fafc;
+            font: inherit;
+        }
+
+        .shuffle-attendance-import-note,
+        .shuffle-attendance-import-status {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .shuffle-attendance-import-status[data-error="true"] {
+            color: #fca5a5;
+        }
+
+        .shuffle-attendance-import-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .shuffle-attendance-import-actions button,
+        .shuffle-attendance-manual-add button {
+            min-height: 38px;
+            padding: 8px 12px;
+            border: 0;
+            border-radius: 6px;
+            background: #2563eb;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .shuffle-attendance-import-actions button:disabled {
+            opacity: .55;
+            cursor: wait;
+        }
+
+        .shuffle-attendance-import-actions .shuffle-attendance-save-button {
+            background: #15803d;
+        }
+
+        .shuffle-attendance-preview {
+            display: grid;
+            gap: 8px;
+        }
+
+        .shuffle-attendance-preview:empty {
+            display: none;
+        }
+
+        .shuffle-attendance-preview-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 110px;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border: 1px solid #263448;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 13px;
+        }
+
+        .shuffle-attendance-preview-row label {
+            flex-direction: row;
+            align-items: center;
+            color: inherit;
+            font-size: inherit;
+        }
+
+        .shuffle-attendance-preview-row select {
+            min-height: 34px;
+            padding: 6px 8px;
+        }
+
+        .shuffle-attendance-manual-add {
+            display: flex;
+            gap: 8px;
+        }
+
+        .shuffle-attendance-manual-add select {
+            flex: 1;
+            min-width: 0;
         }
 
         .shuffle-record-empty {
@@ -2058,6 +2354,137 @@
             font-weight: 600;
         }
 
+        #view-dashboard .shuffle-attendance-import {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+            color: #111827;
+        }
+
+        #view-dashboard .shuffle-attendance-manual-entry {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+            color: #111827;
+        }
+
+        #view-dashboard .shuffle-attendance-manual-entry h4,
+        #view-dashboard .shuffle-attendance-manual-entry label {
+            color: #111827 !important;
+        }
+
+        #view-dashboard .shuffle-attendance-manual-entry select {
+            border-color: #94a3b8 !important;
+            background: #ffffff !important;
+            color: #111827 !important;
+        }
+
+        #view-dashboard .shuffle-attendance-manual-status {
+            color: #1d4ed8 !important;
+        }
+
+        #view-dashboard .shuffle-attendance-manual-status[data-error="true"] {
+            color: #b91c1c !important;
+        }
+
+        #view-dashboard .shuffle-attendance-import h4,
+        #view-dashboard .shuffle-attendance-import label,
+        #view-dashboard .shuffle-attendance-preview-row,
+        #view-dashboard .shuffle-attendance-preview-row label {
+            color: #111827 !important;
+        }
+
+        #view-dashboard .shuffle-attendance-import-note {
+            color: #475569 !important;
+        }
+
+        #view-dashboard .shuffle-attendance-import-status {
+            color: #1d4ed8 !important;
+        }
+
+        #view-dashboard .shuffle-attendance-import-status[data-error="true"] {
+            color: #b91c1c !important;
+        }
+
+        #view-dashboard .shuffle-attendance-import select,
+        #view-dashboard .shuffle-attendance-import input[type="file"] {
+            border-color: #94a3b8 !important;
+            background: #ffffff !important;
+            color: #111827 !important;
+        }
+
+        #view-dashboard .shuffle-attendance-preview-row {
+            border-color: #cbd5e1;
+            background: #ffffff;
+        }
+
+        #view-dashboard .shuffle-attendance-grid thead th {
+            border-color: #94a3b8;
+            background: #e2e8f0;
+            color: #111827 !important;
+        }
+
+        #view-dashboard .shuffle-attendance-grid thead tr:nth-child(2) th {
+            background: #f1f5f9;
+            color: #334155 !important;
+        }
+
+        #view-dashboard .shuffle-attendance-grid thead tr:first-child th:first-child,
+        #view-dashboard .shuffle-attendance-grid tbody tr td:first-child {
+            background: #f1f5f9;
+            color: #111827 !important;
+        }
+
+        #view-dashboard .shuffle-attendance-grid tbody tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        #view-dashboard .shuffle-attendance-grid tbody tr:hover td {
+            background: #e2e8f0;
+        }
+
+        #view-dashboard .shuffle-attendance-grid td {
+            border-color: #cbd5e1;
+        }
+
+        #view-dashboard .shuffle-attendance-grid-wrapper {
+            border-color: #cbd5e1;
+            background: #ffffff;
+        }
+
+        #view-dashboard .shuffle-attendance-grid .shuffle-attendance-points,
+        #view-dashboard .shuffle-attendance-legend {
+            color: #475569 !important;
+        }
+
+        #view-dashboard .shuffle-attendance-grid .shuffle-attendance-legacy {
+            background: #fff7ed !important;
+        }
+
+        #view-dashboard .shuffle-attendance-grid .shuffle-attendance-legacy .shuffle-attendance-points,
+        #view-dashboard .shuffle-attendance-legend .legacy {
+            color: #9a3412 !important;
+        }
+
+        #view-dashboard .shuffle-detail-title {
+            color: #111827 !important;
+        }
+
+        #view-dashboard .shuffle-detail-day {
+            color: #1d4ed8;
+        }
+
+        #view-dashboard .shuffle-record-table td:first-child,
+        #view-dashboard .shuffle-period-button {
+            color: #92400e !important;
+        }
+
+        #view-dashboard .shuffle-period-button:hover {
+            color: #78350f !important;
+        }
+
+        #view-dashboard .shuffle-detail-close-button {
+            color: #ffffff;
+        }
+
         #view-dashboard #tab-admin > div {
             background: #ffffff !important;
             border-color: #d1d5db !important;
@@ -2214,6 +2641,94 @@
         body.theme-dark #view-dashboard select,
         body.theme-dark .boss-timer-form input,
         body.theme-dark .boss-edit-dialog input { background: #1f2937 !important; color: #f8fafc !important; border-color: #475569 !important; }
+        body.theme-dark #view-dashboard .shuffle-attendance-import {
+            border-color: #35445a;
+            background: #111827;
+            color: #e2e8f0;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-manual-entry {
+            border-color: #35445a;
+            background: #111827;
+            color: #e2e8f0;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-manual-entry h4,
+        body.theme-dark #view-dashboard .shuffle-attendance-manual-entry label {
+            color: #e2e8f0 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-manual-status {
+            color: #94a3b8 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-manual-status[data-error="true"] {
+            color: #fca5a5 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-import h4,
+        body.theme-dark #view-dashboard .shuffle-attendance-import label,
+        body.theme-dark #view-dashboard .shuffle-attendance-preview-row,
+        body.theme-dark #view-dashboard .shuffle-attendance-preview-row label {
+            color: #e2e8f0 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-import-note,
+        body.theme-dark #view-dashboard .shuffle-attendance-import-status {
+            color: #94a3b8 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-import-status[data-error="true"] {
+            color: #fca5a5 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-preview-row {
+            border-color: #263448;
+            background: #111827;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid thead th {
+            border-color: #35445a;
+            background: #172235;
+            color: #e2e8f0 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid thead tr:nth-child(2) th {
+            background: #111827;
+            color: #cbd5e1 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid thead tr:first-child th:first-child,
+        body.theme-dark #view-dashboard .shuffle-attendance-grid tbody tr td:first-child {
+            background: #111827;
+            color: #e2e8f0 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid tbody tr:nth-child(even) td {
+            background: #0f172a;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid tbody tr:hover td {
+            background: #1e293b;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid td {
+            border-color: #263448;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid-wrapper {
+            border-color: #263247;
+            background: #0b1220;
+        }
+        body.theme-dark #view-dashboard .shuffle-detail-title {
+            color: #f8fafc !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-detail-day {
+            color: #60a5fa;
+        }
+        body.theme-dark #view-dashboard .shuffle-record-table td:first-child,
+        body.theme-dark #view-dashboard .shuffle-period-button {
+            color: #fbbf24 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-period-button:hover {
+            color: #fde68a !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid .shuffle-attendance-points,
+        body.theme-dark #view-dashboard .shuffle-attendance-legend {
+            color: #94a3b8 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid .shuffle-attendance-legacy {
+            background: #172235 !important;
+        }
+        body.theme-dark #view-dashboard .shuffle-attendance-grid .shuffle-attendance-legacy .shuffle-attendance-points,
+        body.theme-dark #view-dashboard .shuffle-attendance-legend .legacy {
+            color: #d97706 !important;
+        }
         body.theme-dark .theme-toggle { border-color: #475569; background: #000000; color: #ffffff; }
         body.theme-dark .theme-toggle:hover { background: #1f2937; }
         .login-theme-toggle {
@@ -2371,6 +2886,26 @@
 
             .shuffle-record-search {
                 grid-template-columns: 1fr;
+            }
+
+            .shuffle-attendance-import {
+                grid-template-columns: 1fr;
+                padding: 12px;
+            }
+
+            .shuffle-attendance-manual-entry {
+                grid-template-columns: 1fr;
+                padding: 12px;
+            }
+
+            .shuffle-attendance-import h4,
+            .shuffle-attendance-import-note,
+            .shuffle-attendance-import-status,
+            .shuffle-attendance-preview,
+            .shuffle-attendance-import-actions,
+            .shuffle-attendance-manual-entry h4,
+            .shuffle-attendance-manual-status {
+                grid-column: 1;
             }
 
             .shuffle-record-search #shuffle-search-nickname,
@@ -3888,9 +4423,16 @@
         }
 
         function restoreLoginSession() {
-            if (localStorage.getItem('dokdoLoggedIn') !== 'true') return;
+            const savedUserData = localStorage.getItem('dokdoCurrentUser');
+            if (!savedUserData) return;
 
-            const savedUser = JSON.parse(localStorage.getItem('dokdoCurrentUser') || 'null');
+            let savedUser;
+            try {
+                savedUser = JSON.parse(savedUserData);
+            } catch (error) {
+                console.error('저장된 로그인 정보를 읽지 못했습니다:', error);
+                return;
+            }
             const nickname = nicknameCorrections[savedUser?.nickname] || nicknameMigrations.get(savedUser?.nickname) || savedUser?.nickname;
             if (!nickname) return;
 
@@ -3898,6 +4440,7 @@
             if (nickname !== savedUser.nickname) {
                 localStorage.setItem('dokdoCurrentUser', JSON.stringify(cachedUser));
             }
+            localStorage.setItem('dokdoLoggedIn', 'true');
             openDashboardForUser(cachedUser);
 
             const userKey = encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
@@ -5379,6 +5922,13 @@
             });
         }
 
+        function formatShuffleScore(score) {
+            const value = Number(score);
+            return (Number.isFinite(value) ? value : 0).toLocaleString('ko-KR', {
+                maximumFractionDigits: 1
+            });
+        }
+
         function sortShuffleParticipants(first, second) {
             const getMember = (participant) => Object.values(memberLists).flat()
                 .find((member) => member.nickname === participant.nickname);
@@ -5394,11 +5944,646 @@
             return first.nickname.localeCompare(second.nickname);
         }
 
+        let shuffleAttendanceOcrWorkerPromise = null;
+        let shuffleAttendanceOcrProgressHandler = null;
+
+        function findShuffleAttendanceRuleRun(rules, minimumGap, maximumGap) {
+            let longestRun = [];
+            rules.forEach((start, startIndex) => {
+                const run = [start];
+                let last = start;
+                for (const rule of rules.slice(startIndex + 1)) {
+                    const gap = rule - last;
+                    if (gap < minimumGap) continue;
+                    if (gap > maximumGap) break;
+                    run.push(rule);
+                    last = rule;
+                }
+                if (run.length > longestRun.length) longestRun = run;
+            });
+            return longestRun;
+        }
+
+        async function extractShuffleAttendanceFromOcr(file, selectedDayIndex, selectedTime, members, worker) {
+            const bitmap = await createImageBitmap(file);
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = bitmap.width;
+                canvas.height = bitmap.height;
+                const context = canvas.getContext('2d', { willReadFrequently: true });
+                context.drawImage(bitmap, 0, 0);
+                const image = context.getImageData(0, 0, canvas.width, canvas.height);
+                const { width, height } = canvas;
+                const horizontalDarkPixels = new Uint32Array(height);
+                const verticalDarkPixels = new Uint32Array(width);
+                const isDarkPixel = (index) => {
+                    const luminance = (image.data[index] * 299 + image.data[index + 1] * 587 +
+                        image.data[index + 2] * 114) / 1000;
+                    return luminance < 110;
+                };
+
+                for (let y = 0; y < height; y += 1) {
+                    for (let x = 0; x < width; x += 1) {
+                        const index = (y * width + x) * 4;
+                        if (!isDarkPixel(index)) continue;
+                        horizontalDarkPixels[y] += 1;
+                        verticalDarkPixels[x] += 1;
+                    }
+                }
+
+                const horizontalRules = Array.from(horizontalDarkPixels, (count, y) =>
+                    count > width * 0.4 ? y : -1).filter((y) => y >= 0);
+                const verticalRules = Array.from(verticalDarkPixels, (count, x) =>
+                    count > height * 0.5 ? x : -1).filter((x) => x >= 0 && x < width * 0.85);
+                const horizontalRun = findShuffleAttendanceRuleRun(
+                    horizontalRules,
+                    Math.max(3, height * 0.005),
+                    height * 0.04
+                );
+                const verticalRun = findShuffleAttendanceRuleRun(
+                    verticalRules,
+                    Math.max(8, width * 0.015),
+                    width * 0.04
+                );
+                if (horizontalRun.length < 4 || verticalRun.length < 3) {
+                    throw new Error('출석표의 격자선을 찾지 못했습니다. 전체 표가 보이는 스크린샷을 선택하세요.');
+                }
+
+                const rowBounds = horizontalRun.slice(1);
+                const columnBounds = verticalRun;
+                const daySlot = selectedDayIndex * 2 + (selectedTime === '13' ? 0 : 1);
+                if (!Number.isInteger(daySlot) || daySlot < 0 || daySlot >= columnBounds.length - 1) {
+                    throw new Error('선택한 날짜·시간 칸이 스크린샷 표 범위를 벗어났습니다.');
+                }
+
+                const nameColumnRight = columnBounds[0];
+                const rowData = [];
+                for (let rowIndex = 0; rowIndex < rowBounds.length - 1; rowIndex += 1) {
+                    const top = rowBounds[rowIndex];
+                    const bottom = rowBounds[rowIndex + 1];
+                    let namePixelCount = 0;
+                    for (let y = top + 2; y < bottom - 2; y += 1) {
+                        for (let x = 2; x < nameColumnRight - 2; x += 1) {
+                            if (isDarkPixel((y * width + x) * 4)) namePixelCount += 1;
+                        }
+                    }
+                    rowData.push({ rowIndex, top, bottom, hasNickname: namePixelCount > 20 });
+                }
+                const rosterRows = rowData.filter((row) => row.hasNickname).length;
+                const cellLeft = columnBounds[daySlot];
+                const cellRight = columnBounds[daySlot + 1];
+                const markedRows = [];
+                let rosterRowIndex = 0;
+
+                await worker.setParameters({
+                    tessedit_pageseg_mode: '7',
+                    tessedit_char_whitelist: '0123456789.Oo'
+                });
+                for (const row of rowData) {
+                    if (!row.hasNickname) continue;
+                    const member = members[rosterRowIndex];
+                    rosterRowIndex += 1;
+                    if (!member) continue;
+                    const top = row.top + 2;
+                    const bottom = row.bottom - 2;
+                    const left = cellLeft + 2;
+                    const right = cellRight - 2;
+                    let darkPixelCount = 0;
+                    let firstMarkPixel = right;
+                    let lastMarkPixel = left - 1;
+                    for (let y = top; y < bottom; y += 1) {
+                        for (let x = left; x < right; x += 1) {
+                            if (!isDarkPixel((y * width + x) * 4)) continue;
+                            darkPixelCount += 1;
+                            firstMarkPixel = Math.min(firstMarkPixel, x);
+                            lastMarkPixel = Math.max(lastMarkPixel, x);
+                        }
+                    }
+                    if (darkPixelCount < 4) continue;
+
+                    const cellCanvas = document.createElement('canvas');
+                    const scale = 8;
+                    cellCanvas.width = (right - left) * scale;
+                    cellCanvas.height = (bottom - top) * scale;
+                    const cellContext = cellCanvas.getContext('2d', { willReadFrequently: true });
+                    cellContext.drawImage(canvas, left, top, right - left, bottom - top,
+                        0, 0, cellCanvas.width, cellCanvas.height);
+                    const cellImage = cellContext.getImageData(0, 0, cellCanvas.width, cellCanvas.height);
+                    for (let index = 0; index < cellImage.data.length; index += 4) {
+                        const luminance = (cellImage.data[index] * 299 + cellImage.data[index + 1] * 587 +
+                            cellImage.data[index + 2] * 114) / 1000;
+                        const color = luminance < 140 ? 0 : 255;
+                        cellImage.data[index] = color;
+                        cellImage.data[index + 1] = color;
+                        cellImage.data[index + 2] = color;
+                    }
+                    cellContext.putImageData(cellImage, 0, 0);
+                    const ocr = await worker.recognize(cellCanvas);
+                    const normalizedText = String(ocr.data.text || '').replace(/\s/g, '');
+                    const markWidth = lastMarkPixel - firstMarkPixel + 1;
+                    // Tiny 0.5 labels are often OCR'd as 06; their ink is wider than a circle.
+                    const points = /^0[.,]?[56]$/.test(normalizedText) ||
+                        (darkPixelCount >= 10 && markWidth >= 9)
+                        ? 0.5
+                        : 1;
+                    markedRows.push({
+                        nickname: member.nickname,
+                        points,
+                        rowNumber: row.rowIndex + 1
+                    });
+                }
+
+                return {
+                    matches: markedRows,
+                    rosterRows,
+                    memberCount: members.length
+                };
+            } finally {
+                bitmap.close();
+            }
+        }
+
+        function loadShuffleOcrLibrary() {
+            if (window.Tesseract) return Promise.resolve(window.Tesseract);
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+                script.onload = () => window.Tesseract
+                    ? resolve(window.Tesseract)
+                    : reject(new Error('OCR 라이브러리를 불러오지 못했습니다.'));
+                script.onerror = () => reject(new Error('OCR 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인하세요.'));
+                document.head.appendChild(script);
+            });
+        }
+
+        async function getShuffleAttendanceOcrWorker() {
+            const Tesseract = await loadShuffleOcrLibrary();
+            if (!shuffleAttendanceOcrWorkerPromise) {
+                shuffleAttendanceOcrWorkerPromise = Tesseract.createWorker('kor+eng', 1, {
+                    logger: (progress) => {
+                        if (shuffleAttendanceOcrProgressHandler) {
+                            shuffleAttendanceOcrProgressHandler(progress);
+                        }
+                    },
+                    workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js',
+                    corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1/tesseract-core.wasm.js',
+                    langPath: 'https://tessdata.projectnaptha.com/4.0.0'
+                }).catch((error) => {
+                    shuffleAttendanceOcrWorkerPromise = null;
+                    throw error;
+                });
+            }
+            return shuffleAttendanceOcrWorkerPromise;
+        }
+
+        function createShuffleAttendanceImporter(recordId, days) {
+            if (!isAdmin()) return null;
+
+            const section = document.createElement('section');
+            section.className = 'shuffle-attendance-import';
+            section.innerHTML = `
+                <h4>출석 스크린샷 인식</h4>
+                <label>출석 날짜<select class="shuffle-attendance-import-date"></select></label>
+                <label>출석 시간
+                    <select class="shuffle-attendance-import-time">
+                        <option value="13">13시</option>
+                        <option value="21">21시</option>
+                    </select>
+                </label>
+                <label>스크린샷<input class="shuffle-attendance-import-file" type="file" accept="image/*"></label>
+                <p class="shuffle-attendance-import-note">이미지는 브라우저 안에서만 인식하며 서버나 저장소에 저장하지 않습니다. 인식이 완료되면 파일 입력과 임시 참조를 제거합니다. 표 행 수가 앱 명단과 일치하면 자동 기록하고, 다르면 잘못된 출석을 막기 위해 결과 확인 후 저장합니다. OCR 모델은 첫 실행 때 다운로드됩니다.</p>
+                <p class="shuffle-attendance-import-status" role="status" aria-live="polite"></p>
+                <div class="shuffle-attendance-import-actions">
+                    <button type="button" class="shuffle-attendance-recognize-button">스크린샷 인식</button>
+                    <button type="button" class="shuffle-attendance-save-button" disabled>선택 인원 저장</button>
+                </div>
+                <div class="shuffle-attendance-manual-add">
+                    <select class="shuffle-attendance-manual-select" aria-label="인식 결과에 닉네임 추가"></select>
+                    <button type="button" class="shuffle-attendance-manual-button">닉네임 추가</button>
+                </div>
+                <div class="shuffle-attendance-preview"></div>
+            `;
+
+            const dateSelect = section.querySelector('.shuffle-attendance-import-date');
+            const timeSelect = section.querySelector('.shuffle-attendance-import-time');
+            const fileInput = section.querySelector('.shuffle-attendance-import-file');
+            const recognizeButton = section.querySelector('.shuffle-attendance-recognize-button');
+            const saveButton = section.querySelector('.shuffle-attendance-save-button');
+            const manualSelect = section.querySelector('.shuffle-attendance-manual-select');
+            const manualButton = section.querySelector('.shuffle-attendance-manual-button');
+            const preview = section.querySelector('.shuffle-attendance-preview');
+            const status = section.querySelector('.shuffle-attendance-import-status');
+            const entries = new Map();
+
+            dateSelect.replaceChildren(...days.map(([day]) => new Option(day.replace(/-/g, '.'), day)));
+            if (days.some(([day]) => day === currentAttendanceDay())) {
+                dateSelect.value = currentAttendanceDay();
+            }
+            manualSelect.replaceChildren(new Option('닉네임 직접 추가', ''));
+            [...memberLists.admin, ...memberLists.normal]
+                .sort((first, second) => compareMemberOrder(first, second))
+                .forEach((member) => manualSelect.add(new Option(member.nickname, member.nickname)));
+
+            const updateSaveButton = () => {
+                saveButton.disabled = ![...entries.values()].some((entry) => entry.checkbox.checked);
+            };
+            const addPreviewEntry = (member, detectedPoints = 0.5, sourceRow = null, checkedByDefault = true) => {
+                if (entries.has(member.nickname)) {
+                    const existingEntry = entries.get(member.nickname);
+                    existingEntry.checkbox.checked = existingEntry.checkbox.checked || checkedByDefault;
+                    if (sourceRow) {
+                        existingEntry.sourceRows.push(sourceRow);
+                        existingEntry.nickname.textContent =
+                            `${member.nickname} (표 ${existingEntry.sourceRows.join(', ')}행)`;
+                    }
+                    updateSaveButton();
+                    return;
+                }
+
+                const row = document.createElement('div');
+                row.className = 'shuffle-attendance-preview-row';
+                const memberLabel = document.createElement('label');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = checkedByDefault;
+                const nickname = document.createElement('span');
+                const sourceRows = sourceRow ? [sourceRow] : [];
+                nickname.textContent = sourceRow ? `${member.nickname} (표 ${sourceRow}행)` : member.nickname;
+                memberLabel.append(checkbox, nickname);
+                const points = document.createElement('select');
+                points.setAttribute('aria-label', `${member.nickname} 출석 점수`);
+                points.add(new Option('0.5점', '0.5'));
+                points.add(new Option('1점', '1'));
+                points.value = String(detectedPoints);
+                row.append(memberLabel, points);
+                preview.appendChild(row);
+                entries.set(member.nickname, { checkbox, points, nickname, sourceRows });
+                checkbox.addEventListener('change', updateSaveButton);
+                updateSaveButton();
+            };
+
+            manualButton.addEventListener('click', () => {
+                const member = [...memberLists.admin, ...memberLists.normal]
+                    .find((candidate) => candidate.nickname === manualSelect.value);
+                if (!member) return;
+                addPreviewEntry(member);
+                manualSelect.value = '';
+            });
+
+            recognizeButton.addEventListener('click', async () => {
+                let file = fileInput.files?.[0];
+                if (!file) {
+                    status.textContent = '먼저 스크린샷 이미지를 선택하세요.';
+                    status.dataset.error = 'true';
+                    return;
+                }
+                if (!file.type.startsWith('image/')) {
+                    status.textContent = '이미지 파일을 선택하세요.';
+                    status.dataset.error = 'true';
+                    return;
+                }
+
+                recognizeButton.disabled = true;
+                saveButton.disabled = true;
+                entries.clear();
+                preview.replaceChildren();
+                status.dataset.error = 'false';
+                status.textContent = '표 격자와 출석 표시를 확인하고 있습니다.';
+                let imageProcessed = false;
+                shuffleAttendanceOcrProgressHandler = (progress) => {
+                    if (progress.status) {
+                        const percent = Number.isFinite(progress.progress)
+                            ? ` ${Math.round(progress.progress * 100)}%`
+                            : '';
+                        status.textContent = `스크린샷 인식 중: ${progress.status}${percent}`;
+                    }
+                };
+                try {
+                    const worker = await getShuffleAttendanceOcrWorker();
+                    const members = [...memberLists.admin, ...memberLists.normal]
+                        .sort((first, second) => compareMemberOrder(first, second));
+                    const dayIndex = days.findIndex(([day]) => day === dateSelect.value);
+                    const result = await extractShuffleAttendanceFromOcr(
+                        file,
+                        dayIndex,
+                        timeSelect.value,
+                        members,
+                        worker
+                    );
+                    imageProcessed = true;
+                    fileInput.value = '';
+                    file = null;
+                    if (!result.matches.length) {
+                        status.textContent = '선택한 날짜·시간 칸에서 닉네임과 출석 표시를 찾지 못했습니다. 날짜와 시간을 확인하거나 닉네임을 직접 추가하세요.';
+                    } else {
+                        const rosterMatches = result.rosterRows === result.memberCount;
+                        result.matches.forEach((match) => {
+                            const member = members.find((candidate) => candidate.nickname === match.nickname);
+                            if (member) {
+                                addPreviewEntry(member, match.points, match.rowNumber, rosterMatches);
+                            }
+                        });
+                        const rosterWarning = result.rosterRows === result.memberCount
+                            ? ''
+                            : ` 표의 닉네임 행 ${result.rosterRows}개와 앱 명단 ${result.memberCount}명이 달라 자동 선택을 해제했습니다. 행 번호와 닉네임을 확인한 뒤 저장하세요.`;
+                        status.textContent =
+                            `${result.matches.length}개의 출석 표시를 찾았습니다.${rosterWarning}`;
+                        const recognizedEntries = result.matches
+                            .map((match) => ({
+                                nickname: match.nickname,
+                                points: match.points,
+                                member: members.find((candidate) => candidate.nickname === match.nickname)
+                            }))
+                            .filter((entry) => entry.member)
+                            .map(({ nickname, points }) => ({ nickname, points }));
+                        const uniqueRecognizedMembers = new Set(
+                            recognizedEntries.map((entry) => entry.nickname)
+                        ).size === recognizedEntries.length;
+                        if (rosterMatches && isAdmin() &&
+                            recognizedEntries.length === result.matches.length && uniqueRecognizedMembers) {
+                            status.textContent = `${recognizedEntries.length}명의 출석을 자동 기록하고 있습니다.`;
+                            try {
+                                await saveShuffleAttendanceImport(
+                                    recordId,
+                                    dateSelect.value,
+                                    timeSelect.value,
+                                    recognizedEntries
+                                );
+                                await showShuffleDetails(recordId);
+                                const refreshedStatus = document.querySelector(
+                                    '#shuffle-detail-panel .shuffle-attendance-import-status'
+                                );
+                                if (refreshedStatus) {
+                                    refreshedStatus.textContent =
+                                        `${recognizedEntries.length}명의 출석 기록을 자동 저장했습니다.`;
+                                    refreshedStatus.dataset.error = 'false';
+                                }
+                                return;
+                            } catch (error) {
+                                console.error('스크린샷 출석 자동 저장 실패:', error);
+                                status.textContent =
+                                    `자동 저장에 실패했습니다. 인식 결과를 확인하고 선택 인원을 저장하세요: ${error.message || '연결 상태를 확인하세요.'}`;
+                                status.dataset.error = 'true';
+                                saveButton.disabled = false;
+                                return;
+                            }
+                        }
+                    }
+                    status.dataset.error = 'false';
+                } catch (error) {
+                    console.error('출석 스크린샷 OCR 실패:', error);
+                    status.textContent = `스크린샷을 인식하지 못했습니다: ${error.message || '다시 시도하세요.'}`;
+                    status.dataset.error = 'true';
+                } finally {
+                    shuffleAttendanceOcrProgressHandler = null;
+                    if (imageProcessed) {
+                        fileInput.value = '';
+                        file = null;
+                    }
+                    recognizeButton.disabled = false;
+                    updateSaveButton();
+                }
+            });
+
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files?.length) recognizeButton.click();
+            });
+
+            saveButton.addEventListener('click', async () => {
+                if (!isAdmin()) {
+                    status.textContent = '운영진만 스크린샷 출석을 저장할 수 있습니다.';
+                    status.dataset.error = 'true';
+                    return;
+                }
+                const selectedEntries = [...entries.entries()]
+                    .filter(([, entry]) => entry.checkbox.checked)
+                    .map(([nickname, entry]) => ({ nickname, points: Number(entry.points.value) }));
+                if (!selectedEntries.length) return;
+
+                saveButton.disabled = true;
+                recognizeButton.disabled = true;
+                status.dataset.error = 'false';
+                status.textContent = '선택한 출석 기록을 저장하고 있습니다.';
+                try {
+                    await saveShuffleAttendanceImport(
+                        recordId,
+                        dateSelect.value,
+                        timeSelect.value,
+                        selectedEntries
+                    );
+                    await showShuffleDetails(recordId);
+                    const refreshedStatus = document.querySelector(
+                        '#shuffle-detail-panel .shuffle-attendance-import-status'
+                    );
+                    if (refreshedStatus) {
+                        refreshedStatus.textContent = `${selectedEntries.length}명의 출석 기록을 저장했습니다.`;
+                        refreshedStatus.dataset.error = 'false';
+                    }
+                } catch (error) {
+                    console.error('스크린샷 출석 저장 실패:', error);
+                    status.textContent = `출석 기록을 저장하지 못했습니다: ${error.message || '연결 상태를 확인하세요.'}`;
+                    status.dataset.error = 'true';
+                    saveButton.disabled = false;
+                } finally {
+                    recognizeButton.disabled = false;
+                }
+            });
+
+            return section;
+        }
+
+        function createShuffleAttendanceManualEntry(recordId, days) {
+            if (!isAdmin()) return null;
+
+            const section = document.createElement('section');
+            section.className = 'shuffle-attendance-manual-entry';
+            section.innerHTML = `
+                <h4>출석 수기로 추가 / 점수 수정</h4>
+                <label>출석 날짜<select class="shuffle-attendance-manual-date"></select></label>
+                <label>출석 시간
+                    <select class="shuffle-attendance-manual-time">
+                        <option value="13">13시</option>
+                        <option value="21">21시</option>
+                    </select>
+                </label>
+                <label>닉네임<select class="shuffle-attendance-manual-member"></select></label>
+                <label>출석 점수
+                    <select class="shuffle-attendance-manual-points">
+                        <option value="0.5">0.5점</option>
+                        <option value="1">1점</option>
+                    </select>
+                </label>
+                <button type="button" class="shuffle-attendance-manual-save">동그라미와 점수 저장</button>
+                <p class="shuffle-attendance-manual-status" role="status" aria-live="polite">저장하면 선택한 날짜·시간 칸의 출석과 점수가 추가되거나 수정됩니다.</p>
+            `;
+
+            const dateSelect = section.querySelector('.shuffle-attendance-manual-date');
+            const memberSelect = section.querySelector('.shuffle-attendance-manual-member');
+            const pointsSelect = section.querySelector('.shuffle-attendance-manual-points');
+            const saveButton = section.querySelector('.shuffle-attendance-manual-save');
+            const status = section.querySelector('.shuffle-attendance-manual-status');
+            dateSelect.replaceChildren(...days.map(([day]) =>
+                new Option(day.replace(/-/g, '.'), day)));
+            if (days.some(([day]) => day === currentAttendanceDay())) {
+                dateSelect.value = currentAttendanceDay();
+            }
+            memberSelect.add(new Option('닉네임 선택', ''));
+            [...memberLists.admin, ...memberLists.normal]
+                .sort((first, second) => compareMemberOrder(first, second))
+                .forEach((member) => memberSelect.add(new Option(member.nickname, member.nickname)));
+
+            saveButton.addEventListener('click', async () => {
+                const nickname = memberSelect.value;
+                if (!nickname) {
+                    status.textContent = '출석을 추가할 닉네임을 선택하세요.';
+                    status.dataset.error = 'true';
+                    return;
+                }
+
+                saveButton.disabled = true;
+                status.textContent = '출석 기록을 저장하고 있습니다.';
+                status.dataset.error = 'false';
+                try {
+                    await saveShuffleAttendanceImport(recordId, dateSelect.value,
+                        section.querySelector('.shuffle-attendance-manual-time').value, [{
+                            nickname,
+                            points: Number(pointsSelect.value)
+                        }]);
+                    await showShuffleDetails(recordId);
+                    const refreshedStatus = document.querySelector(
+                        '#shuffle-detail-panel .shuffle-attendance-manual-status'
+                    );
+                    if (refreshedStatus) {
+                        refreshedStatus.textContent =
+                            `${nickname}님의 출석 동그라미와 ${formatShuffleScore(Number(pointsSelect.value))}점 기록을 저장했습니다.`;
+                        refreshedStatus.dataset.error = 'false';
+                    }
+                } catch (error) {
+                    console.error('수기 셔플 출석 저장 실패:', error);
+                    status.textContent = `수기 출석을 저장하지 못했습니다: ${error.message || '연결 상태를 확인하세요.'}`;
+                    status.dataset.error = 'true';
+                    saveButton.disabled = false;
+                }
+            });
+
+            return section;
+        }
+
+        async function saveShuffleAttendanceImport(recordId, day, time, selectedEntries) {
+            if (!isAdmin()) throw new Error('운영진만 출석을 저장할 수 있습니다.');
+            if (!['13', '21'].includes(time)) throw new Error('출석 시간을 선택하세요.');
+            if (!selectedEntries.length) throw new Error('저장할 닉네임을 선택하세요.');
+
+            const [dailySnapshot, recordSnapshot] = await Promise.all([
+                database.ref(`shuffleRecords/${recordId}/daily`).once('value'),
+                database.ref(`shuffleRecords/${recordId}`).once('value')
+            ]);
+            const allDailyRecords = dailySnapshot.val() || {};
+            const record = recordSnapshot.val() || {};
+            const legacyDay = new Date(`${day}T00:00:00Z`);
+            const legacyDayKey = `${legacyDay.getUTCFullYear()}-${legacyDay.getUTCMonth() + 1}-${legacyDay.getUTCDate()}`;
+            const dayRecords = {
+                ...(allDailyRecords[legacyDayKey] || {}),
+                ...(allDailyRecords[day] || {})
+            };
+            const updates = {};
+            if (legacyDayKey !== day && allDailyRecords[legacyDayKey]) {
+                Object.entries(dayRecords).forEach(([memberKey, participant]) => {
+                    updates[`shuffleRecords/${recordId}/daily/${day}/${memberKey}`] = participant;
+                });
+                updates[`shuffleRecords/${recordId}/daily/${legacyDayKey}`] = null;
+            }
+            const slotField = time === '13' ? 'time13Activities' : 'time21Activities';
+            const otherSlotField = time === '13' ? 'time21Activities' : 'time13Activities';
+            const asActivities = (value) => {
+                if (Array.isArray(value)) return value.filter(Boolean);
+                if (value && typeof value === 'object') return Object.values(value).filter(Boolean);
+                return String(value || '').split(/[|/]/).filter(Boolean);
+            };
+
+            selectedEntries.forEach(({ nickname, points }) => {
+                if (![0.5, 1].includes(points)) throw new Error(`${nickname}님의 점수를 확인하세요.`);
+                const memberKey = attendanceUserKey(nickname);
+                const previous = dayRecords[memberKey] ||
+                    Object.values(dayRecords).find((participant) => participant.nickname === nickname) || {};
+                const previousActivities = asActivities(previous.activities);
+                const previousTimeActivities = asActivities(previous[slotField]);
+                const previousOtherTimeActivities = asActivities(previous[otherSlotField]);
+                const previousEvents = asActivities(previous.events).length
+                    ? asActivities(previous.events)
+                    : previousActivities.filter((activity) =>
+                        !['3층전', '마무리', '5분전', '전초전'].includes(activity));
+                const oldSlotActivities = Array.isArray(previous[slotField])
+                    ? previousTimeActivities
+                    : previousTimeActivities.length
+                        ? previousTimeActivities
+                        : previousActivities.filter((activity) => ['3층전', '마무리'].includes(activity));
+                const existingSlotActivities = oldSlotActivities
+                    .filter((activity) => !['3층전', '마무리'].includes(activity));
+                const oldSlotCount = oldSlotActivities.filter((activity) =>
+                    ['3층전', '마무리'].includes(activity)).length;
+                const oldDailyScore = Number(previous.score) || 0;
+                const nonSlotScore = oldDailyScore - oldSlotCount * 0.5;
+                const markerActivities = points === 1
+                    ? ['3층전', '마무리']
+                    : [[...oldSlotActivities].find((activity) => ['3층전', '마무리'].includes(activity)) || '3층전'];
+                const slotActivities = [...existingSlotActivities, ...markerActivities];
+                const newDailyScore = Math.round((nonSlotScore + markerActivities.length * 0.5) * 2) / 2;
+                const oldTotalScore = Number(record.participants?.[memberKey]?.score ??
+                    previous.totalScore ?? oldDailyScore);
+                const totalScore = Math.round((oldTotalScore + newDailyScore - oldDailyScore) * 2) / 2;
+                const activities = time === '13'
+                    ? [...slotActivities, ...previousOtherTimeActivities, ...previousEvents]
+                    : [...previousOtherTimeActivities, ...slotActivities, ...previousEvents];
+                const dailyParticipant = {
+                    ...previous,
+                    nickname,
+                    activities: [...new Set(activities)].join('/'),
+                    time13Activities: time === '13' ? slotActivities : previousOtherTimeActivities,
+                    time21Activities: time === '21' ? slotActivities : previousOtherTimeActivities,
+                    events: previousEvents,
+                    score: newDailyScore,
+                    totalScore,
+                    rate: Math.round((totalScore / maxShuffleScore) * 100)
+                };
+                const participant = {
+                    ...(record.participants?.[memberKey] || {}),
+                    nickname,
+                    score: totalScore,
+                    rate: Math.round((totalScore / maxShuffleScore) * 100)
+                };
+                updates[`shuffleRecords/${recordId}/daily/${day}/${memberKey}`] = dailyParticipant;
+                updates[`shuffleRecords/${recordId}/participants/${memberKey}`] = participant;
+            });
+
+            await database.ref().update(updates);
+            const updatedDaily = { ...(record.daily || {}), [day]: { ...(record.daily?.[day] || {}), ...dayRecords } };
+            if (legacyDayKey !== day) delete updatedDaily[legacyDayKey];
+            shuffleRecordsCache[recordId] = {
+                ...record,
+                participants: { ...(record.participants || {}) },
+                daily: updatedDaily
+            };
+            Object.entries(updates).forEach(([path, value]) => {
+                const match = path.match(/^shuffleRecords\/[^/]+\/(participants|daily\/[^/]+)\/([^/]+)$/);
+                if (!match) return;
+                if (match[1] === 'participants') {
+                    shuffleRecordsCache[recordId].participants[match[2]] = value;
+                } else {
+                    const importedDay = match[1].slice('daily/'.length);
+                    shuffleRecordsCache[recordId].daily[importedDay] = {
+                        ...(shuffleRecordsCache[recordId].daily[importedDay] || {}),
+                        [match[2]]: value
+                    };
+                }
+            });
+        }
+
         function showShuffleDetails(recordId) {
             openShuffleRecordId = recordId;
             const panel = document.getElementById('shuffle-detail-panel');
             const record = shuffleRecordsCache[recordId] || {};
-            database.ref(`shuffleRecords/${recordId}/daily`).once('value')
+            return database.ref(`shuffleRecords/${recordId}/daily`).once('value')
                 .then((dailySnapshot) => [record, dailySnapshot.val() || {}])
                 .catch(() => [record, {}])
                 .then(([record, dailyRecords]) => {
@@ -5407,7 +6592,7 @@
 
                 const title = document.createElement('h3');
                 title.className = 'shuffle-detail-title';
-                title.textContent = '날짜별 참여 기록';
+                title.textContent = `${record.startDate || ''} ~ ${record.endDate || ''} · ${record.serverName || ''} 셔플 출석 현황`;
                 panel.appendChild(title);
 
                 const startDate = new Date(`${record.startDate}T00:00:00Z`);
@@ -5418,6 +6603,114 @@
                     const legacyDayKey = `${day.getUTCFullYear()}-${day.getUTCMonth() + 1}-${day.getUTCDate()}`;
                     days.push([dayKey, dailyRecords[dayKey] || dailyRecords[legacyDayKey] || {}]);
                 }
+
+                const attendanceTitle = document.createElement('h3');
+                attendanceTitle.className = 'shuffle-detail-title';
+                attendanceTitle.textContent = '날짜별 출석 (13시 / 21시)';
+                panel.appendChild(attendanceTitle);
+
+                const attendanceLegend = document.createElement('p');
+                attendanceLegend.className = 'shuffle-attendance-legend';
+                attendanceLegend.innerHTML = '<strong>○</strong> 시간 확인된 출석 <span class="legacy">○</span> 기존 기록 (시간 구분 없음)';
+                panel.appendChild(attendanceLegend);
+
+                const attendanceImporter = createShuffleAttendanceImporter(recordId, days);
+                if (attendanceImporter) panel.appendChild(attendanceImporter);
+                const manualAttendanceEntry = createShuffleAttendanceManualEntry(recordId, days);
+                if (manualAttendanceEntry) panel.appendChild(manualAttendanceEntry);
+
+                const attendanceGridWrapper = document.createElement('div');
+                attendanceGridWrapper.className = 'shuffle-attendance-grid-wrapper';
+                const attendanceGrid = document.createElement('table');
+                attendanceGrid.className = 'shuffle-detail-table shuffle-attendance-grid';
+                const attendanceHead = document.createElement('thead');
+                const dateHeaderRow = document.createElement('tr');
+                const nicknameHeader = document.createElement('th');
+                nicknameHeader.rowSpan = 2;
+                nicknameHeader.textContent = '닉네임';
+                dateHeaderRow.appendChild(nicknameHeader);
+                days.forEach(([day]) => {
+                    const dateHeader = document.createElement('th');
+                    dateHeader.colSpan = 2;
+                    dateHeader.textContent = day.replace(/-/g, '.');
+                    dateHeaderRow.appendChild(dateHeader);
+                });
+                const timeHeaderRow = document.createElement('tr');
+                days.forEach(() => {
+                    ['13시', '21시'].forEach((time) => {
+                        const timeHeader = document.createElement('th');
+                        timeHeader.textContent = time;
+                        timeHeaderRow.appendChild(timeHeader);
+                    });
+                });
+                attendanceHead.append(dateHeaderRow, timeHeaderRow);
+                attendanceGrid.appendChild(attendanceHead);
+
+                const attendanceBody = document.createElement('tbody');
+                const attendanceMembers = [...memberLists.admin, ...memberLists.normal]
+                    .filter((member) => !shuffleRecordNicknameFilter ||
+                        member.nickname.toUpperCase().includes(shuffleRecordNicknameFilter))
+                    .sort((first, second) => compareMemberOrder(first, second));
+                const participantsByDay = days.map(([, dayParticipants]) =>
+                    new Map(Object.values(dayParticipants).map((participant) => [participant.nickname, participant])));
+                const slotAttendancePoints = (participant, field) => {
+                    const activities = participant?.[field];
+                    if (Array.isArray(activities)) return activities.filter(Boolean).length * 0.5;
+                    if (activities && typeof activities === 'object') {
+                        return Object.values(activities).filter(Boolean).length * 0.5;
+                    }
+                    return String(activities || '').split('|').filter(Boolean).length * 0.5;
+                };
+                const legacySlotAttendancePoints = (participant) =>
+                    String(participant?.activities || '')
+                        .split(/[\/|,]/)
+                        .filter((activity) => ['3층전', '마무리'].includes(activity.trim())).length * 0.5;
+                const appendAttendanceCircle = (cell, points, legacy = false) => {
+                    if (legacy) {
+                        cell.classList.add('shuffle-attendance-legacy');
+                        cell.title = '기존 기록: 출석은 확인되지만 13시/21시 구분 정보가 없습니다.';
+                    } else {
+                        cell.title = '출석 완료';
+                    }
+                    const circle = document.createElement('span');
+                    circle.className = 'shuffle-attendance-circle';
+                    circle.textContent = '○';
+                    circle.setAttribute('aria-label', '출석 완료');
+                    const pointLabel = document.createElement('span');
+                    pointLabel.className = 'shuffle-attendance-points';
+                    pointLabel.textContent = `${formatShuffleScore(points)}점`;
+                    cell.append(circle, pointLabel);
+                };
+                attendanceMembers.forEach((member) => {
+                    const row = document.createElement('tr');
+                    const nicknameCell = document.createElement('td');
+                    nicknameCell.textContent = member.nickname;
+                    row.appendChild(nicknameCell);
+                    participantsByDay.forEach((participantMap) => {
+                        const participant = participantMap.get(member.nickname);
+                        const hasExplicitTimeData = participant &&
+                            (Object.prototype.hasOwnProperty.call(participant, 'time13Activities') ||
+                                Object.prototype.hasOwnProperty.call(participant, 'time21Activities'));
+                        const legacyPoints = legacySlotAttendancePoints(participant);
+                        if (!hasExplicitTimeData && legacyPoints) {
+                            const cell = document.createElement('td');
+                            cell.colSpan = 2;
+                            appendAttendanceCircle(cell, legacyPoints, true);
+                            row.appendChild(cell);
+                            return;
+                        }
+                        ['time13Activities', 'time21Activities'].forEach((field) => {
+                            const cell = document.createElement('td');
+                            const points = slotAttendancePoints(participant, field);
+                            if (points) appendAttendanceCircle(cell, points);
+                            row.appendChild(cell);
+                        });
+                    });
+                    attendanceBody.appendChild(row);
+                });
+                attendanceGrid.appendChild(attendanceBody);
+                attendanceGridWrapper.appendChild(attendanceGrid);
+                panel.appendChild(attendanceGridWrapper);
 
                 days.forEach(([day, participants]) => {
                     const dayTitle = document.createElement('h4');
@@ -5459,9 +6752,9 @@
                             ? participant.activities.replace(/,\s*/g, '/')
                             : '참여 없음';
                         const scoreCell = document.createElement('td');
-                        scoreCell.textContent = `${Number(participant.score) || 0}점`;
+                        scoreCell.textContent = `${formatShuffleScore(participant.score)}점`;
                         const totalScoreCell = document.createElement('td');
-                        totalScoreCell.textContent = `${Number(participant.totalScore) || 0}점`;
+                        totalScoreCell.textContent = `${formatShuffleScore(participant.totalScore)}점`;
                         const rateCell = document.createElement('td');
                         rateCell.textContent = `${Number(participant.rate) || 0}%`;
                         row.append(nicknameCell, activitiesCell, scoreCell, totalScoreCell, rateCell);
@@ -5521,7 +6814,13 @@
                         .sort((first, second) => compareMemberOrder(first, second));
                     groupParticipants.forEach((participant) => {
                         const row = document.createElement('tr');
-                        row.innerHTML = `<td>${participant.nickname}</td><td>${Number(participant.score) || 0}점</td><td>${Number(participant.rate) || 0}%</td>`;
+                        const nicknameCell = document.createElement('td');
+                        nicknameCell.textContent = participant.nickname;
+                        const scoreCell = document.createElement('td');
+                        scoreCell.textContent = `${formatShuffleScore(participant.score)}점`;
+                        const rateCell = document.createElement('td');
+                        rateCell.textContent = `${Number(participant.rate) || 0}%`;
+                        row.append(nicknameCell, scoreCell, rateCell);
                         participantBody.appendChild(row);
                     });
                     participantTable.appendChild(participantBody);
@@ -6948,6 +8247,8 @@
                 const dailyParticipant = {
                     nickname,
                     activities: [...time13, ...time21, ...events].join('/'),
+                    time13Activities: [...time13],
+                    time21Activities: [...time21],
                     score: dailyScore,
                     totalScore: score,
                     rate: Math.round((score / maxShuffleScore) * 100)
@@ -7012,6 +8313,8 @@
             const dailyParticipant = {
                 nickname,
                 activities: [...time13, ...time21, ...events].join('/') || '',
+                time13Activities: [...time13],
+                time21Activities: [...time21],
                 score: dailyScore,
                 totalScore,
                 rate: Math.round((totalScore / maxShuffleScore) * 100)
