@@ -846,6 +846,10 @@
             font-weight: 600;
         }
 
+        .shuffle-attendance-mobile-list {
+            display: none;
+        }
+
         .shuffle-attendance-grid .shuffle-attendance-circle {
             color: #16a34a;
             font-size: 18px;
@@ -3686,6 +3690,127 @@
             .mobile-more-panel .admin-only.hidden,
             .mobile-more-panel .member-restricted.hidden {
                 display: none;
+            }
+
+            .shuffle-attendance-grid-wrapper {
+                display: none;
+            }
+
+            .shuffle-attendance-mobile-list {
+                display: grid;
+                gap: 10px;
+                margin: 0 0 20px;
+            }
+
+            .shuffle-attendance-mobile-card {
+                min-width: 0;
+                padding: 12px;
+                border: 1px solid #334155;
+                border-radius: 12px;
+                background: #111827;
+            }
+
+            .shuffle-attendance-mobile-card-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+            .shuffle-attendance-mobile-nickname {
+                overflow: hidden;
+                color: #f8fafc;
+                font-size: 14px;
+                font-weight: 800;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .shuffle-attendance-mobile-score {
+                flex: 0 0 auto;
+                padding: 4px 8px;
+                border-radius: 7px;
+                background: #fef3c7;
+                color: #92400e;
+                font-size: 12px;
+                font-weight: 800;
+            }
+
+            .shuffle-attendance-mobile-days {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 6px;
+            }
+
+            .shuffle-attendance-mobile-day {
+                min-width: 0;
+                padding: 7px;
+                border: 1px solid #263448;
+                border-radius: 8px;
+                background: #0b1220;
+            }
+
+            .shuffle-attendance-mobile-date {
+                display: block;
+                margin-bottom: 5px;
+                color: #cbd5e1;
+                font-size: 10px;
+                font-weight: 700;
+            }
+
+            .shuffle-attendance-mobile-slots {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 4px;
+            }
+
+            .shuffle-attendance-mobile-slot {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 3px;
+                min-width: 0;
+                padding: 4px 2px;
+                border-radius: 5px;
+                background: #172235;
+                color: #94a3b8;
+                font-size: 9px;
+                white-space: nowrap;
+            }
+
+            .shuffle-attendance-mobile-slot.is-present {
+                background: #123026;
+                color: #86efac;
+                font-weight: 800;
+            }
+
+            body:not(.theme-dark) .shuffle-attendance-mobile-card {
+                border-color: #cbd5e1;
+                background: #ffffff;
+            }
+
+            body:not(.theme-dark) .shuffle-attendance-mobile-nickname {
+                color: #111827;
+            }
+
+            body:not(.theme-dark) .shuffle-attendance-mobile-day {
+                border-color: #cbd5e1;
+                background: #f8fafc;
+            }
+
+            body:not(.theme-dark) .shuffle-attendance-mobile-date {
+                color: #334155;
+            }
+
+            body:not(.theme-dark) .shuffle-attendance-mobile-slot {
+                background: #e2e8f0;
+                color: #475569;
+            }
+
+            body:not(.theme-dark) .shuffle-attendance-mobile-slot.is-present {
+                background: #dcfce7;
+                color: #166534;
             }
         }
     </style>
@@ -6830,6 +6955,8 @@
 
                 const attendanceGridWrapper = document.createElement('div');
                 attendanceGridWrapper.className = 'shuffle-attendance-grid-wrapper';
+                const attendanceMobileList = document.createElement('div');
+                attendanceMobileList.className = 'shuffle-attendance-mobile-list';
                 const attendanceGrid = document.createElement('table');
                 attendanceGrid.className = 'shuffle-detail-table shuffle-attendance-grid';
                 const attendanceHead = document.createElement('thead');
@@ -6905,7 +7032,21 @@
                     finalScoreCell.textContent = `${formatShuffleScore(finalScore)}점`;
                     finalScoreCell.title = '셔플 기간 최종 점수';
                     row.appendChild(finalScoreCell);
-                    participantsByDay.forEach((participantMap) => {
+                    const mobileCard = document.createElement('article');
+                    mobileCard.className = 'shuffle-attendance-mobile-card';
+                    const mobileHeader = document.createElement('div');
+                    mobileHeader.className = 'shuffle-attendance-mobile-card-header';
+                    const mobileNickname = document.createElement('strong');
+                    mobileNickname.className = 'shuffle-attendance-mobile-nickname';
+                    mobileNickname.textContent = member.nickname;
+                    const mobileScore = document.createElement('span');
+                    mobileScore.className = 'shuffle-attendance-mobile-score';
+                    mobileScore.textContent = `${formatShuffleScore(finalScore)}점`;
+                    mobileScore.title = '셔플 기간 최종 점수';
+                    mobileHeader.append(mobileNickname, mobileScore);
+                    const mobileDays = document.createElement('div');
+                    mobileDays.className = 'shuffle-attendance-mobile-days';
+                    participantsByDay.forEach((participantMap, dayIndex) => {
                         const participant = participantMap.get(member.nickname);
                         const slotPoints = getShuffleDailyAttendanceSlotPoints(participant);
                         slotPoints.forEach((points, slotIndex) => {
@@ -6919,12 +7060,36 @@
                             }
                             row.appendChild(cell);
                         });
+                        const mobileDay = document.createElement('div');
+                        mobileDay.className = 'shuffle-attendance-mobile-day';
+                        const dateLabel = document.createElement('span');
+                        dateLabel.className = 'shuffle-attendance-mobile-date';
+                        dateLabel.textContent = days[dayIndex][0].slice(5).replace('-', '/');
+                        const mobileSlots = document.createElement('div');
+                        mobileSlots.className = 'shuffle-attendance-mobile-slots';
+                        slotPoints.forEach((points, slotIndex) => {
+                            const slot = document.createElement('span');
+                            slot.className = `shuffle-attendance-mobile-slot${points ? ' is-present' : ''}`;
+                            const time = slotIndex === 0 ? '13시' : '21시';
+                            slot.textContent = points
+                                ? `${time.slice(0, 2)} ○ ${formatShuffleScore(points)}`
+                                : `${time.slice(0, 2)} —`;
+                            slot.setAttribute('aria-label', points
+                                ? `${time} 출석 ${formatShuffleScore(points)}점`
+                                : `${time} 미출석`);
+                            mobileSlots.appendChild(slot);
+                        });
+                        mobileDay.append(dateLabel, mobileSlots);
+                        mobileDays.appendChild(mobileDay);
                     });
                     attendanceBody.appendChild(row);
+                    mobileCard.append(mobileHeader, mobileDays);
+                    attendanceMobileList.appendChild(mobileCard);
                 });
                 attendanceGrid.appendChild(attendanceBody);
                 attendanceGridWrapper.appendChild(attendanceGrid);
                 panel.appendChild(attendanceGridWrapper);
+                panel.appendChild(attendanceMobileList);
 
                 days.forEach(([day, participants]) => {
                     const dayTitle = document.createElement('h4');
