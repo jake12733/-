@@ -5191,7 +5191,7 @@
         });
         localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
 
-        const blindPowerMembers = [
+        const defaultBlindPowerMembers = [
             ['바이퍼', 'DOKDO라닷지', '1,921,809'],
             ['카니지', 'DOKDO마왕', '1,914,321'],
             ['카니지', 'DOKDO한국', '1,839,888'],
@@ -5204,6 +5204,16 @@
             ['바이퍼', 'DOKDO결마로', '1,607,522'],
             ['바이퍼', 'DOKDO파도', '1,589,213']
         ];
+        let blindPowerMembers;
+        try {
+            const savedBlindPowerMembers = JSON.parse(localStorage.getItem('dokdoBlindPowerMembers') || 'null');
+            blindPowerMembers = Array.isArray(savedBlindPowerMembers)
+                ? savedBlindPowerMembers
+                : defaultBlindPowerMembers.map((entry) => [...entry]);
+        } catch (error) {
+            console.error('블라인드 전투력 명단을 불러오지 못했습니다:', error);
+            blindPowerMembers = defaultBlindPowerMembers.map((entry) => [...entry]);
+        }
         const blindPowerVersion = '2026-10-06-power';
         function applyBlindPowerValues() {
             const members = Object.values(memberLists).flat();
@@ -5218,8 +5228,10 @@
             ];
             defaults.forEach(([className, nickname, power]) => {
                 const entry = currentEntries.get(nickname);
-                if (entry) { entry[0] = className; entry[2] = power; }
-                else blindPowerMembers.push([className, nickname, power]);
+                if (entry) {
+                    entry[0] = className;
+                    entry[2] = power;
+                }
                 const member = members.find((candidate) => candidate.nickname === nickname);
                 if (member) { member.className = className; member.power = power; }
             });
@@ -5248,6 +5260,7 @@
                 member.power = power;
             }
         });
+        localStorage.setItem('dokdoBlindPowerMembers', JSON.stringify(blindPowerMembers));
         localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
 
         function renderBlindPowerMembers() {
@@ -5342,6 +5355,7 @@
 
         function saveMemberLists() {
             localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
+            localStorage.setItem('dokdoBlindPowerMembers', JSON.stringify(blindPowerMembers));
             persistClanRoster();
         }
 
@@ -5856,9 +5870,11 @@
 
         const secretAgentOrderVersion = '2026-10-06';
         if (localStorage.getItem('dokdoSecretAgentOrderVersion') !== secretAgentOrderVersion) {
-            memberOrder = memberOrder.filter((nickname) => nickname !== '비밀요원');
-            const swallowIndex = memberOrder.indexOf('DOKDO제비');
-            memberOrder.splice(swallowIndex >= 0 ? swallowIndex + 1 : memberOrder.length, 0, '비밀요원');
+            if (memberOrder.includes('비밀요원')) {
+                memberOrder = memberOrder.filter((nickname) => nickname !== '비밀요원');
+                const swallowIndex = memberOrder.indexOf('DOKDO제비');
+                memberOrder.splice(swallowIndex >= 0 ? swallowIndex + 1 : memberOrder.length, 0, '비밀요원');
+            }
             localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
             localStorage.setItem('dokdoSecretAgentOrderVersion', secretAgentOrderVersion);
         }
@@ -5911,19 +5927,11 @@
             memberOrder = roster.memberOrder || memberOrder;
             if (Array.isArray(roster.blindPowerMembers)) {
                 blindPowerMembers.splice(0, blindPowerMembers.length, ...roster.blindPowerMembers);
+                localStorage.setItem('dokdoBlindPowerMembers', JSON.stringify(blindPowerMembers));
             }
             if (roster.powerVersion !== blindPowerVersion) {
                 applyBlindPowerValues();
                 rosterPowerUpdated = true;
-            }
-            if (!blindPowerMembers.some(([, nickname]) => nickname === '비밀요원')) {
-                const swallowEntry = blindPowerMembers.findIndex(([, nickname]) => nickname === 'DOKDO제비');
-                blindPowerMembers.splice(swallowEntry >= 0 ? swallowEntry + 1 : blindPowerMembers.length, 0,
-                    ['미정', '비밀요원', '1,778,000']);
-            }
-            if (!memberOrder.includes('비밀요원')) {
-                const swallowIndex = memberOrder.indexOf('DOKDO제비');
-                memberOrder.splice(swallowIndex >= 0 ? swallowIndex + 1 : memberOrder.length, 0, '비밀요원');
             }
             localStorage.setItem('dokdoMembers', JSON.stringify(memberLists));
             localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder));
