@@ -5860,6 +5860,13 @@
             if (!confirm(`${member.nickname}님을 명단에서 삭제하시겠습니까?`)) return;
 
             memberLists[listName].splice(index, 1);
+            const blindEntryIndex = blindPowerMembers.findIndex(([, nickname]) =>
+                nickname === member.nickname
+            );
+            if (blindEntryIndex >= 0) {
+                blindPowerMembers.splice(blindEntryIndex, 1);
+                blindPowerNicknames.delete(member.nickname);
+            }
             memberOrder = memberOrder.filter((nickname) => nickname !== member.nickname);
             saveMemberLists();
             localStorage.setItem('dokdoMemberOrder', JSON.stringify(memberOrder)); persistClanRoster();
