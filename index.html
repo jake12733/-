@@ -6491,7 +6491,7 @@
             if (!isAdmin()) return null;
 
             const section = document.createElement('section');
-            section.className = 'shuffle-attendance-import';
+            section.className = 'shuffle-attendance-import admin-only';
             section.innerHTML = `
                 <h4>출석 스크린샷 인식</h4>
                 <label>출석 날짜<select class="shuffle-attendance-import-date"></select></label>
@@ -6782,7 +6782,7 @@
             if (!isAdmin()) return null;
 
             const section = document.createElement('section');
-            section.className = 'shuffle-attendance-manual-entry';
+            section.className = 'shuffle-attendance-manual-entry admin-only';
             section.innerHTML = `
                 <h4>출석 칸 선택 · 점수 추가 / 제거</h4>
                 <label>출석 날짜<select class="shuffle-attendance-manual-date"></select></label>
@@ -8578,7 +8578,10 @@
             return saveAttendanceRecord(row, activityAddition).then(() => true).catch((error) => {
                 console.error('출석 기록 저장 실패:', error);
                 applyAttendanceRecords(attendanceRecordsCache);
-                showAttendanceNotice(`${row.cells[0].textContent}님의 출석 기록을 저장하지 못했습니다. 연결 상태를 확인한 뒤 다시 시도하세요.`);
+                const message = error.attendanceCommitted
+                    ? '출석은 저장됐지만 셔플 기록 동기화에 실패했습니다.'
+                    : '출석 기록을 저장하지 못했습니다.';
+                showAttendanceNotice(`${row.cells[0].textContent}님의 ${message} 연결 상태를 확인한 뒤 다시 시도하세요.`);
                 return false;
             });
         }
@@ -8599,33 +8602,29 @@
             return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         }
 
+        function attendanceDailyScore(record) {
+            const time13 = String(record.time13Activities || '').split('|').filter(Boolean);
+            const time21 = String(record.time21Activities || '').split('|').filter(Boolean);
+            const events = String(record.events || '').split('|').filter(Boolean);
+            return time13.length * 0.5 + time21.length * 0.5 +
+                Number(events.includes('에노크')) * 0.5 + Number(events.includes('마슈미드')) * 0.5 +
+                Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
+                Number(events.includes('VCC') && record.vccBonusAwarded === true) +
+                Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2 +
+                getLuchefAttendanceScore(events) + Number(events.includes('한시간 이상')) * 2;
+        }
+
         function attendanceRecordBaseScore(record) {
             const baseScore = Number(record.baseScore);
             if (Number.isFinite(baseScore)) return baseScore;
 
             const recordedScore = Number(record.score);
             if (!Number.isFinite(recordedScore)) return 0;
-
-            const time13 = String(record.time13Activities || '').split('|').filter(Boolean);
-            const time21 = String(record.time21Activities || '').split('|').filter(Boolean);
-            const events = String(record.events || '').split('|').filter(Boolean);
-            const dailyScore = time13.length * 0.5 + time21.length * 0.5 +
-                Number(events.includes('에노크')) * 0.5 + Number(events.includes('마슈미드')) * 0.5 +
-                Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
-                Number(events.includes('VCC') && record.vccBonusAwarded === true) +
-                Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2 +
-                getLuchefAttendanceScore(events) + Number(events.includes('한시간 이상')) * 2;
-            return recordedScore - dailyScore;
+            return recordedScore - attendanceDailyScore(record);
         }
 
         function resetDailyAttendance() {
-            document.querySelectorAll('#attendance-body tr.attendance-member-row').forEach((row) => {
-                row.dataset.baseScore = Number(row.cells[1].textContent.match(/^\d+(?:\.\d+)?/)?.[0]) || 0;
-                row.dataset.time13Activities = '';
-                row.dataset.time21Activities = '';
-                row.dataset.events = '';
-                updateAttendanceRow(row);
-            });
+            applyAttendanceRecords(attendanceRecordsCache);
             document.getElementById('attendance-notice').textContent = '';
         }
 
@@ -8757,28 +8756,60 @@
             return nickname === 'DOKDO천상계' ? 'DOKDO한빠' : nickname;
         }
 
+        const attendanceSaveQueues = new Map();
+        function queueAttendanceSave(participantKey, save) {
+            const previousSave = attendanceSaveQueues.get(participantKey) || Promise.resolve();
+            const queuedSave = previousSave.catch(() => {}).then(save);
+            attendanceSaveQueues.set(participantKey, queuedSave);
+            return queuedSave.finally(() => {
+                if (attendanceSaveQueues.get(participantKey) === queuedSave) {
+                    attendanceSaveQueues.delete(participantKey);
+                }
+            });
+        }
+
         function saveAttendanceActivity(row, activityAddition) {
+            const participantKey = attendanceUserKey(row.cells[0].textContent);
+            return queueAttendanceSave(participantKey, () =>
+                saveAttendanceActivityNow(row, activityAddition));
+        }
+
+        async function saveAttendanceActivityNow(row, activityAddition) {
             const nickname = row.cells[0].textContent;
             const participantKey = attendanceUserKey(nickname);
             const recordId = currentShuffleId();
             const currentDay = currentAttendanceDay();
             const attendanceRef = database.ref(`attendance/${participantKey}`);
+            const participantSnapshot = await database.ref(
+                `shuffleRecords/${recordId}/participants/${participantKey}`
+            ).once('value');
+            const shuffleParticipant = participantSnapshot.val();
+            const shuffleScore = shuffleParticipant && Number.isFinite(Number(shuffleParticipant.score))
+                ? Number(shuffleParticipant.score)
+                : null;
 
-            return attendanceRef.transaction((currentRecord) => {
+            const result = await attendanceRef.transaction((currentRecord) => {
                 const sameShuffle = currentRecord?.shuffleId === recordId;
                 const sameDay = sameShuffle && currentRecord.attendanceDay === currentDay;
-                const record = sameDay
-                    ? { ...currentRecord, baseScore: attendanceRecordBaseScore(currentRecord) }
-                    : {
+                const record = sameDay ? { ...currentRecord } : {
                         nickname: legacyAttendanceName(nickname),
                         shuffleId: recordId,
                         attendanceDay: currentDay,
-                        baseScore: sameShuffle ? Number(currentRecord.score) || 0 : 0,
+                        baseScore: shuffleScore ?? (sameShuffle ? Number(currentRecord.score) || 0 : 0),
                         time13Activities: '',
                         time21Activities: '',
                         events: '',
-                        vccBonusAwarded: sameShuffle && currentRecord.vccBonusAwarded === true
+                        vccBonusAwarded: sameShuffle && currentRecord?.vccBonusAwarded === true
                     };
+                if (sameDay) {
+                    record.baseScore = attendanceRecordBaseScore(currentRecord);
+                    if (shuffleScore !== null) {
+                        record.baseScore = Math.max(
+                            record.baseScore,
+                            shuffleScore - attendanceDailyScore(currentRecord)
+                        );
+                    }
+                }
                 const existingActivities = String(record[activityAddition.field] || '').split('|').filter(Boolean);
                 if (!existingActivities.includes(activityAddition.activity)) {
                     existingActivities.push(activityAddition.activity);
@@ -8786,74 +8817,95 @@
                 record[activityAddition.field] = existingActivities.join('|');
                 if (activityAddition.activity === 'VCC') record.vccBonusAwarded = true;
 
-                const time13 = String(record.time13Activities || '').split('|').filter(Boolean);
-                const time21 = String(record.time21Activities || '').split('|').filter(Boolean);
-                const events = String(record.events || '').split('|').filter(Boolean);
-                const dailyScore = time13.length * 0.5 + time21.length * 0.5 +
-                    Number(events.includes('에노크')) * 0.5 + Number(events.includes('마슈미드')) * 0.5 +
-                    Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
-                    Number(events.includes('VCC') && record.vccBonusAwarded === true) +
-                    Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2 +
-                    getLuchefAttendanceScore(events) + Number(events.includes('한시간 이상')) * 2;
+                const dailyScore = attendanceDailyScore(record);
                 record.score = (Number(record.baseScore) || 0) + dailyScore;
                 record.updatedAt = firebase.database.ServerValue.TIMESTAMP;
                 return record;
-            }).then((result) => {
-                if (!result.committed) throw new Error('출석 기록 저장이 완료되지 않았습니다.');
-                const attendanceRecord = result.snapshot.val();
-                const time13 = String(attendanceRecord.time13Activities || '').split('|').filter(Boolean);
-                const time21 = String(attendanceRecord.time21Activities || '').split('|').filter(Boolean);
-                const events = String(attendanceRecord.events || '').split('|').filter(Boolean);
-                const dailyScore = Number(attendanceRecord.score) - (Number(attendanceRecord.baseScore) || 0);
-                const score = Number(attendanceRecord.score) || 0;
-                const participant = {
-                    nickname,
-                    score,
-                    rate: Math.round((score / maxShuffleScore) * 100)
-                };
-                const dailyParticipant = {
-                    nickname,
-                    activities: [...time13, ...time21, ...events].join('/'),
-                    time13Activities: [...time13],
-                    time21Activities: [...time21],
-                    events,
-                    vccBonusAwarded: attendanceRecord.vccBonusAwarded === true,
-                    score: dailyScore,
-                    totalScore: score,
-                    rate: Math.round((score / maxShuffleScore) * 100)
-                };
-                row.dataset.time13Activities = attendanceRecord.time13Activities || '';
-                row.dataset.time21Activities = attendanceRecord.time21Activities || '';
-                row.dataset.events = attendanceRecord.events || '';
-                row.dataset.baseScore = String(Number(attendanceRecord.baseScore) || 0);
-                row.dataset.vccBonusAwarded = attendanceRecord.vccBonusAwarded ? 'true' : 'false';
-                updateAttendanceVccButton(row);
-                updateAttendanceRow(row, false);
-                attendanceRecordsCache[participantKey] = attendanceRecord;
-
-                const cachedRecord = {
-                    ...(shuffleRecordsCache[recordId] || {}),
-                    startDate: shuffleRecordsCache[recordId]?.startDate || dateInputValue(new Date(Number(recordId))),
-                    endDate: shuffleRecordsCache[recordId]?.endDate || dateInputValue(new Date(Number(recordId) + 13 * 86400000)),
-                    serverName: shuffleRecordsCache[recordId]?.serverName || document.getElementById('server-name').value,
-                    participants: { ...(shuffleRecordsCache[recordId]?.participants || {}), [participantKey]: participant },
-                    daily: { ...(shuffleRecordsCache[recordId]?.daily || {}) }
-                };
-                cachedRecord.daily[currentDay] = {
-                    ...(cachedRecord.daily[currentDay] || {}),
-                    [participantKey]: dailyParticipant
-                };
-                const updates = {
-                    [`shuffleRecords/${recordId}/startDate`]: cachedRecord.startDate,
-                    [`shuffleRecords/${recordId}/endDate`]: cachedRecord.endDate,
-                    [`shuffleRecords/${recordId}/serverName`]: cachedRecord.serverName,
-                    [`shuffleRecords/${recordId}/participants/${participantKey}`]: participant,
-                    [`shuffleRecords/${recordId}/daily/${currentDay}/${participantKey}`]: dailyParticipant
-                };
-                return database.ref().update(updates).then(() => {
-                    shuffleRecordsCache[recordId] = cachedRecord;
-                });
             });
+            if (!result.committed) throw new Error('출석 기록 저장이 완료되지 않았습니다.');
+
+            const attendanceRecord = result.snapshot.val();
+            row.dataset.time13Activities = attendanceRecord.time13Activities || '';
+            row.dataset.time21Activities = attendanceRecord.time21Activities || '';
+            row.dataset.events = attendanceRecord.events || '';
+            row.dataset.baseScore = String(Number(attendanceRecord.baseScore) || 0);
+            row.dataset.vccBonusAwarded = attendanceRecord.vccBonusAwarded ? 'true' : 'false';
+            updateAttendanceVccButton(row);
+            updateAttendanceRow(row, false);
+            attendanceRecordsCache[participantKey] = attendanceRecord;
+
+            const dailyRef = database.ref(
+                `shuffleRecords/${recordId}/daily/${currentDay}/${participantKey}`
+            );
+            const dailyResult = await dailyRef.transaction((currentDaily) => {
+                const mergeActivities = (first, second) => [...new Set([
+                    ...String(first || '').split('|').filter(Boolean),
+                    ...String(second || '').split('|').filter(Boolean)
+                ])];
+                const merged = {
+                    time13Activities: mergeActivities(currentDaily?.time13Activities, attendanceRecord.time13Activities).join('|'),
+                    time21Activities: mergeActivities(currentDaily?.time21Activities, attendanceRecord.time21Activities).join('|'),
+                    events: mergeActivities(currentDaily?.events, attendanceRecord.events).join('|'),
+                    vccBonusAwarded: currentDaily?.vccBonusAwarded === true ||
+                        attendanceRecord.vccBonusAwarded === true
+                };
+                const baseScore = Number(attendanceRecord.baseScore) || 0;
+                const score = attendanceDailyScore(merged);
+                const totalScore = baseScore + score;
+                return {
+                    ...currentDaily,
+                    nickname,
+                    activities: [
+                        ...merged.time13Activities.split('|').filter(Boolean),
+                        ...merged.time21Activities.split('|').filter(Boolean),
+                        ...merged.events.split('|').filter(Boolean)
+                    ].join('/'),
+                    ...merged,
+                    baseScore,
+                    score,
+                    totalScore,
+                    rate: Math.round((totalScore / maxShuffleScore) * 100)
+                };
+            });
+            if (!dailyResult.committed) {
+                const error = new Error('출석은 저장됐지만 셔플 날짜별 기록이 저장되지 않았습니다.');
+                error.attendanceCommitted = true;
+                throw error;
+            }
+
+            const dailyParticipant = dailyResult.snapshot.val();
+            const score = Number(dailyParticipant.totalScore) || 0;
+            const participant = {
+                ...(shuffleParticipant || {}),
+                nickname,
+                score,
+                rate: Math.round((score / maxShuffleScore) * 100)
+            };
+            const cachedRecord = {
+                ...(shuffleRecordsCache[recordId] || {}),
+                startDate: shuffleRecordsCache[recordId]?.startDate || dateInputValue(new Date(Number(recordId))),
+                endDate: shuffleRecordsCache[recordId]?.endDate || dateInputValue(new Date(Number(recordId) + 13 * 86400000)),
+                serverName: shuffleRecordsCache[recordId]?.serverName || document.getElementById('server-name').value,
+                participants: { ...(shuffleRecordsCache[recordId]?.participants || {}), [participantKey]: participant },
+                daily: { ...(shuffleRecordsCache[recordId]?.daily || {}) }
+            };
+            cachedRecord.daily[currentDay] = {
+                ...(cachedRecord.daily[currentDay] || {}),
+                [participantKey]: dailyParticipant
+            };
+            const updates = {
+                [`shuffleRecords/${recordId}/startDate`]: cachedRecord.startDate,
+                [`shuffleRecords/${recordId}/endDate`]: cachedRecord.endDate,
+                [`shuffleRecords/${recordId}/serverName`]: cachedRecord.serverName,
+                [`shuffleRecords/${recordId}/participants/${participantKey}`]: participant
+            };
+            try {
+                await database.ref().update(updates);
+            } catch (error) {
+                error.attendanceCommitted = true;
+                throw error;
+            }
+            shuffleRecordsCache[recordId] = cachedRecord;
         }
 
         function saveAttendanceRecord(row, activityAddition = null) {
@@ -8887,6 +8939,7 @@
                 events,
                 vccBonusAwarded,
                 score: dailyScore,
+                baseScore: Number(row.dataset.baseScore) || 0,
                 totalScore,
                 rate: Math.round((totalScore / maxShuffleScore) * 100)
             };
@@ -8979,9 +9032,19 @@
                 row.dataset.time13Activities = isToday ? filteredTime13.join('|') : '';
                 row.dataset.time21Activities = isToday ? filteredTime21.join('|') : '';
                 row.dataset.events = isToday ? filteredEvents.join('|') : '';
+                const shuffleParticipantScore = Number(shuffleRecordsCache[currentShuffleId()]?.participants?.[
+                    attendanceUserKey(row.cells[0].textContent)
+                ]?.score);
                 row.dataset.baseScore = isToday
-                    ? attendanceRecordBaseScore(record)
-                    : Number(record.score) || 0;
+                    ? Number.isFinite(shuffleParticipantScore)
+                        ? Math.max(
+                            attendanceRecordBaseScore(record),
+                            shuffleParticipantScore - attendanceDailyScore(record)
+                        )
+                        : attendanceRecordBaseScore(record)
+                    : Number.isFinite(shuffleParticipantScore)
+                        ? shuffleParticipantScore
+                        : Number(record.score) || 0;
                 row.dataset.vccBonusAwarded = record.vccBonusAwarded ? 'true' : 'false';
                 updateAttendanceVccButton(row);
                 updateAttendanceRow(row, false);
@@ -9093,31 +9156,96 @@
             });
         }
 
-        function adjustAttendanceScore(nickname, amount) {
+        async function adjustAttendanceScore(nickname, amount) {
+            if (!isAdmin()) return;
+            return queueAttendanceSave(attendanceUserKey(nickname), () =>
+                adjustAttendanceScoreNow(nickname, amount));
+        }
+
+        async function adjustAttendanceScoreNow(nickname, amount) {
             if (!isAdmin()) return;
             const row = [...document.querySelectorAll('#attendance-body tr.attendance-member-row')]
                 .find((candidate) => candidate.cells[0].textContent === nickname);
             if (!row) return;
 
-            const time13 = String(row.dataset.time13Activities || '').split('|').filter(Boolean);
-            const time21 = String(row.dataset.time21Activities || '').split('|').filter(Boolean);
-            const events = String(row.dataset.events || '').split('|').filter(Boolean);
-            const dailyScore = time13.length * 0.5 + time21.length * 0.5 +
-                Number(events.includes('에노크')) * 0.5 + Number(events.includes('마슈미드')) * 0.5 +
-                Number(events.includes('쟁탈전')) + Number(events.includes('점령전')) +
-                Number(events.includes('VCC') && row.dataset.vccBonusAwarded === 'true') +
-                Number(events.includes('클랜임무')) * 2 + Number(events.includes('클랜수호')) * 2 +
-                getLuchefAttendanceScore(events) + Number(events.includes('한시간 이상')) * 2;
-            const currentBaseScore = Number(row.dataset.baseScore) || 0;
-            const nextBaseScore = Math.max(-dailyScore, currentBaseScore + amount);
-            if (nextBaseScore === currentBaseScore) return;
+            const key = attendanceUserKey(nickname);
+            const recordId = currentShuffleId();
+            const currentDay = currentAttendanceDay();
+            let appliedAmount = 0;
+            let scoreCommitted = false;
+            try {
+                const participantSnapshot = await database.ref(
+                    `shuffleRecords/${recordId}/participants/${key}`
+                ).once('value');
+                const shuffleParticipant = participantSnapshot.val();
+                const shuffleScore = shuffleParticipant && Number.isFinite(Number(shuffleParticipant.score))
+                    ? Number(shuffleParticipant.score)
+                    : null;
+                const result = await database.ref(`attendance/${key}`).transaction((currentRecord) => {
+                    const sameShuffle = currentRecord?.shuffleId === recordId;
+                    const sameDay = sameShuffle && currentRecord.attendanceDay === currentDay;
+                    const record = sameDay ? { ...currentRecord } : {
+                            nickname: legacyAttendanceName(nickname),
+                            shuffleId: recordId,
+                            attendanceDay: currentDay,
+                            baseScore: shuffleScore ?? (sameShuffle ? Number(currentRecord.score) || 0 : 0),
+                            time13Activities: '',
+                            time21Activities: '',
+                            events: '',
+                            vccBonusAwarded: sameShuffle && currentRecord?.vccBonusAwarded === true
+                        };
+                    const dailyScore = attendanceDailyScore(record);
+                    if (sameDay) {
+                        record.baseScore = attendanceRecordBaseScore(currentRecord);
+                        if (shuffleScore !== null) {
+                            record.baseScore = Math.max(
+                                record.baseScore,
+                                shuffleScore - dailyScore
+                            );
+                        }
+                    }
+                    const currentBaseScore = Number(record.baseScore) || 0;
+                    const nextBaseScore = Math.max(-dailyScore, currentBaseScore + amount);
+                    if (nextBaseScore === currentBaseScore) return;
 
-            row.dataset.baseScore = String(nextBaseScore);
-            const appliedAmount = nextBaseScore - currentBaseScore;
-            updateAttendanceRow(row).then((saved) => {
-                if (!saved) return;
+                    appliedAmount = nextBaseScore - currentBaseScore;
+                    record.baseScore = nextBaseScore;
+                    record.score = nextBaseScore + dailyScore;
+                    record.updatedAt = firebase.database.ServerValue.TIMESTAMP;
+                    return record;
+                });
+                if (!result.committed) return;
+
+                scoreCommitted = true;
+                const updatedRecord = result.snapshot.val();
+                attendanceRecordsCache[key] = updatedRecord;
+                applyAttendanceRecords(attendanceRecordsCache);
+                const participant = {
+                    nickname,
+                    score: updatedRecord.score,
+                    rate: Math.round((updatedRecord.score / maxShuffleScore) * 100)
+                };
+                const dailyRef = database.ref(`shuffleRecords/${recordId}/daily/${currentDay}/${key}`);
+                const dailySnapshot = await dailyRef.once('value');
+                const dailyParticipant = dailySnapshot.val();
+                const updates = {
+                    [`shuffleRecords/${recordId}/participants/${key}`]: participant
+                };
+                if (dailyParticipant) {
+                    updates[`shuffleRecords/${recordId}/daily/${currentDay}/${key}/baseScore`] = updatedRecord.baseScore;
+                    updates[`shuffleRecords/${recordId}/daily/${currentDay}/${key}/totalScore`] = updatedRecord.score;
+                    updates[`shuffleRecords/${recordId}/daily/${currentDay}/${key}/rate`] = participant.rate;
+                }
+                await database.ref().update(updates);
                 showAttendanceNotice(`${nickname}님의 점수가 ${Math.abs(appliedAmount)}점 ${appliedAmount > 0 ? '올랐습니다.' : '내려갔습니다.'}`);
-            });
+            } catch (error) {
+                console.error('출석 점수 조정 실패:', error);
+                if (scoreCommitted) {
+                    showAttendanceNotice(`${nickname}님의 출석 점수는 저장됐지만 셔플 통계를 갱신하지 못했습니다. 다시 시도하세요.`);
+                } else {
+                    showAttendanceNotice(`${nickname}님의 점수를 저장하지 못했습니다. 연결 상태를 확인한 뒤 다시 시도하세요.`);
+                }
+            }
         }
 
         function updateAttendanceVccButton(row) {
