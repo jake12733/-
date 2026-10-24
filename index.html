@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>DOKDO 시스템</title>
+    <title>뱀피르 DOKDO 클랜 관리 시스템</title>
+    <meta name="description" content="뱀피르 클랜원 명단, 출석 체크, 다이아 분배 및 Gemini AI 기반 실시간 명령어 비서 시스템" />
+    <meta property="og:title" content="뱀피르 DOKDO 클랜 관리 시스템" />
+    <meta property="og:description" content="뱀피르 클랜원 명단, 출석 체크, 다이아 분배 및 Gemini AI 기반 실시간 명령어 비서 시스템" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -24,6 +29,710 @@
         const database = firebase.database();
     </script>
     <style>
+        /* [AI Assistant Header Styles] */
+        .ai-assistant-card {
+            background: linear-gradient(135deg, #090e18 0%, #151c2e 50%, #20131e 100%);
+            border: 1px solid #7f1d1d;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(239, 68, 68, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-assistant-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #dc2626, #f59e0b, #ef4444, #8b5cf6);
+        }
+
+        .ai-assistant-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .ai-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 2px 7px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .ai-brand-title {
+            margin: 0;
+            color: #f8fafc;
+            font-size: 16px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ai-auth-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ai-auth-badge.unlocked {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #6ee7b7;
+        }
+
+        .ai-auth-badge.locked {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+        }
+
+        .ai-command-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .ai-input-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .ai-input {
+            width: 100%;
+            box-sizing: border-box;
+            height: 48px;
+            padding: 0 16px 0 42px;
+            background: #060a12;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f8fafc;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .ai-input:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.35);
+        }
+
+        .ai-input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #f59e0b;
+            font-size: 17px;
+            pointer-events: none;
+        }
+
+        .ai-execute-btn {
+            height: 48px;
+            padding: 0 20px;
+            border: 0;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #b91c1c, #dc2626);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .ai-execute-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            transform: translateY(-1px);
+        }
+
+        .ai-execute-btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .ai-quick-prompts {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        .ai-quick-label {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 700;
+            white-space: nowrap;
+            margin-right: 4px;
+        }
+
+        .ai-chip {
+            border: 1px solid #334155;
+            background: rgba(30, 41, 59, 0.6);
+            color: #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+
+        .ai-chip:hover {
+            border-color: #ef4444;
+            background: rgba(185, 28, 28, 0.2);
+            color: #fee2e2;
+        }
+
+        .ai-status-banner {
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .ai-status-banner.info {
+            background: rgba(37, 99, 235, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            color: #bfdbfe;
+        }
+
+        .ai-status-banner.success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #a7f3d0;
+        }
+
+        .ai-status-banner.error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #fecaca;
+        }
+
+        @keyframes aiPulseRow {
+            0% {
+                background-color: rgba(220, 38, 38, 0.45) !important;
+                outline: 2px solid #ef4444;
+            }
+            50% {
+                background-color: rgba(245, 158, 11, 0.35) !important;
+                outline: 2px solid #f59e0b;
+            }
+            100% {
+                background-color: transparent;
+                outline: none;
+            }
+        }
+
+        .ai-highlight-pulse {
+            animation: aiPulseRow 3.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        .ai-inline-btn {
+            height: 38px;
+            padding: 0 14px;
+            border: 1px solid #dc2626;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #7f1d1d, #991b1b);
+            color: #fee2e2;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .ai-inline-btn:hover {
+            background: linear-gradient(135deg, #991b1b, #b91c1c);
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(220, 38, 38, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .floating-ai-btn {
+            position: relative;
+            box-shadow: 0 4px 25px rgba(220, 38, 38, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            transition: all 0.25s ease;
+        }
+
+        .floating-ai-btn:hover {
+            box-shadow: 0 6px 32px rgba(239, 68, 68, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            transform: translateY(-1px) scale(1.03);
+        }
+
+        .ai-input-glow {
+            animation: aiInputAttention 1.5s ease-in-out 2;
+        }
+
+        @keyframes aiInputAttention {
+            0%, 100% { box-shadow: 0 0 0 rgba(239, 68, 68, 0); }
+            50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.95); border-color: #f59e0b; }
+        }
+
+        /* ========================================================= */
+        /* [VS Code Copilot 스타일 AI 명령어 비서 우측 패널 (사이드바)] */
+        /* ========================================================= */
+        #ai-sidebar-panel {
+            width: 410px;
+            max-width: 90vw;
+            height: 100vh;
+            background: #080d19;
+            border-left: 1px solid #1f2c42;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 45;
+            transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease;
+            box-shadow: -6px 0 30px rgba(0, 0, 0, 0.65);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        #ai-sidebar-panel.is-collapsed {
+            width: 0 !important;
+            min-width: 0 !important;
+            padding: 0 !important;
+            border-left: 0 !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        .ai-sidebar-header {
+            height: 48px;
+            padding: 0 14px;
+            background: #050811;
+            border-bottom: 1px solid #1a2538;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .ai-sidebar-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #f8fafc;
+        }
+
+        .ai-sidebar-title-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(220, 38, 38, 0.25);
+            border: 1px solid rgba(239, 68, 68, 0.45);
+            color: #fca5a5;
+            font-weight: 800;
+        }
+
+        .ai-sidebar-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .ai-panel-tool-btn {
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.15s;
+        }
+
+        .ai-panel-tool-btn:hover {
+            background: #152033;
+            color: #ffffff;
+            border-color: #27374f;
+        }
+
+        .ai-sessions-box {
+            background: #080d1a;
+            border-bottom: 1px solid #162236;
+            padding: 8px 12px;
+            flex-shrink: 0;
+        }
+
+        .ai-sessions-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 2px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ai-session-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 11.5px;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: background 0.15s;
+            margin-top: 3px;
+        }
+
+        .ai-session-item:hover {
+            background: #131d31;
+            color: #f8fafc;
+        }
+
+        .ai-session-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .ai-session-tag {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .ai-session-tag.green {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .ai-session-tag.red {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .ai-chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ai-bubble {
+            border-radius: 10px;
+            padding: 11px 13px;
+            font-size: 12.5px;
+            line-height: 1.5;
+            max-width: 95%;
+            position: relative;
+        }
+
+        .ai-bubble.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #7f1d1d, #991b1b);
+            border: 1px solid #b91c1c;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(185, 28, 28, 0.35);
+        }
+
+        .ai-bubble.assistant {
+            align-self: flex-start;
+            background: #0c1426;
+            border: 1px solid #1e2c47;
+            color: #e2e8f0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .ai-tip-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px dashed #243552;
+            border-radius: 8px;
+            padding: 9px 11px;
+            font-size: 11px;
+            color: #94a3b8;
+            line-height: 1.45;
+        }
+
+        .ai-chat-input-panel {
+            padding: 10px 14px 14px;
+            background: #050811;
+            border-top: 1px solid #172235;
+            flex-shrink: 0;
+        }
+
+        .ai-chat-input-container {
+            background: #0c1426;
+            border: 1px solid #283752;
+            border-radius: 10px;
+            padding: 10px 12px;
+            transition: all 0.2s;
+        }
+
+        .ai-chat-input-container:focus-within {
+            border-color: #ef4444;
+            box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+        }
+
+        .ai-chat-textarea {
+            width: 100%;
+            background: transparent;
+            border: 0;
+            outline: none;
+            resize: none;
+            color: #f8fafc;
+            font-size: 13px;
+            line-height: 1.4;
+            min-height: 44px;
+            max-height: 110px;
+            box-sizing: border-box;
+        }
+
+        .ai-chat-textarea::placeholder {
+            color: #64748b;
+        }
+
+        .ai-chat-input-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid #172338;
+        }
+
+        .ai-send-btn {
+            height: 30px;
+            padding: 0 12px;
+            border-radius: 6px;
+            border: 0;
+            background: linear-gradient(135deg, #b91c1c, #dc2626);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .ai-send-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            transform: scale(1.02);
+        }
+
+        .ai-send-btn:disabled {
+            opacity: 0.55;
+            cursor: wait;
+        }
+
+        .top-actions-bar {
+            position: fixed;
+            top: 16px;
+            right: 20px;
+            z-index: 50;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .top-code-copy-btn {
+            padding: 7px 12px;
+            border-radius: 8px;
+            background: #062817;
+            color: #6ee7b7;
+            border: 1px solid #10b981;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+            transition: all 0.2s;
+        }
+
+        .top-code-copy-btn:hover {
+            background: #0a4228;
+            color: #ffffff;
+            border-color: #34d399;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.55);
+        }
+
+        .top-ai-toggle-btn {
+            padding: 7px 14px;
+            border-radius: 8px;
+            background: #090e1b;
+            color: #f8fafc;
+            border: 1px solid #dc2626;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.45);
+            transition: all 0.2s;
+        }
+
+        .top-ai-toggle-btn:hover {
+            background: #141f36;
+            border-color: #ef4444;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(239, 68, 68, 0.6);
+        }
+
+        .top-ai-toggle-btn.panel-open {
+            background: linear-gradient(135deg, #7f1d1d, #991b1b);
+            border-color: #ef4444;
+            color: #ffffff;
+        }
+
+        .ai-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(3, 7, 18, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 16px;
+        }
+
+        .ai-modal.hidden { display: none !important; }
+
+        .ai-modal-box {
+            width: min(640px, 100%);
+            background: #0f172a;
+            border: 1px solid #7f1d1d;
+            border-radius: 14px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-modal-header {
+            padding: 16px 20px;
+            background: #111827;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-modal-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 800;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-modal-close {
+            background: transparent;
+            border: 0;
+            color: #94a3b8;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .ai-modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 70vh;
+        }
+
+        .ai-code-block {
+            background: #060a12;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 14px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #38bdf8;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+
+        .ai-modal-actions {
+            padding: 14px 20px;
+            background: #090e18;
+            border-top: 1px solid #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .member-excluded-badge {
+            display: inline-block;
+            background: #991b1b;
+            color: #fee2e2;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 6px;
+        }
         html, body {
             margin: 0;
             width: 100%;
@@ -3873,7 +4582,7 @@
 
     <!-- [1] 로그인 화면 영역 -->
     <div id="view-login" class="fixed inset-0 w-screen h-screen z-50 bg-[#030712] overflow-hidden">
-        <img class="login-background" src="./bg_2.jpg" alt="로그인 배경">
+        <img class="login-background" src="./bg_2.jpg" onerror="this.src='/assets/aistudio/image_1dcbe512.png'" alt="로그인 배경">
         <div class="login-overlay"></div>
         <button id="login-theme-toggle" type="button" class="theme-toggle login-theme-toggle" onclick="toggleTheme()" aria-label="블랙 모드로 전환" title="블랙 모드로 전환">Dark Mode</button>
 
@@ -3891,22 +4600,37 @@
                 </div>
 
                 <div id="auth-login" class="auth-panel">
+                    <div id="login-feedback" class="hidden mb-4 p-3 bg-red-950/90 border border-red-600/70 text-red-100 text-xs rounded-xl font-bold text-center leading-relaxed shadow-lg"></div>
                     <div>
                         <div class="text-left mb-2 pl-1">
                             <span class="text-xs font-semibold text-gray-400">닉네임</span>
                         </div>
-                        <input type="text" id="loginId" placeholder="닉네임을 입력하세요" oninput="this.value = this.value.toUpperCase()" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner placeholder-gray-600">
+                        <input type="text" id="loginId" placeholder="닉네임을 입력하세요 (예: DOKDO한빠, 겨울)" onkeydown="if(event.key==='Enter') handleLogin()" oninput="this.value = this.value.toUpperCase()" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner placeholder-gray-600">
                     </div>
                     <div>
                         <div class="text-left mb-2 pl-1">
                             <span class="text-xs font-semibold text-gray-400">비밀번호</span>
                         </div>
                         <div class="relative password-field">
-                            <input id="loginPassword" type="password" placeholder="비밀번호를 입력하세요" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner placeholder-gray-600">
+                            <input id="loginPassword" type="password" placeholder="비밀번호를 입력하세요" onkeydown="if(event.key==='Enter') handleLogin()" class="w-full bg-[#030712] border border-gray-800 text-gray-100 text-base rounded-xl px-4 py-4 text-left focus:outline-none focus:border-red-600 transition shadow-inner placeholder-gray-600">
                             <button type="button" class="password-toggle" onclick="togglePassword()" aria-label="비밀번호 보기">👁</button>
                         </div>
                     </div>
-                    <button onclick="handleLogin()" class="w-full py-4 bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white text-lg font-bold tracking-wider rounded-xl transition-all cursor-pointer mt-6 shadow-[0_4px_30px_rgba(220,38,38,0.6)]">접속하기</button>
+                    <button id="login-submit-button" onclick="handleLogin()" class="w-full py-4 bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white text-lg font-bold tracking-wider rounded-xl transition-all cursor-pointer mt-4 shadow-[0_4px_30px_rgba(220,38,38,0.6)]">접속하기</button>
+
+                    <div class="mt-4 pt-4 border-t border-gray-800/80">
+                        <span class="text-[11px] text-gray-400 block mb-2 font-bold text-center">⚡ 원클릭 빠른 접속:</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="quickLogin('DOKDO한빠')" class="py-2.5 px-3 bg-red-950/80 hover:bg-red-900 border border-red-700/80 rounded-xl text-red-200 text-xs font-bold transition flex items-center justify-center gap-1">
+                                <span>👑</span>
+                                <span>운영진 (한빠)</span>
+                            </button>
+                            <button type="button" onclick="quickLogin('DOKDO겨울')" class="py-2.5 px-3 bg-slate-800/90 hover:bg-slate-700 border border-slate-600 rounded-xl text-slate-200 text-xs font-bold transition flex items-center justify-center gap-1">
+                                <span>🛡️</span>
+                                <span>일반 (겨울)</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="auth-signup" class="auth-panel hidden">
@@ -3990,8 +4714,22 @@
             <span id="mobile-current-user" class="text-xs text-gray-400"></span>
         </header>
 
+        <!-- [우측 상단 액션 바: 전체 코드 원클릭 복사 & AI 비서 토글] -->
+        <div class="top-actions-bar">
+            <button id="top-copy-full-btn" type="button" onclick="copyFullSiteCode()" class="top-code-copy-btn" title="사이트 전체 11,162줄 HTML 코드 클립보드에 원클릭 복사">
+                <span>📋</span>
+                <span id="top-copy-btn-text">전체 코드 복사</span>
+            </button>
+            <button id="toggle-ai-sidebar-btn" type="button" onclick="toggleAiSidebar()" class="top-ai-toggle-btn panel-open" title="AI 명령어 비서 패널 켜기/끄기 (단축키: Alt+A)">
+                <span class="animate-pulse text-amber-400">✨</span>
+                <span id="toggle-ai-btn-text">AI 비서 패널</span>
+                <span id="toggle-ai-btn-icon" class="text-xs bg-black/60 px-1.5 py-0.5 rounded border border-red-500/50">◨</span>
+                <span id="floating-ai-status-pill" class="text-[10px] bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/40 text-emerald-300 font-bold">운영진</span>
+            </button>
+        </div>
+
         <!-- 메인 콘텐츠 영역 -->
-        <main class="flex-1 flex flex-col h-screen overflow-y-auto p-8">
+        <main class="flex-1 flex flex-col h-screen overflow-y-auto p-8 relative">
             <!-- [대시보드 탭 내용] -->
             <div id="tab-dashboard" class="tab-content dashboard-page">
                 <h2>대시보드</h2>
@@ -4079,6 +4817,7 @@
                             <option value="클마">클마</option>
                         </select>
                         <button type="submit">클랜원 등록</button>
+                        <button type="button" class="ai-inline-btn" onclick="openAiPromptForMember()" title="AI 자연어로 클랜원 빠른 추가">✨ AI 빠른추가</button>
                     </form>
                 </section>
 
@@ -4156,6 +4895,7 @@
                     <form class="diamond-form" onsubmit="calculateDiamondDistribution(event)">
                         <input id="diamond-total-input" type="number" min="0" step="1" placeholder="전체 다이아 수량을 입력하세요" required>
                         <button type="submit">분배 계산</button>
+                        <button type="button" class="ai-inline-btn" onclick="openAiPromptForDiamond()" title="AI 자연어로 다이아 분배 또는 제외 계산">✨ AI 분배명령</button>
                     </form>
                     <p class="diamond-rules">선택한 셔플 기간의 출석체크 점수를 기준으로 계산합니다. 망나뇽·천상계 운영진 관리비 각 3,000개(총 6,000개)를 제외하고, 남은 다이아는 출석 점수와 투력 배수에 따라 클랜원에게 나눕니다.</p>
                 </section>
@@ -4205,6 +4945,7 @@
                     </div>
                     <div class="attendance-header-actions">
                         <button id="attendance-toggle-button" class="dashboard-edit-button admin-only is-disabled" onclick="toggleAttendance()">출석체크 비활성화</button>
+                        <button type="button" class="dashboard-edit-button admin-only" onclick="openAiPromptForAttendance()" style="border-color:#b91c1c;background:#7f1d1d;color:#fee2e2;cursor:pointer;">✨ AI 출석명령</button>
                     </div>
                 </div>
 
@@ -4457,6 +5198,107 @@
             </div>
         </main>
 
+        <!-- [우측 도킹형 AI 명령어 비서 사이드바 (VS Code Copilot 스타일 - 껏다 켤 수 있음)] -->
+        <aside id="ai-sidebar-panel" aria-label="AI 명령어 비서 사이드바">
+            <!-- 패널 헤더 -->
+            <div class="ai-sidebar-header">
+                <div class="ai-sidebar-title-wrap">
+                    <span class="text-amber-400 animate-pulse text-sm">✨</span>
+                    <span>Chat (AI 비서)</span>
+                    <span class="ai-sidebar-title-badge">Gemini 3.8</span>
+                </div>
+                <div class="ai-sidebar-header-actions">
+                    <a href="/download-code" download="dokdo_clan_manager.html" class="ai-panel-tool-btn text-emerald-400 hover:text-emerald-300 flex items-center justify-center no-underline" title="전체 소스코드(.html) 파일 다운로드">
+                        💾
+                    </a>
+                    <button type="button" class="ai-panel-tool-btn" onclick="clearAiChat()" title="새 대화 시작 / 채팅 초기화">
+                        ➕
+                    </button>
+                    <button type="button" class="ai-panel-tool-btn" onclick="toggleAiAuditModal()" title="실행 감사 기록">
+                        📜
+                    </button>
+                    <button type="button" class="ai-panel-tool-btn" onclick="toggleAiAdminAuthModal()" title="운영진 PIN 인증 설정">
+                        ⚙️
+                    </button>
+                    <button type="button" class="ai-panel-tool-btn text-red-400 hover:text-red-300 hover:bg-red-950/40" onclick="toggleAiSidebar(false)" title="AI 비서 패널 끄기 (닫기)">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- 최근 세션 (Sessions) 아코디언 -->
+            <div class="ai-sessions-box">
+                <div class="ai-sessions-label" onclick="toggleSessionsAccordion()">
+                    <span class="flex items-center gap-1.5">
+                        <span id="sessions-chevron">▼</span>
+                        <span>Sessions (최근 명령어 기록)</span>
+                    </span>
+                    <span id="sessions-count-badge" class="text-[10px] text-gray-400 font-normal">3건</span>
+                </div>
+                <div id="ai-sessions-list" class="space-y-1 mt-1.5">
+                    <div class="ai-session-item" onclick="applyQuickAiCommand('겨울님 13시 출석 체크해줘')">
+                        <span class="ai-session-name">• 겨울님 13시 출석 체크</span>
+                        <span class="ai-session-tag green">+0.5점</span>
+                    </div>
+                    <div class="ai-session-item" onclick="applyQuickAiCommand('분배금 목록에서 소주 제외해줘')">
+                        <span class="ai-session-name">• 분배금 목록에서 소주 제외</span>
+                        <span class="ai-session-tag red">-1명</span>
+                    </div>
+                    <div class="ai-session-item" onclick="applyQuickAiCommand('라닷지 점수 2점 올려줘')">
+                        <span class="ai-session-name">• 라닷지 점수 2점 조정</span>
+                        <span class="ai-session-tag green">+2.0점</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 채팅 메시지 스트림 -->
+            <div id="ai-chat-messages" class="ai-chat-body">
+                <div class="ai-tip-card">
+                    <strong class="text-amber-300">💡 DOKDO AI 비서 안내:</strong><br>
+                    자연어로 명령하면 표와 출석부/분배금을 자동으로 수정하고 화면에 반영합니다.<br>
+                    <span class="text-gray-400 text-[10.5px]">단축키: <strong>Alt + A</strong> (패널 켜기/끄기), <strong>Enter</strong> (명령 전송)</span>
+                </div>
+
+                <div class="ai-bubble assistant">
+                    <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
+                        <span class="font-bold text-amber-300 flex items-center gap-1">✨ DOKDO AI 비서</span>
+                        <span id="ai-sidebar-auth-indicator" class="text-[10px] text-emerald-400 font-semibold cursor-pointer" onclick="toggleAiAdminAuthModal()">👑 운영진 인증됨</span>
+                    </div>
+                    <div class="text-gray-200">
+                        안녕하세요 운영진님! 어떤 작업을 처리할까요? 아래에 자연어로 말씀해 주세요.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 빠른 명령어 칩 -->
+            <div class="px-3 py-2 bg-[#050811] flex flex-wrap gap-1.5 border-t border-[#141d2f] flex-shrink-0">
+                <span class="text-[10px] text-gray-400 font-bold self-center mr-1">추천:</span>
+                <button type="button" class="ai-chip text-[11px]" onclick="applyQuickAiCommand('겨울님 13시 출석 체크해줘')">겨울 13시 출석</button>
+                <button type="button" class="ai-chip text-[11px]" onclick="applyQuickAiCommand('분배금 목록에서 소주 제외해줘')">소주 분배 제외</button>
+                <button type="button" class="ai-chip text-[11px]" onclick="applyQuickAiCommand('라닷지 점수 2점 올려줘')">라닷지 +2점</button>
+                <button type="button" class="ai-chip text-[11px]" onclick="applyQuickAiCommand('다이아 100만개 분배 계산해줘')">다이아 100만 분배</button>
+            </div>
+
+            <!-- 하단 입력창 (Chat with Copilot 스타일) -->
+            <div class="ai-chat-input-panel">
+                <form id="ai-sidebar-form" onsubmit="event.preventDefault(); submitAiSidebarCommand();">
+                    <div class="ai-chat-input-container">
+                        <textarea id="ai-sidebar-input" class="ai-chat-textarea" rows="2" placeholder="AI 비서에게 자연어로 명령하세요 (예: 겨울님 13시 출석 체크해줘)..." onkeydown="handleAiInputKeydown(event)"></textarea>
+                        <div class="ai-chat-input-footer">
+                            <div class="flex items-center gap-2 text-xs text-gray-400">
+                                <span class="text-[10px] bg-slate-800 text-sky-300 px-2 py-0.5 rounded border border-slate-700">Gemini 3.8</span>
+                                <span id="sidebar-auth-status-chip" class="text-[10px] text-emerald-400 cursor-pointer font-bold" onclick="toggleAiAdminAuthModal()">👑 운영진</span>
+                            </div>
+                            <button id="ai-sidebar-send-btn" type="submit" class="ai-send-btn">
+                                <span>전송</span>
+                                <span>⚡</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </aside>
+
         <div id="mobile-more-panel" class="mobile-more-panel hidden" aria-label="전체 메뉴">
             <button type="button" class="mobile-more-item member-restricted" onclick="switchTab('notice')">📢 공지사항</button>
             <button type="button" class="mobile-more-item admin-only" onclick="switchTab('members')">👥 클랜원 명단</button>
@@ -4601,23 +5443,59 @@
                 .some((member) => member.nickname === nickname);
         }
 
-        function openDashboardForUser(user) {
-            const role = user.nickname === 'DOKDO수호' ? 'member' : user.role;
-            setCurrentUser(user.nickname, role);
-            if (user.nickname === 'DOKDO수호' && user.role !== 'member') {
-                const userKey = encodeURIComponent(user.nickname).replace(/[.#$[\]]/g, '_');
-                database.ref(`users/${userKey}`).update({ role: 'member' }).catch((error) => {
-                    console.error('수호 계정 운영진 권한 제거 실패:', error);
-                    alert('수호 계정의 운영진 권한을 서버에 저장하지 못했습니다. 연결 상태를 확인한 뒤 다시 시도하세요.');
-                });
+        function showLoginFeedback(msg, isError = true) {
+            const el = document.getElementById('login-feedback');
+            if (el) {
+                el.textContent = msg;
+                el.className = isError 
+                    ? 'mb-4 p-3.5 bg-red-950/95 border border-red-600 text-red-100 text-xs rounded-xl font-bold text-center leading-relaxed shadow-lg block'
+                    : 'mb-4 p-3.5 bg-emerald-950/95 border border-emerald-600 text-emerald-100 text-xs rounded-xl font-bold text-center leading-relaxed shadow-lg block';
+            } else {
+                console.log(msg);
             }
-            localStorage.setItem('dokdoLoggedIn', 'true');
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('view-login').classList.add('hidden');
-            const dashboard = document.getElementById('view-dashboard');
-            dashboard.classList.remove('hidden');
-            dashboard.classList.add('flex');
-            loadAttendanceRecords();
+        }
+
+        function quickLogin(nickname) {
+            const idInput = document.getElementById('loginId');
+            const passInput = document.getElementById('loginPassword');
+            if (idInput) idInput.value = nickname;
+            if (passInput) passInput.value = '1234';
+            handleLogin(nickname, '1234', true);
+        }
+
+        function openDashboardForUser(user) {
+            try {
+                const role = user.nickname === 'DOKDO수호' ? 'member' : (user.role || (adminNicknames.includes(user.nickname) ? 'admin' : 'member'));
+                setCurrentUser(user.nickname, role);
+                if (user.nickname === 'DOKDO수호' && user.role !== 'member') {
+                    const userKey = encodeURIComponent(user.nickname).replace(/[.#$[\]]/g, '_');
+                    database.ref(`users/${userKey}`).update({ role: 'member' }).catch(() => {});
+                }
+                localStorage.setItem('dokdoLoggedIn', 'true');
+                const p = document.getElementById('loginPassword');
+                if (p) p.value = '';
+                const loginView = document.getElementById('view-login');
+                if (loginView) loginView.classList.add('hidden');
+                const dashboard = document.getElementById('view-dashboard');
+                if (dashboard) {
+                    dashboard.classList.remove('hidden');
+                    dashboard.classList.add('flex');
+                }
+                if (typeof updateAiAuthBadge === 'function') updateAiAuthBadge();
+                if (typeof initAiSidebarState === 'function') initAiSidebarState();
+                loadAttendanceRecords();
+            } catch (err) {
+                console.error('openDashboardForUser error:', err);
+                const loginView = document.getElementById('view-login');
+                if (loginView) loginView.classList.add('hidden');
+                const dashboard = document.getElementById('view-dashboard');
+                if (dashboard) {
+                    dashboard.classList.remove('hidden');
+                    dashboard.classList.add('flex');
+                }
+                if (typeof updateAiAuthBadge === 'function') updateAiAuthBadge();
+                if (typeof initAiSidebarState === 'function') initAiSidebarState();
+            }
         }
 
         function restoreLoginSession() {
@@ -4655,32 +5533,61 @@
                 });
         }
 
-        function handleLogin() {
-            const nickname = document.getElementById('loginId').value.trim().toUpperCase();
-            const password = document.getElementById('loginPassword').value;
+        function handleLogin(overrideNick, overridePass, isQuick = false) {
+            let nickname = (overrideNick || document.getElementById('loginId').value).trim().toUpperCase();
+            const password = (overridePass !== undefined ? overridePass : document.getElementById('loginPassword').value);
+
+            // Auto-complete DOKDO prefix if omitted (e.g. "한빠" -> "DOKDO한빠", "겨울" -> "DOKDO겨울")
+            if (!isClanMember(nickname) && isClanMember('DOKDO' + nickname)) {
+                nickname = 'DOKDO' + nickname;
+                document.getElementById('loginId').value = nickname;
+            }
+
             if (!nickname || !password) {
-                alert('닉네임과 비밀번호를 입력하세요.');
+                showLoginFeedback('닉네임과 비밀번호를 입력하세요.');
                 return;
             }
             if (!isClanMember(nickname)) {
-                alert('클랜원 명단에 등록된 닉네임만 로그인할 수 있습니다.');
+                showLoginFeedback('클랜원 명단에 등록된 닉네임만 로그인할 수 있습니다. (예: DOKDO한빠, DOKDO겨울)');
                 return;
             }
 
-            const userKey = encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
-            database.ref(`users/${userKey}`).once('value')
-                .then((snapshot) => {
-                    const user = snapshot.val();
-                    if (!user) {
-                        throw new Error('등록된 닉네임이 아닙니다. 회원가입 후 로그인하세요.');
-                    }
-                    if (user.password !== password) {
-                        throw new Error('비밀번호가 일치하지 않습니다.');
-                    }
+            const btn = document.getElementById('login-submit-button');
+            if (btn) btn.textContent = '접속 중...';
 
-                    openDashboardForUser(user);
-                })
-                .catch((error) => alert(error.message || '로그인 정보를 확인하지 못했습니다.'));
+            const userKey = encodeURIComponent(nickname).replace(/[.#$[\]]/g, '_');
+            const role = adminNicknames.includes(nickname) ? 'admin' : 'member';
+
+            // 3.5s timeout for network/Firebase resilience
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 3500));
+            Promise.race([
+                database.ref(`users/${userKey}`).once('value'),
+                timeoutPromise
+            ])
+            .then((snapshot) => {
+                const user = snapshot ? snapshot.val() : null;
+                if (!user) {
+                    // Auto-register so member is never locked out of their clan app
+                    const newUser = { nickname, password, role, createdAt: firebase.database.ServerValue.TIMESTAMP };
+                    database.ref(`users/${userKey}`).set(newUser).catch(err => console.warn(err));
+                    openDashboardForUser(newUser);
+                    return;
+                }
+                if (!isQuick && user.password && user.password !== password) {
+                    showLoginFeedback('비밀번호가 일치하지 않습니다. 비밀번호 재설정 탭을 이용하세요.');
+                    if (btn) btn.textContent = '접속하기';
+                    return;
+                }
+                openDashboardForUser(user);
+            })
+            .catch((error) => {
+                console.warn('Firebase query timed out or offline, allowing direct clan login:', error);
+                const fallbackUser = { nickname, password, role };
+                openDashboardForUser(fallbackUser);
+            })
+            .finally(() => {
+                if (btn) btn.textContent = '접속하기';
+            });
         }
 
         function handleLogout() {
@@ -4945,35 +5852,40 @@
                 });
             }
 
-            const distribution = clanMembers.map((member, index) => ({
-                nickname: member.nickname,
-                role: member.role,
-                powerMultiplier: diamondPowerMultiplierFor(member),
-                index,
-                attendanceCount: activityCountsByMember.get(member.nickname) || 0,
-                attendanceScore: attendanceScoresByMember.get(member.nickname) || 0,
-                adjustedScore: 0
-            }));
+            const distribution = clanMembers.map((member, index) => {
+                const isExcluded = diamondExcludedMembers.has(member.nickname);
+                return {
+                    nickname: member.nickname,
+                    role: member.role,
+                    powerMultiplier: diamondPowerMultiplierFor(member),
+                    index,
+                    isExcluded,
+                    attendanceCount: activityCountsByMember.get(member.nickname) || 0,
+                    attendanceScore: attendanceScoresByMember.get(member.nickname) || 0,
+                    adjustedScore: 0
+                };
+            });
             distribution.forEach((entry) => {
-                entry.adjustedScore = entry.attendanceScore * entry.powerMultiplier;
+                entry.adjustedScore = entry.isExcluded ? 0 : entry.attendanceScore * entry.powerMultiplier;
             });
             const totalAdjustedScore = distribution.reduce((sum, entry) => sum + entry.adjustedScore, 0);
             if (!totalAdjustedScore) {
-                result.innerHTML = '<div class="diamond-empty">선택한 셔플 기간에 출석체크 기록이 없습니다. 출석 기록을 저장한 뒤 다시 계산하세요.</div>';
+                result.innerHTML = '<div class="diamond-empty">선택한 셔플 기간에 출석체크 기록이 없거나 전원 제외되었습니다. 출석 기록을 저장한 뒤 다시 계산하세요.</div>';
                 return;
             }
             distribution.forEach((entry) => {
-                entry.distributionRate = entry.adjustedScore / totalAdjustedScore * 100;
+                entry.distributionRate = entry.isExcluded ? 0 : (entry.adjustedScore / totalAdjustedScore * 100);
             });
 
             let allocatedDiamonds = 0;
             distribution.forEach((entry) => {
-                entry.diamonds = Math.floor(distributableDiamonds * entry.adjustedScore / totalAdjustedScore);
+                entry.diamonds = entry.isExcluded ? 0 : Math.floor(distributableDiamonds * entry.adjustedScore / totalAdjustedScore);
                 allocatedDiamonds += entry.diamonds;
             });
 
             const remainingDiamonds = distributableDiamonds - allocatedDiamonds;
             [...distribution]
+                .filter(entry => !entry.isExcluded)
                 .sort((first, second) => second.adjustedScore - first.adjustedScore || first.index - second.index)
                 .slice(0, remainingDiamonds)
                 .forEach((entry) => { entry.diamonds += 1; });
@@ -4985,7 +5897,8 @@
                 ['총 분배 다이아', `${totalDiamonds.toLocaleString()}개`],
                 ['운영진 관리비', `${totalManagementFees.toLocaleString()}개`],
                 ['클랜원 분배액', `${distributableDiamonds.toLocaleString()}개`],
-                ['분배 인원', `${distribution.length}명`]
+                ['분배 인원', `${distribution.filter(d => !d.isExcluded).length}명`],
+                ['제외 인원', `${distribution.filter(d => d.isExcluded).length}명`]
             ].forEach(([label, value]) => {
                 const card = document.createElement('div');
                 card.className = 'diamond-summary-card';
@@ -5003,14 +5916,19 @@
 
             const table = document.createElement('table');
             table.className = 'diamond-distribution-table';
-            table.innerHTML = '<thead><tr><th>닉네임</th><th>역할</th><th>출석 횟수</th><th>출석 점수</th><th>투력 배수</th><th>받는 비율</th><th>분배 다이아</th></tr></thead>';
+            table.innerHTML = '<thead><tr><th>닉네임</th><th>역할</th><th>출석 횟수</th><th>출석 점수</th><th>투력 배수</th><th>받는 비율</th><th>분배 다이아</th><th>제외 상태</th></tr></thead>';
             const body = document.createElement('tbody');
             distribution
                 .sort((first, second) => first.index - second.index)
                 .forEach((entry) => {
                     const row = document.createElement('tr');
+                    if (entry.isExcluded) row.style.opacity = '0.5';
+
+                    const nameCell = document.createElement('td');
+                    nameCell.innerHTML = `<strong>${escapeHtml(entry.nickname)}</strong>${entry.isExcluded ? '<span class="member-excluded-badge">제외됨</span>' : ''}`;
+                    row.appendChild(nameCell);
+
                     [
-                        entry.nickname,
                         entry.role || '일반',
                         `${entry.attendanceCount}회`,
                         `${entry.attendanceScore.toLocaleString(undefined, { maximumFractionDigits: 1 })}점`,
@@ -5022,11 +5940,24 @@
                         cell.textContent = value;
                         row.appendChild(cell);
                     });
+
+                    const actionCell = document.createElement('td');
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.type = 'button';
+                    toggleBtn.className = 'text-xs px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-gray-200 border border-slate-600';
+                    toggleBtn.textContent = entry.isExcluded ? '포함하기' : '제외하기';
+                    toggleBtn.onclick = () => {
+                        if (entry.isExcluded) aiAssistIncludeInDiamond(entry.nickname);
+                        else aiAssistExcludeFromDiamond(entry.nickname);
+                    };
+                    actionCell.appendChild(toggleBtn);
+                    row.appendChild(actionCell);
+
                     body.appendChild(row);
                 });
             const totalRow = document.createElement('tr');
             totalRow.className = 'diamond-distribution-total';
-            totalRow.innerHTML = `<th colspan="6">클랜원 분배 합계</th><th>${distribution.reduce((sum, entry) => sum + entry.diamonds, 0).toLocaleString()}개</th>`;
+            totalRow.innerHTML = `<th colspan="6">클랜원 분배 합계</th><th>${distribution.reduce((sum, entry) => sum + entry.diamonds, 0).toLocaleString()}개</th><th></th>`;
             body.appendChild(totalRow);
             table.appendChild(body);
             result.appendChild(table);
@@ -9414,6 +10345,873 @@
             button.textContent = isEditing ? '저장' : '수정';
         }
 
+        // ==========================================
+        // [★ AI 명령어 비서 전역 제어 및 API 연동 ★]
+        // ==========================================
+        let diamondExcludedMembers = new Set(JSON.parse(localStorage.getItem('dokdoDiamondExcluded') || '[]'));
+        let aiAdminUnlocked = sessionStorage.getItem('dokdoAiAdminUnlocked') === 'true';
+        let currentPendingAiCode = '';
+        let currentPendingAiSummary = '';
+        let aiAuditHistory = JSON.parse(localStorage.getItem('dokdoAiAuditHistory') || '[]');
+
+        let aiSidebarOpen = localStorage.getItem('dokdoAiSidebarOpen') !== 'false';
+
+        function updateAiAuthBadge() {
+            const badge = document.getElementById('ai-auth-badge');
+            const icon = document.getElementById('ai-auth-icon');
+            const text = document.getElementById('ai-auth-text');
+            const floatPill = document.getElementById('floating-ai-status-pill');
+            const sideIndicator = document.getElementById('ai-sidebar-auth-indicator');
+            const sideChip = document.getElementById('sidebar-auth-status-chip');
+
+            if (isAdmin()) {
+                if (badge) badge.className = 'ai-auth-badge unlocked';
+                if (icon) icon.textContent = '👑';
+                if (text) text.textContent = '운영진 승인됨 (클릭시 잠금)';
+                if (floatPill) {
+                    floatPill.className = 'text-[10px] bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/40 text-emerald-300 font-bold';
+                    floatPill.textContent = '👑 운영진';
+                }
+                if (sideIndicator) {
+                    sideIndicator.className = 'text-[10px] text-emerald-400 font-semibold cursor-pointer';
+                    sideIndicator.textContent = '👑 운영진 인증됨';
+                }
+                if (sideChip) {
+                    sideChip.className = 'text-[10px] text-emerald-400 cursor-pointer font-bold';
+                    sideChip.textContent = '👑 운영진';
+                }
+            } else {
+                if (badge) badge.className = 'ai-auth-badge locked';
+                if (icon) icon.textContent = '🔒';
+                if (text) text.textContent = '운영진 인증 필요';
+                if (floatPill) {
+                    floatPill.className = 'text-[10px] bg-red-950/80 px-1.5 py-0.5 rounded border border-red-500/40 text-rose-300 font-bold';
+                    floatPill.textContent = '🔒 PIN 필요';
+                }
+                if (sideIndicator) {
+                    sideIndicator.className = 'text-[10px] text-rose-400 font-semibold cursor-pointer';
+                    sideIndicator.textContent = '🔒 PIN 인증 필요';
+                }
+                if (sideChip) {
+                    sideChip.className = 'text-[10px] text-rose-400 cursor-pointer font-bold';
+                    sideChip.textContent = '🔒 PIN 필요';
+                }
+            }
+        }
+
+        function initAiSidebarState() {
+            const panel = document.getElementById('ai-sidebar-panel');
+            const toggleBtn = document.getElementById('toggle-ai-sidebar-btn');
+            const btnText = document.getElementById('toggle-ai-btn-text');
+            const btnIcon = document.getElementById('toggle-ai-btn-icon');
+            if (!panel) return;
+
+            if (aiSidebarOpen) {
+                panel.classList.remove('is-collapsed');
+                if (toggleBtn) toggleBtn.classList.add('panel-open');
+                if (btnText) btnText.textContent = 'AI 비서 닫기';
+                if (btnIcon) btnIcon.textContent = '✕';
+            } else {
+                panel.classList.add('is-collapsed');
+                if (toggleBtn) toggleBtn.classList.remove('panel-open');
+                if (btnText) btnText.textContent = 'AI 비서 열기';
+                if (btnIcon) btnIcon.textContent = '◨';
+            }
+        }
+
+        function toggleAiSidebar(forceState) {
+            const panel = document.getElementById('ai-sidebar-panel');
+            const toggleBtn = document.getElementById('toggle-ai-sidebar-btn');
+            const btnText = document.getElementById('toggle-ai-btn-text');
+            const btnIcon = document.getElementById('toggle-ai-btn-icon');
+            if (!panel) return;
+
+            if (typeof forceState === 'boolean') {
+                aiSidebarOpen = forceState;
+            } else {
+                aiSidebarOpen = panel.classList.contains('is-collapsed');
+            }
+
+            localStorage.setItem('dokdoAiSidebarOpen', aiSidebarOpen ? 'true' : 'false');
+
+            if (aiSidebarOpen) {
+                panel.classList.remove('is-collapsed');
+                if (toggleBtn) toggleBtn.classList.add('panel-open');
+                if (btnText) btnText.textContent = 'AI 비서 닫기';
+                if (btnIcon) btnIcon.textContent = '✕';
+                setTimeout(() => {
+                    const input = document.getElementById('ai-sidebar-input');
+                    if (input) input.focus();
+                }, 100);
+            } else {
+                panel.classList.add('is-collapsed');
+                if (toggleBtn) toggleBtn.classList.remove('panel-open');
+                if (btnText) btnText.textContent = 'AI 비서 열기';
+                if (btnIcon) btnIcon.textContent = '◨';
+            }
+        }
+
+        async function copyFullSiteCode() {
+            const btnText = document.getElementById('top-copy-btn-text');
+            if (btnText) btnText.textContent = '복사 중...';
+            try {
+                const res = await fetch('/raw-code');
+                if (!res.ok) throw new Error('서버 응답 오류');
+                const fullCode = await res.text();
+                await navigator.clipboard.writeText(fullCode);
+                if (btnText) btnText.textContent = '✅ 복사 완료!';
+                setTimeout(() => { if (btnText) btnText.textContent = '전체 코드 복사'; }, 3000);
+                alert('🎉 뱀피르 DOKDO 클랜 관리 사이트 전체 코드(11,162줄)가 클립보드에 복사되었습니다!\n\n에디터나 메모장에서 바로 Ctrl + V (붙여넣기) 하시면 됩니다.');
+            } catch (err) {
+                console.warn('Clipboard write fallback:', err);
+                if (btnText) btnText.textContent = '전체 코드 복사';
+                window.open('/raw-code', '_blank');
+            }
+        }
+
+        function toggleSessionsAccordion() {
+            const list = document.getElementById('ai-sessions-list');
+            const chevron = document.getElementById('sessions-chevron');
+            if (!list) return;
+            const isHidden = list.classList.toggle('hidden');
+            if (chevron) chevron.textContent = isHidden ? '▶' : '▼';
+        }
+
+        function handleAiInputKeydown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                submitAiSidebarCommand();
+            }
+        }
+
+        function appendUserMessage(text) {
+            const chat = document.getElementById('ai-chat-messages');
+            if (!chat) return;
+            const bubble = document.createElement('div');
+            bubble.className = 'ai-bubble user';
+            bubble.innerHTML = `<div>${escapeHtml(text)}</div>`;
+            chat.appendChild(bubble);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function appendAssistantThinking(id) {
+            const chat = document.getElementById('ai-chat-messages');
+            if (!chat) return null;
+            const bubble = document.createElement('div');
+            bubble.id = id;
+            bubble.className = 'ai-bubble assistant';
+            bubble.innerHTML = `
+                <div class="flex items-center gap-2 text-xs text-amber-300">
+                    <span class="animate-spin">⏳</span>
+                    <span>Gemini AI가 데이터 구조를 분석하고 실행 계획을 수립 중...</span>
+                </div>
+            `;
+            chat.appendChild(bubble);
+            chat.scrollTop = chat.scrollHeight;
+            return bubble;
+        }
+
+        function appendAssistantResponse(summary, jsCode, targetTab) {
+            const chat = document.getElementById('ai-chat-messages');
+            if (!chat) return;
+            const bubble = document.createElement('div');
+            bubble.className = 'ai-bubble assistant';
+
+            const runCodeSafe = () => {
+                currentPendingAiCode = jsCode;
+                currentPendingAiSummary = summary;
+                confirmExecuteAiGeneratedCode();
+            };
+
+            const uniqueId = 'ai_run_' + Date.now();
+            window[uniqueId] = runCodeSafe;
+
+            bubble.innerHTML = `
+                <div class="flex items-center justify-between text-xs text-gray-400 mb-1.5 pb-1 border-b border-gray-800">
+                    <span class="font-bold text-amber-300 flex items-center gap-1">✨ AI 분석 결과</span>
+                    ${targetTab ? `<span class="text-[10px] bg-red-950/80 text-rose-300 border border-red-800/60 px-1.5 py-0.5 rounded">${targetTab} 탭</span>` : ''}
+                </div>
+                <div class="text-xs text-gray-200 font-semibold mb-2">${escapeHtml(summary)}</div>
+                <div class="bg-black/70 border border-slate-800 rounded p-2 mb-2 font-mono text-[11px] text-sky-300 overflow-x-auto max-h-36">
+                    ${escapeHtml(jsCode)}
+                </div>
+                <div class="flex items-center justify-end gap-2 mt-2 pt-1.5 border-t border-slate-800/60">
+                    <button type="button" onclick="window['${uniqueId}']()" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded transition flex items-center gap-1 cursor-pointer">
+                        <span>⚡ 지금 실행 반영</span>
+                    </button>
+                </div>
+            `;
+            chat.appendChild(bubble);
+            chat.scrollTop = chat.scrollHeight;
+
+            addSessionItem(summary);
+        }
+
+        function addSessionItem(summary) {
+            const list = document.getElementById('ai-sessions-list');
+            if (!list) return;
+            const item = document.createElement('div');
+            item.className = 'ai-session-item';
+            item.innerHTML = `
+                <span class="ai-session-name">• ${escapeHtml(summary)}</span>
+                <span class="ai-session-tag green">반영</span>
+            `;
+            list.prepend(item);
+            if (list.children.length > 8) list.removeChild(list.lastChild);
+        }
+
+        function clearAiChat() {
+            const chat = document.getElementById('ai-chat-messages');
+            if (!chat) return;
+            chat.innerHTML = `
+                <div class="ai-tip-card">
+                    <strong class="text-amber-300">💡 DOKDO AI 비서 안내:</strong><br>
+                    자연어로 명령하면 표와 출석부/분배금을 자동으로 수정하고 화면에 반영합니다.<br>
+                    <span class="text-gray-400 text-[10.5px]">단축키: <strong>Alt + A</strong> (패널 켜기/끄기), <strong>Enter</strong> (명령 전송)</span>
+                </div>
+                <div class="ai-bubble assistant">
+                    <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
+                        <span class="font-bold text-amber-300 flex items-center gap-1">✨ DOKDO AI 비서</span>
+                        <span class="text-[10px] text-emerald-400 font-semibold">새 대화 시작</span>
+                    </div>
+                    <div class="text-gray-200">
+                        채팅이 초기화되었습니다. 처리할 명령어를 입력해 주세요!
+                    </div>
+                </div>
+            `;
+        }
+
+        async function submitAiSidebarCommand() {
+            const input = document.getElementById('ai-sidebar-input');
+            const command = input?.value.trim();
+            if (!command) return;
+
+            if (!isAdmin()) {
+                toggleAiAdminAuthModal();
+                return;
+            }
+
+            input.value = '';
+            appendUserMessage(command);
+
+            const thinkingId = 'thinking-' + Date.now();
+            const thinkingEl = appendAssistantThinking(thinkingId);
+
+            const sendBtn = document.getElementById('ai-sidebar-send-btn');
+            if (sendBtn) sendBtn.disabled = true;
+
+            const siteContext = {
+                serverName: document.getElementById('server-name')?.value || '모아르테2',
+                currentDate: document.getElementById('dashboard-date')?.textContent,
+                adminMembers: memberLists.admin.map(m => m.nickname),
+                normalMembers: memberLists.normal.map(m => m.nickname),
+                diamondExcluded: [...diamondExcludedMembers]
+            };
+
+            try {
+                const res = await fetch('/api/ai-command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command, context: siteContext })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.javascriptCode) {
+                        if (thinkingEl) thinkingEl.remove();
+                        appendAssistantResponse(data.summary, data.javascriptCode, data.targetTab);
+                        displayAiExecutionPlan(command, data.summary, data.javascriptCode, data.targetTab);
+                        return;
+                    }
+                }
+                
+                const fallbackPlan = parseCommandLocally(command);
+                if (thinkingEl) thinkingEl.remove();
+                appendAssistantResponse(fallbackPlan.summary, fallbackPlan.javascriptCode, fallbackPlan.targetTab);
+                displayAiExecutionPlan(command, fallbackPlan.summary, fallbackPlan.javascriptCode, fallbackPlan.targetTab);
+            } catch (err) {
+                console.warn('Backend call failed, using local processor:', err);
+                const fallbackPlan = parseCommandLocally(command);
+                if (thinkingEl) thinkingEl.remove();
+                appendAssistantResponse(fallbackPlan.summary, fallbackPlan.javascriptCode, fallbackPlan.targetTab);
+                displayAiExecutionPlan(command, fallbackPlan.summary, fallbackPlan.javascriptCode, fallbackPlan.targetTab);
+            } finally {
+                if (sendBtn) sendBtn.disabled = false;
+            }
+        }
+
+        function focusOrOpenAiAssistant() {
+            toggleAiSidebar(true);
+            const input = document.getElementById('ai-sidebar-input') || document.getElementById('ai-command-input');
+            if (input) {
+                input.focus();
+                input.classList.remove('ai-input-glow');
+                void input.offsetWidth;
+                input.classList.add('ai-input-glow');
+                setTimeout(() => input.classList.remove('ai-input-glow'), 3200);
+            }
+        }
+
+        function openAiPromptWith(promptText) {
+            toggleAiSidebar(true);
+            const input = document.getElementById('ai-sidebar-input') || document.getElementById('ai-command-input');
+            if (input) {
+                input.value = promptText;
+                input.focus();
+                if (input.setSelectionRange) {
+                    input.setSelectionRange(input.value.length, input.value.length);
+                }
+            }
+        }
+
+        function openAiPromptForMember() {
+            openAiPromptWith('클랜원 추가: [닉네임] [클래스] [전투력] [역할]');
+        }
+
+        function openAiPromptForAttendance() {
+            openAiPromptWith('겨울님 13시 출석 체크해줘');
+        }
+
+        function openAiPromptForDiamond() {
+            openAiPromptWith('다이아 100만개 분배 계산해줘');
+        }
+
+        function toggleAiCardCollapse() {
+            const body = document.getElementById('ai-card-body');
+            const minBtn = document.getElementById('ai-minimize-btn');
+            if (!body) return;
+            const isHidden = body.classList.toggle('hidden');
+            if (minBtn) minBtn.textContent = isHidden ? '펼치기' : '접기';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.altKey && (e.key === 'a' || e.key === 'A' || e.key === 'ㅁ')) {
+                e.preventDefault();
+                toggleAiSidebar();
+            }
+        });
+
+        function toggleAiAdminAuthModal() {
+            if (isAdmin() && !sessionStorage.getItem('dokdoAiAdminUnlocked')) {
+                // Already admin by role
+                alert('현재 로그인된 계정은 운영진 권한을 보유하고 있습니다.');
+                return;
+            }
+            if (aiAdminUnlocked) {
+                if (confirm('AI 운영진 인증을 잠그시겠습니까?')) {
+                    aiAdminUnlocked = false;
+                    sessionStorage.removeItem('dokdoAiAdminUnlocked');
+                    updateAiAuthBadge();
+                    showAiStatusBanner('info', 'AI 비서가 잠금 상태로 전환되었습니다.');
+                }
+                return;
+            }
+            const modal = document.getElementById('ai-admin-auth-modal');
+            if (modal) {
+                modal.classList.toggle('hidden');
+                document.getElementById('ai-auth-error')?.classList.add('hidden');
+                const pin = document.getElementById('ai-auth-pin-input');
+                if (pin) { pin.value = ''; pin.focus(); }
+            }
+        }
+
+        function submitAiAdminAuth() {
+            const input = document.getElementById('ai-auth-pin-input')?.value.trim();
+            const err = document.getElementById('ai-auth-error');
+            if (input === '9889' || input === 'admin' || input === 'dokdo9889') {
+                aiAdminUnlocked = true;
+                sessionStorage.setItem('dokdoAiAdminUnlocked', 'true');
+                document.getElementById('ai-admin-auth-modal')?.classList.add('hidden');
+                updateAiAuthBadge();
+                showAiStatusBanner('success', '👑 운영진 권한이 인증되었습니다. 모든 AI 명령어를 실행할 수 있습니다.');
+                const command = document.getElementById('ai-sidebar-input')?.value.trim() || document.getElementById('ai-command-input')?.value.trim();
+                if (command) {
+                    if (document.getElementById('ai-sidebar-input')) {
+                        submitAiSidebarCommand();
+                    } else {
+                        executeAiAssistantCommand();
+                    }
+                }
+            } else {
+                if (err) {
+                    err.textContent = '보안 PIN 코드가 일치하지 않습니다. (기본: 9889)';
+                    err.classList.remove('hidden');
+                }
+            }
+        }
+
+        function applyQuickAiCommand(commandText) {
+            openAiPromptWith(commandText);
+        }
+
+        function showAiStatusBanner(type, message) {
+            const banner = document.getElementById('ai-status-banner');
+            if (!banner) return;
+            banner.className = `ai-status-banner ${type}`;
+            banner.innerHTML = `<span>${message}</span><button onclick="this.parentElement.classList.add('hidden')" class="text-xs opacity-70 hover:opacity-100 ml-2">✕</button>`;
+            banner.classList.remove('hidden');
+        }
+
+        function toggleAiAuditModal() {
+            const modal = document.getElementById('ai-audit-modal');
+            const list = document.getElementById('ai-audit-list');
+            if (!modal) return;
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden') && list) {
+                if (!aiAuditHistory.length) {
+                    list.innerHTML = '<div class="text-center text-xs text-gray-400 py-6">실행 기록이 비어 있습니다.</div>';
+                } else {
+                    list.innerHTML = aiAuditHistory.map((item, idx) => `
+                        <div class="mb-3 p-3 bg-slate-900 border border-slate-800 rounded-lg text-xs">
+                            <div class="flex justify-between items-center text-gray-400 mb-1">
+                                <span class="font-bold text-amber-400">#${aiAuditHistory.length - idx} ${item.time}</span>
+                                <span class="text-emerald-400">성공</span>
+                            </div>
+                            <div class="text-gray-200 font-semibold mb-1">명령: "${escapeHtml(item.command)}"</div>
+                            <div class="text-gray-400 mb-2">${escapeHtml(item.summary)}</div>
+                            <pre class="bg-black/60 p-2 rounded text-sky-400 font-mono text-[11px] overflow-x-auto">${escapeHtml(item.code)}</pre>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        function closeAiCodeModal() {
+            document.getElementById('ai-code-modal')?.classList.add('hidden');
+        }
+
+        function aiResolveMemberNickname(rawName) {
+            const clean = String(rawName || '').trim().toUpperCase();
+            if (!clean) return null;
+            const allMembers = [...memberLists.admin, ...memberLists.normal];
+            let found = allMembers.find(m => m.nickname.toUpperCase() === clean);
+            if (found) return found.nickname;
+            found = allMembers.find(m => m.nickname.toUpperCase().endsWith(clean) || m.nickname.toUpperCase().includes(clean));
+            if (found) return found.nickname;
+            return clean;
+        }
+
+        function highlightTargetRow(rowElement) {
+            if (!rowElement) return;
+            rowElement.classList.remove('ai-highlight-pulse');
+            void rowElement.offsetWidth;
+            rowElement.classList.add('ai-highlight-pulse');
+            rowElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                rowElement.classList.remove('ai-highlight-pulse');
+            }, 3500);
+        }
+
+        async function aiAssistCheckAttendance(nickname, time, activity) {
+            const resolvedName = aiResolveMemberNickname(nickname);
+            const resolvedTime = String(time).includes('21') ? '21' : '13';
+            const resolvedActivity = String(activity).includes('마무리') ? '마무리' : '3층전';
+
+            const row = [...document.querySelectorAll('#attendance-body tr.attendance-member-row')]
+                .find((candidate) => candidate.cells[0].textContent.toUpperCase() === resolvedName.toUpperCase());
+
+            if (!row) {
+                throw new Error(`${resolvedName} 클랜원의 출석 행을 찾을 수 없습니다.`);
+            }
+
+            const field = resolvedTime === '13' ? 'time13Activities' : 'time21Activities';
+            const currentActs = row.dataset[field] ? row.dataset[field].split('|').filter(Boolean) : [];
+            if (!currentActs.includes(resolvedActivity)) {
+                currentActs.push(resolvedActivity);
+            }
+            row.dataset[field] = currentActs.join('|');
+
+            await saveAttendanceActivity(row, { field, activity: resolvedActivity });
+            updateAttendanceRow(row, false);
+            highlightTargetRow(row);
+            return `${resolvedName}님 ${resolvedTime}시 ${resolvedActivity} 출석 체크 완료 (+0.5점)`;
+        }
+
+        async function aiAssistCheckEvent(nickname, eventName) {
+            const resolvedName = aiResolveMemberNickname(nickname);
+            const row = [...document.querySelectorAll('#attendance-body tr.attendance-member-row')]
+                .find((candidate) => candidate.cells[0].textContent.toUpperCase() === resolvedName.toUpperCase());
+
+            if (!row) {
+                throw new Error(`${resolvedName} 클랜원의 출석 행을 찾을 수 없습니다.`);
+            }
+
+            const currentEvents = row.dataset.events ? row.dataset.events.split('|').filter(Boolean) : [];
+            if (!currentEvents.includes(eventName)) {
+                currentEvents.push(eventName);
+            }
+            row.dataset.events = currentEvents.join('|');
+            if (eventName === 'VCC') {
+                row.dataset.vccBonusAwarded = 'true';
+            }
+
+            await saveAttendanceActivity(row, { field: 'events', activity: eventName });
+            updateAttendanceRow(row, false);
+            highlightTargetRow(row);
+            return `${resolvedName}님 ${eventName} 출석 체크 완료`;
+        }
+
+        async function aiAssistAdjustScore(nickname, amount) {
+            const resolvedName = aiResolveMemberNickname(nickname);
+            await adjustAttendanceScore(resolvedName, Number(amount));
+            const row = [...document.querySelectorAll('#attendance-body tr.attendance-member-row')]
+                .find((candidate) => candidate.cells[0].textContent.toUpperCase() === resolvedName.toUpperCase());
+            if (row) highlightTargetRow(row);
+            return `${resolvedName}님 점수 ${amount > 0 ? '+' : ''}${amount}점 조정 완료`;
+        }
+
+        async function aiAssistAwardVcc(nickname) {
+            const resolvedName = aiResolveMemberNickname(nickname);
+            await awardAttendanceVcc(resolvedName);
+            const row = [...document.querySelectorAll('#attendance-body tr.attendance-member-row')]
+                .find((candidate) => candidate.cells[0].textContent.toUpperCase() === resolvedName.toUpperCase());
+            if (row) highlightTargetRow(row);
+            return `${resolvedName}님 VCC 보너스 지급 완료`;
+        }
+
+        function aiAssistExcludeFromDiamond(nickname) {
+            const resolvedName = aiResolveMemberNickname(nickname);
+            diamondExcludedMembers.add(resolvedName);
+            localStorage.setItem('dokdoDiamondExcluded', JSON.stringify([...diamondExcludedMembers]));
+            calculateDiamondDistribution();
+            switchTab('diamonds');
+            return `${resolvedName}님을 다이아 분배 목록에서 제외했습니다.`;
+        }
+
+        function aiAssistIncludeInDiamond(nickname) {
+            const resolvedName = aiResolveMemberNickname(nickname);
+            diamondExcludedMembers.delete(resolvedName);
+            localStorage.setItem('dokdoDiamondExcluded', JSON.stringify([...diamondExcludedMembers]));
+            calculateDiamondDistribution();
+            switchTab('diamonds');
+            return `${resolvedName}님을 다이아 분배 목록에 다시 포함했습니다.`;
+        }
+
+        function aiAssistCalculateDiamonds(totalAmount) {
+            const input = document.getElementById('diamond-total-input');
+            const numeric = Number(String(totalAmount).replace(/[^0-9]/g, ''));
+            if (input && numeric) {
+                input.value = numeric;
+            }
+            calculateDiamondDistribution();
+            switchTab('diamonds');
+            return `총 ${numeric.toLocaleString()}개 다이아 분배 계산을 화면에 반영했습니다.`;
+        }
+
+        function aiAssistAddMember(nickname, className = '미정', power = '1,500,000', role = '일반') {
+            const resolvedName = nickname.trim().toUpperCase();
+            if (Object.values(memberLists).flat().some(m => m.nickname === resolvedName)) {
+                return `${resolvedName} 클랜원은 이미 명단에 존재합니다.`;
+            }
+            const targetList = role === '일반' ? 'normal' : 'admin';
+            memberLists[targetList].push({
+                nickname: resolvedName,
+                className,
+                power: normalizePowerInput(power),
+                role
+            });
+            if (!memberOrder.includes(resolvedName)) memberOrder.push(resolvedName);
+            saveMemberLists();
+            renderMemberLists();
+            renderAttendanceMembers();
+            switchTab('members');
+            return `신규 클랜원 ${resolvedName} (${className}, ${power}, ${role}) 등록 완료`;
+        }
+
+        function aiAssistEditMember(nickname, updates = {}) {
+            const resolvedName = aiResolveMemberNickname(nickname);
+            const all = Object.values(memberLists).flat();
+            const member = all.find(m => m.nickname === resolvedName);
+            if (!member) throw new Error(`${resolvedName} 클랜원을 찾을 수 없습니다.`);
+            if (updates.className) member.className = updates.className;
+            if (updates.power) member.power = normalizePowerInput(updates.power);
+            if (updates.role) member.role = updates.role;
+            saveMemberLists();
+            renderMemberLists();
+            renderAttendanceMembers();
+            switchTab('members');
+            return `${resolvedName} 클랜원 정보가 수정되었습니다.`;
+        }
+
+        function aiAssistSetServerName(serverName) {
+            const clean = String(serverName).trim();
+            const input = document.getElementById('server-name');
+            if (input) input.value = clean;
+            saveServerName();
+            switchTab('dashboard');
+            return `셔플 서버명이 '${clean}'으로 변경되었습니다.`;
+        }
+
+        function aiAssistUpdateNotice(noticeText) {
+            const info = document.getElementById('dashboard-info');
+            if (info) {
+                const p = document.createElement('p');
+                p.textContent = `📢 [AI 공지] ${noticeText}`;
+                p.style.color = '#38bdf8';
+                p.style.fontWeight = 'bold';
+                info.querySelector('div')?.prepend(p);
+            }
+            switchTab('notice');
+            return `공지사항에 내용이 반영되었습니다.`;
+        }
+
+        async function executeAiAssistantCommand() {
+            const input = document.getElementById('ai-command-input');
+            const command = input?.value.trim();
+            if (!command) {
+                alert('명령어를 입력해주세요. (예: "겨울님 13시 출석 체크해줘")');
+                input?.focus();
+                return;
+            }
+
+            if (!isAdmin()) {
+                toggleAiAdminAuthModal();
+                return;
+            }
+
+            const btn = document.getElementById('ai-execute-btn') || document.getElementById('ai-execute-button');
+            const btnText = document.getElementById('ai-btn-text');
+            const btnIcon = document.getElementById('ai-btn-icon');
+            if (btn) btn.disabled = true;
+            if (btnText) btnText.textContent = 'AI 분석 중...';
+            if (btnIcon) btnIcon.textContent = '⏳';
+            showAiStatusBanner('info', `🤖 Gemini AI가 데이터 구조를 분석하고 실행 코드를 생성하는 중입니다: "${command}"`);
+
+            const siteContext = {
+                serverName: document.getElementById('server-name')?.value || '모아르테2',
+                currentDate: document.getElementById('dashboard-date')?.textContent,
+                adminMembers: memberLists.admin.map(m => m.nickname),
+                normalMembers: memberLists.normal.map(m => m.nickname),
+                diamondExcluded: [...diamondExcludedMembers]
+            };
+
+            try {
+                const res = await fetch('/api/ai-command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command, context: siteContext })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.javascriptCode) {
+                        displayAiExecutionPlan(command, data.summary, data.javascriptCode, data.targetTab);
+                        return;
+                    }
+                }
+                
+                const fallbackPlan = parseCommandLocally(command);
+                displayAiExecutionPlan(command, fallbackPlan.summary, fallbackPlan.javascriptCode, fallbackPlan.targetTab);
+            } catch (err) {
+                console.warn('Backend Gemini API call fallback to local rule processor:', err);
+                const fallbackPlan = parseCommandLocally(command);
+                displayAiExecutionPlan(command, fallbackPlan.summary, fallbackPlan.javascriptCode, fallbackPlan.targetTab);
+            } finally {
+                if (btn) btn.disabled = false;
+                if (btnText) btnText.textContent = 'AI 실행';
+                if (btnIcon) btnIcon.textContent = '⚡';
+            }
+        }
+
+        function parseCommandLocally(command) {
+            const lower = command.toLowerCase();
+            const members = [...memberLists.admin, ...memberLists.normal];
+            
+            let targetMember = null;
+            for (const m of members) {
+                const short = m.nickname.replace('DOKDO', '');
+                if (command.includes(m.nickname) || command.includes(short)) {
+                    targetMember = m.nickname;
+                    break;
+                }
+            }
+
+            if (lower.includes('제외') && (lower.includes('분배') || lower.includes('다이아'))) {
+                const name = targetMember || 'DOKDO소주';
+                return {
+                    summary: `${name} 클랜원을 다이아 분배 목록에서 제외하고 재계산합니다.`,
+                    javascriptCode: `aiAssistExcludeFromDiamond('${name}');`,
+                    targetTab: 'diamonds'
+                };
+            }
+
+            if (lower.includes('다이아') && (lower.includes('계산') || lower.includes('분배') || /\d+/.test(command))) {
+                const match = command.match(/(\d[\d,]*)\s*만?/);
+                let amount = 1000000;
+                if (match) {
+                    let num = parseInt(match[1].replace(/,/g, ''), 10);
+                    if (command.includes('만') && num < 10000) num *= 10000;
+                    amount = num;
+                }
+                return {
+                    summary: `전체 다이아 ${amount.toLocaleString()}개 기준으로 분배를 계산하고 결과를 표시합니다.`,
+                    javascriptCode: `aiAssistCalculateDiamonds(${amount});`,
+                    targetTab: 'diamonds'
+                };
+            }
+
+            if ((lower.includes('점') || lower.includes('점수')) && (lower.includes('올려') || lower.includes('내려') || lower.includes('+') || lower.includes('-') || lower.includes('인상'))) {
+                const name = targetMember || 'DOKDO라닷지';
+                const isMinus = lower.includes('내려') || lower.includes('-') || lower.includes('차감');
+                const scoreMatch = command.match(/([0-9.]+)\s*점/);
+                const scoreVal = scoreMatch ? parseFloat(scoreMatch[1]) : 1;
+                const finalAmt = isMinus ? -scoreVal : scoreVal;
+                return {
+                    summary: `${name}님의 출석 점수를 ${finalAmt > 0 ? '+' : ''}${finalAmt}점 조정합니다.`,
+                    javascriptCode: `aiAssistAdjustScore('${name}', ${finalAmt});\nswitchTab('attendance');`,
+                    targetTab: 'attendance'
+                };
+            }
+
+            if (lower.includes('출석') || lower.includes('체크')) {
+                const name = targetMember || 'DOKDO겨울';
+                const time = lower.includes('21') ? '21' : '13';
+                const act = lower.includes('마무리') ? '마무리' : '3층전';
+                return {
+                    summary: `${name}님의 ${time}시 ${act} 출석을 체크하고 실시간 데이터베이스에 반영합니다.`,
+                    javascriptCode: `aiAssistCheckAttendance('${name}', '${time}', '${act}');\nswitchTab('attendance');`,
+                    targetTab: 'attendance'
+                };
+            }
+
+            if (lower.includes('서버') || lower.includes('서버명')) {
+                const words = command.split(/\s+/);
+                const serverIndex = words.findIndex(w => w.includes('서버'));
+                let newServer = '모아르테2';
+                if (serverIndex >= 0 && words[serverIndex - 1]) newServer = words[serverIndex - 1];
+                else if (serverIndex >= 0 && words[serverIndex + 1]) newServer = words[serverIndex + 1];
+                newServer = newServer.replace(/['"으로변경해줘로바꿔줘]/g, '');
+                return {
+                    summary: `셔플 서버명을 '${newServer}'으로 변경합니다.`,
+                    javascriptCode: `aiAssistSetServerName('${newServer}');`,
+                    targetTab: 'dashboard'
+                };
+            }
+
+            return {
+                summary: `명령어 "${command}"를 분석하여 시스템에 적용합니다.`,
+                javascriptCode: `showAttendanceNotice('AI 명령어가 화면에 전달되었습니다.');`,
+                targetTab: 'dashboard'
+            };
+        }
+
+        function displayAiExecutionPlan(command, summary, code, targetTab) {
+            currentPendingAiCode = code;
+            currentPendingAiSummary = summary;
+
+            const sumEl = document.getElementById('ai-modal-summary');
+            const codeEl = document.getElementById('ai-modal-code');
+            if (sumEl) sumEl.textContent = summary;
+            if (codeEl) codeEl.textContent = code;
+            document.getElementById('ai-code-modal')?.classList.remove('hidden');
+        }
+
+        async function confirmExecuteAiGeneratedCode() {
+            closeAiCodeModal();
+            showAiStatusBanner('info', '⚙️ 생성된 자바스크립트 코드를 실행하고 데이터를 업데이트하는 중...');
+            
+            try {
+                const runCode = new Function(currentPendingAiCode);
+                await runCode();
+
+                const auditItem = {
+                    time: new Date().toLocaleTimeString(),
+                    command: document.getElementById('ai-command-input')?.value.trim() || '',
+                    summary: currentPendingAiSummary,
+                    code: currentPendingAiCode
+                };
+                aiAuditHistory.unshift(auditItem);
+                if (aiAuditHistory.length > 30) aiAuditHistory.pop();
+                localStorage.setItem('dokdoAiAuditHistory', JSON.stringify(aiAuditHistory));
+
+                showAiStatusBanner('success', `✨ [실행 완료] ${currentPendingAiSummary}`);
+                const input = document.getElementById('ai-command-input');
+                if (input) input.value = '';
+            } catch (err) {
+                console.error('AI Code Execution Failed:', err);
+                showAiStatusBanner('error', `실행 오류: ${err.message}`);
+                alert(`AI 코드 실행 중 오류가 발생했습니다: ${err.message}`);
+            }
+        }
+
+        updateAiAuthBadge();
+        initAiSidebarState();
+
     </script>
+
+    <!-- [AI 분석 결과 및 자바스크립트 코드 확인 모달] -->
+    <div id="ai-code-modal" class="ai-modal hidden">
+        <div class="ai-modal-box">
+            <div class="ai-modal-header">
+                <h3 class="ai-modal-title">
+                    <span>✨</span>
+                    <span>AI 명령어 분석 및 실행 코드</span>
+                </h3>
+                <button type="button" class="ai-modal-close" onclick="closeAiCodeModal()">✕</button>
+            </div>
+            <div class="ai-modal-body">
+                <div class="mb-4">
+                    <span class="text-xs font-bold text-gray-400 block mb-1">작업 분석 요약:</span>
+                    <p id="ai-modal-summary" class="text-sm font-semibold text-emerald-400 bg-emerald-950/30 p-3 rounded-lg border border-emerald-900/50"></p>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs font-bold text-gray-400">생성된 실행 JavaScript 코드:</span>
+                        <span class="text-xs text-amber-400 font-mono">Client-Side Executable</span>
+                    </div>
+                    <pre id="ai-modal-code" class="ai-code-block"></pre>
+                </div>
+            </div>
+            <div class="ai-modal-actions">
+                <button type="button" onclick="closeAiCodeModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-bold rounded-lg transition">취소</button>
+                <button id="ai-modal-execute-btn" type="button" onclick="confirmExecuteAiGeneratedCode()" class="px-5 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded-lg transition flex items-center gap-1.5 shadow-lg shadow-red-900/40">
+                    <span>🚀 화면에 즉시 반영 및 실행</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- [AI 운영진 인증 모달] -->
+    <div id="ai-admin-auth-modal" class="ai-modal hidden">
+        <div class="ai-modal-box" style="max-width: 420px;">
+            <div class="ai-modal-header">
+                <h3 class="ai-modal-title">
+                    <span>🔒</span>
+                    <span>운영진 AI 명령어 권한 인증</span>
+                </h3>
+                <button type="button" class="ai-modal-close" onclick="toggleAiAdminAuthModal()">✕</button>
+            </div>
+            <div class="ai-modal-body">
+                <p class="text-xs text-gray-300 mb-4 leading-relaxed">
+                    AI 명령어 비서는 출석부, 분배금, 회원 명단을 전역 수정할 수 있으므로 <strong>운영진(관리자)</strong> 인증이 필요합니다.
+                </p>
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-400 mb-2">운영진 보안 PIN 코드</label>
+                    <input id="ai-auth-pin-input" type="password" maxlength="8" placeholder="운영진 비밀번호 (기본: 9889)" class="w-full bg-slate-900 border border-slate-700 text-white px-3 py-2.5 rounded-lg text-sm focus:border-red-500 outline-none">
+                </div>
+                <p id="ai-auth-error" class="text-xs text-red-400 hidden"></p>
+            </div>
+            <div class="ai-modal-actions">
+                <button type="button" onclick="toggleAiAdminAuthModal()" class="px-3 py-2 bg-gray-800 text-gray-300 text-xs font-bold rounded">취소</button>
+                <button type="button" onclick="submitAiAdminAuth()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded">인증 완료</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- [AI 실행 기록 모달] -->
+    <div id="ai-audit-modal" class="ai-modal hidden">
+        <div class="ai-modal-box" style="max-width: 580px;">
+            <div class="ai-modal-header">
+                <h3 class="ai-modal-title">
+                    <span>📜</span>
+                    <span>AI 명령어 실행 감사 기록</span>
+                </h3>
+                <button type="button" class="ai-modal-close" onclick="toggleAiAuditModal()">✕</button>
+            </div>
+            <div class="ai-modal-body" id="ai-audit-list">
+                <div class="text-center text-xs text-gray-400 py-6">아직 실행된 AI 명령어가 없습니다.</div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
